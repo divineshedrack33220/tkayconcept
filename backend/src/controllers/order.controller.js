@@ -23,7 +23,7 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: 'Shipping address is required' });
     }
 
-    const user = await User.findOne({ clerkId: req.auth.userId });
+    const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) {
       return res.status(404).json({ message: 'User not found. Please sync your account first.' });
     }
@@ -90,7 +90,7 @@ const createOrder = async (req, res) => {
 // GET /api/orders - Get current user's orders
 const getMyOrders = async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.auth.userId });
+    const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -123,7 +123,7 @@ const getMyOrders = async (req, res) => {
 // GET /api/orders/:orderId - Get single order
 const getOrder = async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.auth.userId });
+    const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

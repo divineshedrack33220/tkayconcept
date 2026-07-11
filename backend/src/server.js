@@ -26,6 +26,34 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+app.post('/api/bootstrap/admin', async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const adminExists = await User.findOne({ role: { $in: ['admin', 'super_admin'] } });
+    if (adminExists) {
+      return res.status(403).json({ message: 'Admin already exists. Use the regular role update endpoint.' });
+    }
+
+    const { clerkId, email } = req.body;
+    if (!clerkId || !email) {
+      return res.status(400).json({ message: 'clerkId and email are required' });
+    }
+
+    let user = await User.findOne({ clerkId });
+    if (user) {
+      user.role = 'super_admin';
+      await user.save();
+    } else {
+      user = await User.create({ clerkId, email, role: 'super_admin' });
+    }
+
+    res.json({ data: user, message: 'First admin created successfully' });
+  } catch (error) {
+    console.error('Bootstrap admin error:', error);
+    res.status(500).json({ message: 'Failed to bootstrap admin' });
+  }
+});
+
 app.use('/api/products', require('./routes/product.routes'));
 app.use('/api/categories', require('./routes/category.routes'));
 app.use('/api/users', require('./routes/user.routes'));

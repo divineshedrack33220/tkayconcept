@@ -32,7 +32,7 @@ const createPaymentIntent = async (req, res) => {
       amount: Math.round(amount * 100), // Convert to cents
       currency,
       metadata: {
-        userId: req.auth.userId,
+        userId: req.user.sub,
         ...metadata,
       },
     });

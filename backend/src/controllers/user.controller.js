@@ -107,7 +107,7 @@ const updateAddress = async (req, res) => {
   try {
     const { addressId } = req.params;
     const { label, street, city, state, zipCode, country, isDefault } = req.body;
-    const user = await User.findOne({ clerkId: req.auth.userId });
+    const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -141,7 +141,7 @@ const updateAddress = async (req, res) => {
 const deleteAddress = async (req, res) => {
   try {
     const { addressId } = req.params;
-    const user = await User.findOne({ clerkId: req.auth.userId });
+    const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -165,7 +165,7 @@ const deleteAddress = async (req, res) => {
 const setDefaultAddress = async (req, res) => {
   try {
     const { addressId } = req.params;
-    const user = await User.findOne({ clerkId: req.auth.userId });
+    const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
