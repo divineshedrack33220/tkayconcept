@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <rect width="600" height="600" fill="#fef3c7"/>
+  <path d="M240,150 L300,100 L360,150 L360,400 L240,400 Z" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+  <rect x="260" y="200" width="80" height="120" rx="4" fill="#fcd34d"/>
+  <text x="300" y="460" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#92400e" font-weight="bold">TKAY KONCEPTS</text>
+  <text x="300" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#b45309">Apparel</text>
+</svg>

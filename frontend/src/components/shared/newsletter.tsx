@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import api from "@/lib/api";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");
@@ -12,12 +13,16 @@ export function Newsletter() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // TODO: API call
-    setTimeout(() => {
-      toast.success("Thanks for subscribing!");
+    try {
+      const res = await api.post("/newsletter/subscribe", { email });
+      toast.success(res.data.message || "Thanks for subscribing!");
       setEmail("");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      toast.error(msg || "Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (

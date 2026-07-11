@@ -67,6 +67,9 @@ app.use('/api/blog', require('./routes/blog.routes'));
 app.use('/api/contacts', require('./routes/contact.routes'));
 app.use('/api/wishlist', require('./routes/wishlist.routes'));
 app.use('/api/media', require('./routes/media.routes'));
+app.use('/api/testimonials', require('./routes/testimonial'));
+app.use('/api/newsletter', require('./routes/newsletter'));
+app.use('/api/coupons', require('./routes/coupon'));
 
 app.use(errorHandler);
 

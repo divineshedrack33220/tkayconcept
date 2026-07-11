@@ -4,7 +4,7 @@ const Order = require('../models/Order');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder');
 
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/', async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -13,7 +13,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     if (endpointSecret && sig) {
       event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
     } else {
-      event = JSON.parse(req.body.toString());
+      event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     }
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
@@ -28,9 +28,6 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         if (order) {
           order.paymentStatus = 'paid';
           order.status = 'confirmed';
-          if (paymentIntent.metadata?.trackingNumber) {
-            order.trackingNumber = paymentIntent.metadata.trackingNumber;
-          }
           await order.save();
           console.log(`Order ${order.orderNumber} paid via webhook`);
         }
@@ -42,7 +39,6 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         if (failedOrder) {
           failedOrder.paymentStatus = 'failed';
           await failedOrder.save();
-          console.log(`Payment failed for order ${failedOrder.orderNumber}`);
         }
         break;
       }
@@ -53,7 +49,6 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
           refundedOrder.paymentStatus = 'refunded';
           refundedOrder.status = 'cancelled';
           await refundedOrder.save();
-          console.log(`Order ${refundedOrder.orderNumber} refunded`);
         }
         break;
       }
