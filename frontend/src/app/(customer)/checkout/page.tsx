@@ -368,11 +368,40 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
+              {(!process.env.NEXT_PUBLIC_STRIPE_KEY || process.env.NEXT_PUBLIC_STRIPE_KEY === "pk_test_xxx") ? (
+                <div className="mb-6">
+                  <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 mb-4">
+                    <p className="text-sm font-medium text-yellow-800">Demo Mode</p>
+                    <p className="text-xs text-yellow-600">No real payment will be processed. Configure Stripe keys to enable live payments.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-gray-700">Card Number</label>
+                      <Input value="4242 4242 4242 4242" readOnly className="bg-gray-50 font-mono" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">Expiry</label>
+                        <Input value="12/28" readOnly className="bg-gray-50 font-mono" />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">CVC</label>
+                        <Input value="123" readOnly className="bg-gray-50 font-mono" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <p className="mb-2 text-sm text-gray-600">Card details will be collected securely by Stripe.</p>
+                </div>
+              )}
+
               <div className="mb-6 rounded-lg bg-gray-50 p-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Lock className="h-4 w-4" />
                   <span>
-                    {process.env.NEXT_PUBLIC_STRIPE_KEY
+                    {process.env.NEXT_PUBLIC_STRIPE_KEY && process.env.NEXT_PUBLIC_STRIPE_KEY !== "pk_test_xxx"
                       ? "Your payment info is encrypted and secure."
                       : "Demo mode — no real payment will be processed."}
                   </span>

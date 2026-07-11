@@ -18,7 +18,7 @@ const blogPostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-blogPostSchema.pre('validate', function (next) {
+blogPostSchema.pre('validate', function () {
   if (this.title && (!this.slug || this.isModified('title'))) {
     this.slug = this.title
       .toLowerCase()
@@ -27,7 +27,6 @@ blogPostSchema.pre('validate', function (next) {
       .replace(/-+/g, '-')
       .trim();
   }
-  next();
 });
 
 blogPostSchema.index({ slug: 1 });

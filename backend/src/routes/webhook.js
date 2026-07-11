@@ -1,0 +1,70 @@
+const express = require('express');
+const router = express.Router();
+const Order = require('../models/Order');
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder');
+
+router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  let event;
+  try {
+    if (endpointSecret && sig) {
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } else {
+      event = JSON.parse(req.body.toString());
+    }
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err.message);
+    return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+  }
+
+  try {
+    switch (event.type) {
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object;
+        const order = await Order.findOne({ paymentIntentId: paymentIntent.id });
+        if (order) {
+          order.paymentStatus = 'paid';
+          order.status = 'confirmed';
+          if (paymentIntent.metadata?.trackingNumber) {
+            order.trackingNumber = paymentIntent.metadata.trackingNumber;
+          }
+          await order.save();
+          console.log(`Order ${order.orderNumber} paid via webhook`);
+        }
+        break;
+      }
+      case 'payment_intent.payment_failed': {
+        const failedIntent = event.data.object;
+        const failedOrder = await Order.findOne({ paymentIntentId: failedIntent.id });
+        if (failedOrder) {
+          failedOrder.paymentStatus = 'failed';
+          await failedOrder.save();
+          console.log(`Payment failed for order ${failedOrder.orderNumber}`);
+        }
+        break;
+      }
+      case 'charge.refunded': {
+        const charge = event.data.object;
+        const refundedOrder = await Order.findOne({ paymentIntentId: charge.payment_intent });
+        if (refundedOrder) {
+          refundedOrder.paymentStatus = 'refunded';
+          refundedOrder.status = 'cancelled';
+          await refundedOrder.save();
+          console.log(`Order ${refundedOrder.orderNumber} refunded`);
+        }
+        break;
+      }
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+    res.json({ received: true });
+  } catch (err) {
+    console.error('Webhook handler error:', err);
+    res.status(500).json({ error: 'Webhook handler failed' });
+  }
+});
+
+module.exports = router;

@@ -17,6 +17,9 @@ connectDB();
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
+
+app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), require('./routes/webhook'));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -62,6 +65,7 @@ app.use('/api/payments', require('./routes/payment.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/blog', require('./routes/blog.routes'));
 app.use('/api/contacts', require('./routes/contact.routes'));
+app.use('/api/wishlist', require('./routes/wishlist.routes'));
 app.use('/api/media', require('./routes/media.routes'));
 
 app.use(errorHandler);
