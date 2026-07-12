@@ -56,7 +56,7 @@ export function MobileBottomNav() {
           return (
             <Link
               key={item.label}
-              href={isSignedIn || item.href === "/" ? item.href : "/sign-in"}
+              href={(isSignedIn || item.href === "/") && item.href ? item.href : "/sign-in"}
               className={`flex flex-col items-center gap-0.5 px-4 py-1 ${
                 isActive ? "text-accent" : "text-gray-500"
               }`}

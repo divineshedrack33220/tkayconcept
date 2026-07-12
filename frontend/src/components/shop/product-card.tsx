@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ShoppingBag, Package, Heart, Eye, Zap } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { Rating } from "@/components/ui/rating";
+import { FlashSaleTimer } from "@/components/ui/flash-sale-timer";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
@@ -13,9 +14,10 @@ import type { Product } from "@/types";
 
 interface ProductCardProps {
   product: Product;
+  layout?: "grid" | "list";
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
   const [imgError, setImgError] = useState(false);
   const { isSignedIn } = useAuth();
@@ -83,6 +85,94 @@ export function ProductCard({ product }: ProductCardProps) {
     setTimeout(() => setAddedToCart(false), 1500);
   };
 
+  if (layout === "list") {
+    return (
+      <Link
+        href={`/shop/${product.category?.slug}/${product._id}`}
+        className="group flex gap-4 overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-gray-200/50"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-xl bg-gray-50 sm:h-40 sm:w-40">
+          {imgError ? (
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/5 to-primary/5">
+              <Package className="h-10 w-10 text-gray-300" />
+            </div>
+          ) : (
+            <>
+              <img
+                src={primaryImage}
+                alt={product.name}
+                onError={() => setImgError(true)}
+                className={`h-full w-full object-cover transition-all duration-500 ${
+                  isHovered && secondImage
+                    ? "scale-110 opacity-0"
+                    : "scale-100 opacity-100 group-hover:scale-105"
+                }`}
+              />
+              {secondImage && (
+                <img
+                  src={secondImage}
+                  alt={product.name}
+                  className={`absolute inset-0 h-full w-full object-cover transition-all duration-500 ${
+                    isHovered ? "scale-105 opacity-100" : "scale-100 opacity-0"
+                  }`}
+                />
+              )}
+            </>
+          )}
+          <div className="absolute left-2 top-2 z-10 flex flex-col gap-1">
+            {hasDiscount && (
+              <FlashSaleTimer discountPercent={discountPercent} endDate={product.saleEndDate} />
+            )}
+            {product.isNewArrival && (
+              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-xs font-bold text-white shadow-sm">
+                New
+              </span>
+            )}
+          </div>
+          <button
+            onClick={handleToggleWishlist}
+            className={`absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md transition-all hover:scale-110 ${
+              isWishlisted ? "text-red-500" : "text-gray-500 hover:text-red-500"
+            }`}
+          >
+            <Heart className={`h-3.5 w-3.5 ${isWishlisted ? "fill-red-500" : ""}`} />
+          </button>
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col py-1">
+          <p className="mb-0.5 text-xs font-semibold uppercase tracking-wider text-accent">{product.brand}</p>
+          <h3 className="mb-1 text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-accent transition-colors">{product.name}</h3>
+          {product.shortDescription && (
+            <p className="mb-2 text-xs text-gray-500 line-clamp-2">{product.shortDescription}</p>
+          )}
+          <div className="flex items-center gap-2">
+            <Rating value={product.averageRating} size="sm" />
+            <span className="text-xs text-gray-400">({product.totalReviews})</span>
+          </div>
+          <div className="mt-auto flex items-center justify-between pt-2">
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
+              {hasDiscount && (
+                <span className="text-sm text-gray-400 line-through">${product.compareAtPrice!.toFixed(2)}</span>
+              )}
+            </div>
+            <button
+              onClick={handleAddToCart}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+                addedToCart
+                  ? "bg-emerald-500 text-white"
+                  : "bg-primary text-white hover:bg-primary-light"
+              }`}
+            >
+              {addedToCart ? "Added!" : "Add to Cart"}
+            </button>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={`/shop/${product.category?.slug}/${product._id}`}
@@ -124,9 +214,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* Badges */}
           <div className="absolute left-3 top-3 flex flex-col gap-1.5 z-10">
             {hasDiscount && (
-              <span className="rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
-                -{discountPercent}%
-              </span>
+              <FlashSaleTimer discountPercent={discountPercent} endDate={product.saleEndDate} />
             )}
             {product.isNewArrival && (
               <span className="rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">

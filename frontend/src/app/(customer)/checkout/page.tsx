@@ -11,6 +11,9 @@ import {
   Lock,
   CheckCircle2,
   ShoppingBag,
+  Shield,
+  Truck,
+  RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -534,6 +537,36 @@ export default function CheckoutPage() {
               <span>Total</span>
               <span>${total.toFixed(2)}</span>
             </div>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="mt-5 grid grid-cols-3 gap-3">
+            <div className="text-center">
+              <div className="mx-auto mb-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100">
+                <Truck className="h-4 w-4 text-emerald-600" />
+              </div>
+              <p className="text-[10px] font-semibold text-gray-700">Free Shipping</p>
+              <p className="text-[9px] text-gray-400">$75+</p>
+            </div>
+            <div className="text-center">
+              <div className="mx-auto mb-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                <Shield className="h-4 w-4 text-blue-600" />
+              </div>
+              <p className="text-[10px] font-semibold text-gray-700">SSL Secure</p>
+              <p className="text-[9px] text-gray-400">256-bit</p>
+            </div>
+            <div className="text-center">
+              <div className="mx-auto mb-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-purple-100">
+                <RotateCcw className="h-4 w-4 text-purple-600" />
+              </div>
+              <p className="text-[10px] font-semibold text-gray-700">Easy Returns</p>
+              <p className="text-[9px] text-gray-400">30 Days</p>
+            </div>
+          </div>
+
+          <div className="mt-4 flex items-center justify-center gap-1.5 rounded-lg bg-gray-50 px-3 py-2">
+            <Lock className="h-3.5 w-3.5 text-gray-400" />
+            <span className="text-[10px] font-medium text-gray-500">Your payment is encrypted and secure</span>
           </div>
         </div>
       </div>

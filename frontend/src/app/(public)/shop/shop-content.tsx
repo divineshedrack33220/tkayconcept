@@ -7,6 +7,8 @@ import {
   X,
   ChevronDown,
   Search,
+  LayoutGrid,
+  Rows3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/shop/product-card";
@@ -41,6 +43,7 @@ export default function ShopContent() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [category, setCategory] = useState(searchParams.get("category") || "");
@@ -137,6 +140,27 @@ export default function ShopContent() {
             <SlidersHorizontal className="h-4 w-4" />
             Filters
           </Button>
+
+          <div className="hidden sm:flex items-center rounded-lg border border-gray-300">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`flex h-9 w-9 items-center justify-center rounded-l-lg transition-colors ${
+                viewMode === "grid" ? "bg-primary text-white" : "text-gray-400 hover:bg-gray-50"
+              }`}
+              title="Grid view"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={`flex h-9 w-9 items-center justify-center rounded-r-lg transition-colors ${
+                viewMode === "list" ? "bg-primary text-white" : "text-gray-400 hover:bg-gray-50"
+              }`}
+              title="List view"
+            >
+              <Rows3 className="h-4 w-4" />
+            </button>
+          </div>
 
           <div className="relative">
             <select
@@ -290,11 +314,20 @@ export default function ShopContent() {
           <p className="mb-4 text-sm text-gray-400">Try adjusting your filters or search</p>
           <Button variant="outline" size="sm" onClick={clearFilters}>Clear Filters</Button>
         </div>
+      ) : viewMode === "list" ? (
+        <>
+          <div className="space-y-3">
+            {products.map((product) => (
+              <ProductCard key={product._id} product={product} layout="list" />
+            ))}
+          </div>
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-8" />
+        </>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
+              <ProductCard key={product._id} product={product} layout="grid" />
             ))}
           </div>
           <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-8" />

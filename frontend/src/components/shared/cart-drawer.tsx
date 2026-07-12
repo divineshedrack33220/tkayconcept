@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { X, Minus, Plus, ShoppingBag, Truck, Package } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, Truck, Package, PlusCircle } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
+import api from "@/lib/api";
+import type { Product } from "@/types";
 
 const FREE_SHIPPING_THRESHOLD = 75;
 
@@ -18,6 +20,24 @@ export function CartDrawer() {
   const subtotal = useCartStore((s) => s.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0));
   const totalItems = useCartStore((s) => s.items.reduce((sum, item) => sum + item.quantity, 0));
   const [justAdded, setJustAdded] = useState<string | null>(null);
+  const [recommendations, setRecommendations] = useState<Product[]>([]);
+  const addItem = useCartStore((s) => s.addItem);
+  const cartProductIds = useMemo(() => items.map((i) => i.product._id), [items]);
+
+  useEffect(() => {
+    if (!isCartOpen || items.length === 0) {
+      setRecommendations([]);
+      return;
+    }
+    api.get("/products?limit=8&sort=-createdAt")
+      .then((res) => {
+        const recs = (res.data.data || res.data || [])
+          .filter((p: Product) => !cartProductIds.includes(p._id))
+          .slice(0, 4);
+        setRecommendations(recs);
+      })
+      .catch(() => {});
+  }, [isCartOpen, items.length, cartProductIds]);
 
   const shippingProgress = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
   const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
@@ -153,6 +173,37 @@ export function CartDrawer() {
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Cross-sell */}
+          {items.length > 0 && recommendations.length > 0 && (
+            <div className="mt-6 border-t border-gray-100 pt-5">
+              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">You may also like</p>
+              <div className="grid grid-cols-2 gap-3">
+                {recommendations.map((rec) => {
+                  const recImage = rec.images?.find((i) => i.isPrimary)?.url || rec.images?.[0]?.url || "/placeholder-book.svg";
+                  return (
+                    <button
+                      key={rec._id}
+                      onClick={() => addItem(rec)}
+                      className="group/rec flex gap-3 rounded-xl border border-gray-100 p-2.5 text-left transition-all hover:border-accent/30 hover:bg-accent/5 hover:shadow-sm"
+                    >
+                      <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-gray-50">
+                        <img src={recImage} alt={rec.name} className="h-full w-full object-cover" />
+                      </div>
+                      <div className="flex min-w-0 flex-col">
+                        <p className="text-xs font-semibold text-gray-900 line-clamp-2 group-hover/rec:text-accent transition-colors">{rec.name}</p>
+                        <p className="mt-auto pt-1 text-xs font-bold text-primary">{formatPrice(rec.price)}</p>
+                        <span className="mt-0.5 flex items-center gap-0.5 text-[10px] font-medium text-accent">
+                          <PlusCircle className="h-3 w-3" />
+                          Add
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

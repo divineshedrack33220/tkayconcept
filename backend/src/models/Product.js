@@ -51,6 +51,13 @@ const productSchema = new mongoose.Schema(
       type: Number,
       min: [0, 'Compare at price cannot be negative'],
     },
+    saleEndDate: {
+      type: Date,
+    },
+    viewCount: {
+      type: Number,
+      default: 0,
+    },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',

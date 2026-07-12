@@ -23,7 +23,9 @@ import { Rating } from "@/components/ui/rating";
 import { Spinner } from "@/components/ui/spinner";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ShareButtons } from "@/components/ui/share-buttons";
+import { FlashSaleTimer } from "@/components/ui/flash-sale-timer";
 import { ReviewsSection } from "@/components/shop/reviews-section";
+import { FrequentlyBoughtTogether } from "@/components/shop/frequently-bought-together";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
@@ -56,6 +58,7 @@ export default function ProductDetailPage() {
   const [showSticky, setShowSticky] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [isZooming, setIsZooming] = useState(false);
+  const [viewers, setViewers] = useState(() => Math.floor(Math.random() * 20) + 8);
   const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,6 +74,14 @@ export default function ProductDetailPage() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Simulate live viewer count fluctuation
+  useEffect(() => {
+    const id = setInterval(() => {
+      setViewers((v) => Math.max(3, v + Math.floor(Math.random() * 5) - 2));
+    }, 5000);
+    return () => clearInterval(id);
   }, []);
 
   const handleToggleWishlist = async () => {
@@ -186,9 +197,9 @@ export default function ProductDetailPage() {
                 } : undefined}
               />
               {hasDiscount && (
-                <span className="absolute left-4 top-4 rounded-full bg-red-500 px-3 py-1 text-sm font-bold text-white shadow-lg">
-                  -{discountPercent}% OFF
-                </span>
+                <div className="absolute left-4 top-4 z-10">
+                  <FlashSaleTimer discountPercent={discountPercent} endDate={product.saleEndDate} />
+                </div>
               )}
             </div>
           </div>
@@ -353,15 +364,32 @@ export default function ProductDetailPage() {
             </button>
           </div>
 
-          {/* Urgency bar */}
-          {isLowStock && (
-            <div className="mb-6 flex items-center gap-3 rounded-xl border border-orange-200 bg-orange-50 p-4">
-              <Zap className="h-5 w-5 text-orange-500" />
-              <p className="text-sm font-semibold text-orange-700">
-                High demand! {product.stock} people are viewing this right now.
-              </p>
+          {/* Urgency bar — always show viewers, conditionally show low stock */}
+          <div className={`mb-6 flex items-center gap-3 rounded-xl border p-4 ${
+            isLowStock ? "border-orange-200 bg-orange-50" : "border-blue-200 bg-blue-50"
+          }`}>
+            <div className={`flex h-8 w-8 items-center justify-center rounded-full ${
+              isLowStock ? "bg-orange-100" : "bg-blue-100"
+            }`}>
+              {isLowStock ? (
+                <Zap className="h-4 w-4 text-orange-500 animate-pulse" />
+              ) : (
+                <Clock className="h-4 w-4 text-blue-500" />
+              )}
             </div>
-          )}
+            <div>
+              <p className={`text-sm font-semibold ${
+                isLowStock ? "text-orange-700" : "text-blue-700"
+              }`}>
+                {viewers} people are viewing this right now
+              </p>
+              {isLowStock && (
+                <p className="text-xs text-orange-600 mt-0.5">
+                  Only {product.stock} left in stock — order soon!
+                </p>
+              )}
+            </div>
+          </div>
 
           {/* Trust Badges */}
           <div className="grid grid-cols-3 gap-4 rounded-2xl border border-gray-100 bg-gray-50 p-5">
@@ -417,6 +445,9 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Frequently Bought Together */}
+      <FrequentlyBoughtTogether currentProduct={product} />
 
       {/* Reviews */}
       <ReviewsSection productId={product._id} />

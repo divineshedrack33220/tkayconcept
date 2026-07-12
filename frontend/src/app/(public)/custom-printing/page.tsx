@@ -80,7 +80,6 @@ export default function CustomPrintingPage() {
         </div>
       </section>
 
-      {/* Services */}
       <section className="section-padding container-custom">
         <h2 className="heading-secondary mb-12 text-center">What We Offer</h2>
         <div className="mb-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -95,7 +94,6 @@ export default function CustomPrintingPage() {
           ))}
         </div>
 
-        {/* Request Form */}
         <div className="mx-auto max-w-2xl">
           <h2 className="heading-secondary mb-6 text-center">Request a Quote</h2>
           <form onSubmit={handleSubmit} className="space-y-5 rounded-xl border border-gray-100 bg-white p-8 shadow-sm">

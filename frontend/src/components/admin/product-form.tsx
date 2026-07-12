@@ -161,9 +161,7 @@ export function ProductForm({ productId }: ProductFormProps) {
     try {
       const formData = new FormData();
       formData.append("files", file);
-      const res = await authApi.post("/media/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await authApi.post("/media/upload", formData);
       const uploaded = res.data.data;
       if (uploaded && uploaded.length > 0) {
         setForm((prev) => ({ ...prev, imageUrl: uploaded[0].url, imageAlt: prev.imageAlt || prev.name || file.name }));

@@ -50,6 +50,8 @@ export interface Product {
   shortDescription: string;
   price: number;
   compareAtPrice?: number;
+  saleEndDate?: string;
+  viewCount: number;
   category: Category;
   tags: string[];
   images: ProductImage[];
