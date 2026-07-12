@@ -51,9 +51,13 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
           <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-accent" />
         </button>
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">
-            {user?.firstName?.charAt(0)}
-          </div>
+          {user?.imageUrl ? (
+            <img src={user.imageUrl} alt="" className="h-8 w-8 rounded-full object-cover" />
+          ) : (
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">
+              {user?.firstName?.charAt(0)}
+            </div>
+          )}
           <div className="hidden md:block">
             <p className="text-sm font-medium text-gray-700">{user?.firstName} {user?.lastName}</p>
             <p className="text-xs text-gray-500">Administrator</p>

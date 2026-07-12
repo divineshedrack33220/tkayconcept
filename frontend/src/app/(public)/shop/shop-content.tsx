@@ -206,8 +206,8 @@ export default function ShopContent() {
 
       {/* Filter Sidebar (collapsible) */}
       {showFilters && (
-        <div className="mb-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="grid gap-6 sm:grid-cols-3">
+        <div className="mb-6 overflow-hidden rounded-xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-3">
             <div>
               <h3 className="mb-3 text-sm font-semibold text-primary">Category</h3>
               <div className="space-y-2">

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Upload, X, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,9 @@ export function ProductForm({ productId }: ProductFormProps) {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(isEdit);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -145,6 +148,47 @@ export function ProductForm({ productId }: ProductFormProps) {
 
   const update = (field: string, value: string | boolean) => setForm((prev) => ({ ...prev, [field]: value }));
 
+  const uploadImage = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File must be under 10MB");
+      return;
+    }
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("files", file);
+      const res = await authApi.post("/media/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const uploaded = res.data.data;
+      if (uploaded && uploaded.length > 0) {
+        setForm((prev) => ({ ...prev, imageUrl: uploaded[0].url, imageAlt: prev.imageAlt || prev.name || file.name }));
+        toast.success("Image uploaded");
+      }
+    } catch {
+      toast.error("Upload failed");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadImage(file);
+    e.target.value = "";
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadImage(file);
+  };
+
   if (loading) {
     return (
       <AdminLayout>
@@ -226,17 +270,60 @@ export function ProductForm({ productId }: ProductFormProps) {
             <div className="rounded-xl border border-gray-100 bg-white p-6">
               <h2 className="mb-4 text-lg font-semibold text-primary">Product Image</h2>
               <div className="space-y-4">
+                {/* Upload area */}
+                <div
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`relative cursor-pointer rounded-xl border-2 border-dashed p-6 text-center transition-colors ${
+                    dragOver ? "border-accent bg-accent/5" : "border-gray-200 hover:border-accent/50 hover:bg-gray-50"
+                  }`}
+                >
+                  {uploadingImage ? (
+                    <div className="flex flex-col items-center gap-2 py-4">
+                      <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                      <p className="text-sm text-gray-500">Uploading...</p>
+                    </div>
+                  ) : form.imageUrl ? (
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="relative">
+                        <img src={form.imageUrl} alt={form.imageAlt} className="h-32 w-32 rounded-lg object-cover" />
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setForm((prev) => ({ ...prev, imageUrl: "", imageAlt: "" })); }}
+                          className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white shadow-md hover:bg-red-600"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-400">Click or drop to replace</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 py-4">
+                      <ImageIcon className="h-10 w-10 text-gray-300" />
+                      <p className="text-sm font-medium text-gray-600">Click to upload or drag and drop</p>
+                      <p className="text-xs text-gray-400">PNG, JPG, WebP up to 10MB</p>
+                    </div>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </div>
+
+                {/* Manual URL input */}
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Image URL</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Or enter image URL</label>
                   <Input value={form.imageUrl} onChange={(e) => update("imageUrl", e.target.value)} placeholder="https://..." />
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">Alt Text</label>
-                  <Input value={form.imageAlt} onChange={(e) => update("imageAlt", e.target.value)} />
+                  <Input value={form.imageAlt} onChange={(e) => update("imageAlt", e.target.value)} placeholder="Describe the image" />
                 </div>
-                {form.imageUrl && (
-                  <img src={form.imageUrl} alt={form.imageAlt} className="h-32 w-32 rounded-lg object-cover" />
-                )}
               </div>
             </div>
           </div>

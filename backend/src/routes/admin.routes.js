@@ -7,7 +7,9 @@ const Product = require('../models/Product');
 const User = require('../models/User');
 const Category = require('../models/Category');
 
-// GET /api/admin/analytics - Dashboard stats
+const adminAuth = [requireAuth, checkRole('admin', 'super_admin')];
+
+// GET /api/admin/analytics - Full analytics stats
 const getDashboardStats = async (req, res) => {
   try {
     const [
@@ -63,6 +65,81 @@ const getDashboardStats = async (req, res) => {
   } catch (error) {
     console.error('Analytics error:', error);
     res.status(500).json({ message: 'Failed to fetch analytics' });
+  }
+};
+
+// GET /api/admin/dashboard - Dashboard stats for frontend
+const getDashboard = async (req, res) => {
+  try {
+    const [
+      totalProducts,
+      totalOrders,
+      totalUsers,
+      revenueResult,
+      topProducts,
+      recentOrdersRaw,
+      ordersByStatus,
+    ] = await Promise.all([
+      Product.countDocuments({ isActive: true }),
+      Order.countDocuments(),
+      User.countDocuments({ role: 'customer' }),
+      Order.aggregate([
+        { $match: { paymentStatus: 'paid' } },
+        { $group: { _id: null, total: { $sum: '$total' } } },
+      ]),
+      Order.aggregate([
+        { $match: { paymentStatus: 'paid' } },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: '$items.product',
+            name: { $first: '$items.name' },
+            totalSold: { $sum: '$items.quantity' },
+            revenue: { $sum: { $multiply: ['$items.price', '$items.quantity'] } },
+          },
+        },
+        { $sort: { revenue: -1 } },
+        { $limit: 5 },
+      ]),
+      Order.find()
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .select('orderNumber orderStatus total createdAt')
+        .lean(),
+      Order.aggregate([
+        { $group: { _id: '$orderStatus', count: { $sum: 1 } } },
+      ]),
+    ]);
+
+    const totalRevenue = revenueResult[0]?.total || 0;
+
+    const recentOrders = recentOrdersRaw.map((o) => ({
+      _id: o._id,
+      orderNumber: o.orderNumber,
+      total: o.total,
+      status: o.orderStatus,
+      createdAt: o.createdAt,
+    }));
+
+    const statusBreakdown = ordersByStatus.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+
+    res.json({
+      data: {
+        totalProducts,
+        totalOrders,
+        totalUsers,
+        totalRevenue,
+        topProducts,
+        recentOrders,
+        ordersByStatus: statusBreakdown,
+      },
+    });
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    res.status(500).json({ message: 'Failed to fetch dashboard' });
   }
 };
 
@@ -143,8 +220,9 @@ const getAdminCustomers = async (req, res) => {
   }
 };
 
-router.get('/analytics', requireAuth, checkRole('admin', 'super_admin'), getDashboardStats);
-router.get('/products', requireAuth, checkRole('admin', 'super_admin'), getAdminProducts);
-router.get('/customers', requireAuth, checkRole('admin', 'super_admin'), getAdminCustomers);
+router.get('/analytics', ...adminAuth, getDashboardStats);
+router.get('/dashboard', ...adminAuth, getDashboard);
+router.get('/products', ...adminAuth, getAdminProducts);
+router.get('/customers', ...adminAuth, getAdminCustomers);
 
 module.exports = router;

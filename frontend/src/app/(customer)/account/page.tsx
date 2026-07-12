@@ -141,9 +141,13 @@ export default function AccountPage() {
           <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="mb-6 flex items-center gap-4">
               <div className="relative">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent text-2xl font-bold text-white">
-                  {profile.firstName?.charAt(0) || user?.firstName?.charAt(0) || "U"}
-                </div>
+                {user?.imageUrl ? (
+                  <img src={user.imageUrl} alt="" className="h-20 w-20 rounded-full object-cover" />
+                ) : (
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent text-2xl font-bold text-white">
+                    {profile.firstName?.charAt(0) || user?.firstName?.charAt(0) || "U"}
+                  </div>
+                )}
                 <button className="absolute bottom-0 right-0 rounded-full bg-white p-1.5 shadow-md hover:bg-gray-50">
                   <Camera className="h-4 w-4 text-gray-600" />
                 </button>

@@ -1,9 +1,10 @@
+const mongoose = require('mongoose');
 const Review = require('../models/Review');
 const Product = require('../models/Product');
 
 async function updateProductRating(productId) {
   const stats = await Review.aggregate([
-    { $match: { product: require('mongoose').Types.ObjectId.createFromHexString(productId), isApproved: true } },
+    { $match: { product: new mongoose.Types.ObjectId(productId), isApproved: true } },
     { $group: { _id: null, avg: { $avg: '$rating' }, count: { $sum: 1 } } },
   ]);
   await Product.findByIdAndUpdate(productId, {
@@ -14,8 +15,12 @@ async function updateProductRating(productId) {
 
 exports.listByProduct = async (req, res) => {
   try {
+    const { productId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ error: 'Invalid product ID' });
+    }
     const { limit = 20, page = 1 } = req.query;
-    const filter = { product: req.params.productId, isApproved: true };
+    const filter = { product: new mongoose.Types.ObjectId(productId), isApproved: true };
     const [reviews, total] = await Promise.all([
       Review.find(filter).populate('user', 'firstName lastName avatar').sort({ createdAt: -1 }).limit(parseInt(limit)).skip((parseInt(page) - 1) * parseInt(limit)),
       Review.countDocuments(filter),
