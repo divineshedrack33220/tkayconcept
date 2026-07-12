@@ -2,11 +2,13 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Search, Clock, ChevronRight } from "lucide-react";
+import { Search, Clock } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import api from "@/lib/api";
 import { BLOG_CATEGORIES } from "@/lib/constants";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface BlogPost {
   _id: string;
@@ -29,6 +31,7 @@ export default function BlogPage() {
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 400);
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -37,7 +40,7 @@ export default function BlogPage() {
       params.set("page", page.toString());
       params.set("limit", "9");
       if (category) params.set("category", category);
-      if (search) params.set("search", search);
+      if (debouncedSearch) params.set("search", debouncedSearch);
 
       const res = await api.get(`/blog?${params.toString()}`);
       setPosts(res.data.data);
@@ -48,7 +51,7 @@ export default function BlogPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, category, search]);
+  }, [page, category, debouncedSearch]);
 
   useEffect(() => {
     fetchPosts();
@@ -57,6 +60,7 @@ export default function BlogPage() {
   return (
     <div className="section-padding container-custom">
       {/* Header */}
+      <Breadcrumbs items={[{ label: "Blog" }]} />
       <div className="mb-10 text-center">
         <h1 className="heading-primary mb-3">Blog</h1>
         <p className="mx-auto max-w-2xl text-gray-600">
@@ -94,7 +98,7 @@ export default function BlogPage() {
           <input
             type="text"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search articles..."
             className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
           />

@@ -19,9 +19,9 @@ export const signUpSchema = z.object({
 export const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
+  phone: z.string().default(""),
   subject: z.string().min(1, "Subject is required"),
-  type: z.enum(["general", "quote", "support", "partnership"]),
+  type: z.enum(["general", "quote", "support", "partnership"]).default("general"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
@@ -43,12 +43,12 @@ export const checkoutSchema = z.object({
 export const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   description: z.string().min(1, "Description is required"),
-  shortDescription: z.string().optional(),
+  shortDescription: z.string().default(""),
   price: z.number().min(0.01, "Price must be greater than 0"),
   compareAtPrice: z.number().optional(),
   category: z.string().min(1, "Category is required"),
-  tags: z.array(z.string()).optional(),
-  sku: z.string().optional(),
+  tags: z.array(z.string()).default([]),
+  sku: z.string().default(""),
   stock: z.number().min(0).default(0),
   brand: z.enum(["TKAYKONCEPTS", "Rooted Identity"]).default("TKAYKONCEPTS"),
   isFeatured: z.boolean().default(false),
@@ -58,29 +58,29 @@ export const productSchema = z.object({
 });
 
 export const reviewSchema = z.object({
-  rating: z.number().min(1).max(5),
-  title: z.string().optional(),
+  rating: z.number().min(1, "Rating is required").max(5),
+  title: z.string().default(""),
   comment: z.string().min(10, "Review must be at least 10 characters"),
 });
 
 export const blogSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
-  excerpt: z.string().optional(),
+  content: z.string().default(""),
+  excerpt: z.string().min(1, "Excerpt is required"),
   category: z.enum(["faith", "purpose", "identity", "books", "culture", "games", "community"]),
-  tags: z.array(z.string()).optional(),
+  tags: z.array(z.string()).default([]),
   status: z.enum(["draft", "published", "scheduled"]).default("draft"),
 });
 
 export const couponSchema = z.object({
   code: z.string().min(3, "Code must be at least 3 characters"),
-  description: z.string().optional(),
+  description: z.string().default(""),
   type: z.enum(["percentage", "fixed"]),
   value: z.number().min(0.01, "Value must be greater than 0"),
   minimumOrder: z.number().min(0).default(0),
-  maximumDiscount: z.number().optional(),
-  usageLimit: z.number().optional(),
-  expiresAt: z.string().optional(),
+  maximumDiscount: z.number().min(0).default(0),
+  usageLimit: z.number().min(0).default(0),
+  expiresAt: z.string().default(""),
   isActive: z.boolean().default(true),
 });
 
@@ -88,9 +88,9 @@ export const customOrderSchema = z.object({
   productType: z.string().min(1, "Product type is required"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  size: z.string().optional(),
-  color: z.string().optional(),
-  additionalNotes: z.string().optional(),
+  size: z.string().default(""),
+  color: z.string().default(""),
+  additionalNotes: z.string().default(""),
 });
 
 export type SignInInput = z.infer<typeof signInSchema>;

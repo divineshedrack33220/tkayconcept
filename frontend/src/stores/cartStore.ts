@@ -8,8 +8,6 @@ interface CartStore {
   removeItem: (productId: string, variant?: { name: string; value: string }) => void;
   updateQuantity: (productId: string, quantity: number, variant?: { name: string; value: string }) => void;
   clearCart: () => void;
-  get totalItems(): number;
-  get subtotal(): number;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -59,17 +57,6 @@ export const useCartStore = create<CartStore>()(
       },
 
       clearCart: () => set({ items: [] }),
-
-      get totalItems() {
-        return get().items.reduce((sum, item) => sum + item.quantity, 0);
-      },
-
-      get subtotal() {
-        return get().items.reduce(
-          (sum, item) => sum + item.product.price * item.quantity,
-          0
-        );
-      },
     }),
     {
       name: "tkay-cart",

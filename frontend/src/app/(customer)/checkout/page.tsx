@@ -31,7 +31,7 @@ export default function CheckoutPage() {
   const { isSignedIn, user } = useUser();
   const authApi = useAuthenticatedApi();
   const items = useCartStore((s) => s.items);
-  const subtotal = useCartStore((s) => s.subtotal);
+  const subtotal = useCartStore((s) => s.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0));
   const clearCart = useCartStore((s) => s.clearCart);
 
   const [step, setStep] = useState<"shipping" | "payment" | "confirm">("shipping");

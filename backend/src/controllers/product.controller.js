@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const { calculatePagination } = require('../utils/helpers');
+const { deleteImage } = require('../utils/cloudinary');
 
 exports.getProducts = async (req, res, next) => {
   try {
@@ -27,7 +28,7 @@ exports.getProducts = async (req, res, next) => {
       } else {
         const cat = await Category.findOne({ slug: category });
         if (cat) query.category = cat._id;
-        else query.category = null; // no match
+        else query.category = null;
       }
     }
 
@@ -167,6 +168,16 @@ exports.deleteProduct = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+
+    // Clean up Cloudinary images
+    if (product.images && product.images.length > 0) {
+      for (const image of product.images) {
+        if (image.publicId) {
+          deleteImage(image.publicId).catch(() => {});
+        }
+      }
+    }
+
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
     next(error);

@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const User = require('../models/User');
 const Product = require('../models/Product');
+const { sendEmail } = require('../utils/email');
 
 const generateOrderNumber = () => {
   const date = new Date();
@@ -79,6 +80,29 @@ const createOrder = async (req, res) => {
         $inc: { stock: -item.quantity },
       });
     }
+
+    // Send order confirmation email (non-blocking)
+    sendEmail({
+      to: user.email,
+      subject: `Order Confirmation - ${order.orderNumber}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1a1a2e;">Order Confirmed!</h2>
+          <p>Hi ${user.firstName},</p>
+          <p>Thank you for your order. Here are the details:</p>
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Order Number:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${order.orderNumber}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Items:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${orderItems.length}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Subtotal:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">$${subtotal.toFixed(2)}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Shipping:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${shippingCost === 0 ? 'FREE' : `$${shippingCost.toFixed(2)}`}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Tax:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">$${tax.toFixed(2)}</td></tr>
+            <tr><td style="padding: 8px;"><strong>Total:</strong></td><td style="padding: 8px; font-size: 18px; color: #F59E0B;"><strong>$${total.toFixed(2)}</strong></td></tr>
+          </table>
+          <p>We'll notify you when your order ships.</p>
+          <p style="color: #666; font-size: 12px; margin-top: 30px;">TKAYKONCEPTS INT'L - Faith. Purpose. Identity.</p>
+        </div>
+      `,
+    }).catch(() => {});
 
     res.status(201).json({ data: order });
   } catch (error) {
@@ -199,6 +223,28 @@ const updateOrderStatus = async (req, res) => {
     if (trackingNumber !== undefined) order.trackingNumber = trackingNumber;
 
     await order.save();
+
+    // Send shipping notification email if status is 'shipped'
+    if (orderStatus === 'shipped' && trackingNumber) {
+      const user = await User.findById(order.user);
+      if (user) {
+        sendEmail({
+          to: user.email,
+          subject: `Your Order ${order.orderNumber} Has Shipped!`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #1a1a2e;">Your Order is On Its Way!</h2>
+              <p>Hi ${user.firstName},</p>
+              <p>Your order <strong>${order.orderNumber}</strong> has been shipped.</p>
+              <p><strong>Tracking Number:</strong> ${trackingNumber}</p>
+              <p>We'll notify you when it's delivered.</p>
+              <p style="color: #666; font-size: 12px; margin-top: 30px;">TKAYKONCEPTS INT'L - Faith. Purpose. Identity.</p>
+            </div>
+          `,
+        }).catch(() => {});
+      }
+    }
+
     res.json({ data: order });
   } catch (error) {
     console.error('Update order status error:', error);

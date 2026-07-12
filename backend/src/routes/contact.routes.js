@@ -3,15 +3,40 @@ const router = express.Router();
 const Contact = require('../models/Contact');
 const { requireAuth } = require('../middleware/auth');
 const { checkRole } = require('../middleware/roleCheck');
+const { contactLimiter } = require('../middleware/rateLimiter');
+const { sendEmail } = require('../utils/email');
 
-// POST /api/contacts - Public: submit contact form
-router.post('/', async (req, res) => {
+// POST /api/contacts - Public: submit contact form (rate limited)
+router.post('/', contactLimiter, async (req, res) => {
   try {
     const { name, email, phone, subject, type, message } = req.body;
     if (!name || !email || !subject || !message) {
       return res.status(400).json({ message: 'Name, email, subject, and message are required' });
     }
     const contact = await Contact.create({ name, email, phone, subject, type, message });
+
+    // Notify admin of new contact (non-blocking)
+    sendEmail({
+      to: process.env.EMAIL_FROM || 'info@tkaykoncepts.com',
+      subject: `New Contact: ${subject}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1a1a2e;">New Contact Form Submission</h2>
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Name:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${name}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${email}</td></tr>
+            ${phone ? `<tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Phone:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${phone}</td></tr>` : ''}
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Type:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${type || 'general'}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Subject:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${subject}</td></tr>
+          </table>
+          <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0; white-space: pre-wrap;">${message}</p>
+          </div>
+          <p style="color: #666; font-size: 12px;">Reply directly to ${email} to respond.</p>
+        </div>
+      `,
+    }).catch(() => {});
+
     res.status(201).json({ data: contact, message: 'Message sent successfully!' });
   } catch (error) {
     console.error('Contact form error:', error);

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { Search, Bell, Menu } from "lucide-react";
 
@@ -9,6 +11,18 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const { user } = useUser();
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const q = query.trim();
+      if (!q) return;
+      router.push(`/admin/products?search=${encodeURIComponent(q)}`);
+    },
+    [query, router]
+  );
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
@@ -19,14 +33,16 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <div className="relative hidden md:block">
+        <form onSubmit={handleSearch} className="relative hidden md:block">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search products..."
             className="w-80 rounded-lg border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
-        </div>
+        </form>
       </div>
 
       <div className="flex items-center gap-3">

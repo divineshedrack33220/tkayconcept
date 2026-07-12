@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Package, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { ProductCard } from "@/components/shop/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
 import type { Product } from "@/types";
 
@@ -88,7 +91,22 @@ export default function RootedIdentityPage() {
           </div>
         ) : products.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-16 text-center">
-            <p className="text-gray-500">Collection coming soon. Stay tuned!</p>
+            <Package className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+            <h3 className="mb-2 text-lg font-semibold text-gray-700">Collection Coming Soon</h3>
+            <p className="mb-6 max-w-md mx-auto text-sm text-gray-500">
+              We&apos;re curating something special for the Rooted Identity collection.
+              Stay connected to be the first to know when it launches.
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <Link href="/contact">
+                <Button variant="accent">Get Notified</Button>
+              </Link>
+              <Link href="/shop">
+                <Button variant="ghost" className="flex items-center gap-1">
+                  Browse All Products <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

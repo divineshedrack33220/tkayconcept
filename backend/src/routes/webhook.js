@@ -24,10 +24,10 @@ router.post('/', async (req, res) => {
     switch (event.type) {
       case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object;
-        const order = await Order.findOne({ paymentIntentId: paymentIntent.id });
+        const order = await Order.findOne({ stripePaymentIntentId: paymentIntent.id });
         if (order) {
           order.paymentStatus = 'paid';
-          order.status = 'confirmed';
+          order.orderStatus = 'confirmed';
           await order.save();
           console.log(`Order ${order.orderNumber} paid via webhook`);
         }
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
       }
       case 'payment_intent.payment_failed': {
         const failedIntent = event.data.object;
-        const failedOrder = await Order.findOne({ paymentIntentId: failedIntent.id });
+        const failedOrder = await Order.findOne({ stripePaymentIntentId: failedIntent.id });
         if (failedOrder) {
           failedOrder.paymentStatus = 'failed';
           await failedOrder.save();
@@ -44,10 +44,10 @@ router.post('/', async (req, res) => {
       }
       case 'charge.refunded': {
         const charge = event.data.object;
-        const refundedOrder = await Order.findOne({ paymentIntentId: charge.payment_intent });
+        const refundedOrder = await Order.findOne({ stripePaymentIntentId: charge.payment_intent });
         if (refundedOrder) {
           refundedOrder.paymentStatus = 'refunded';
-          refundedOrder.status = 'cancelled';
+          refundedOrder.orderStatus = 'cancelled';
           await refundedOrder.save();
         }
         break;

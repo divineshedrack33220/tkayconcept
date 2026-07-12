@@ -53,6 +53,14 @@ const categories = [
     seoTitle: 'Faith Accessories | TKAYKONCEPTS',
     seoDescription: 'Accessories that reflect your faith.',
   },
+  {
+    name: 'Rooted Identity',
+    slug: 'rooted-identity',
+    description: 'Wear your faith boldly with the Rooted Identity collection.',
+    sortOrder: 7,
+    seoTitle: 'Rooted Identity | TKAYKONCEPTS',
+    seoDescription: 'The Rooted Identity sub-brand — faith-driven apparel and merchandise.',
+  },
 ];
 
 const products = [
@@ -64,7 +72,7 @@ const products = [
     compareAtPrice: 24.99,
     category: 'books',
     tags: ['purpose', 'faith', 'guidance'],
-    images: [{ url: '/placeholder-book.jpg', alt: 'Walking in Purpose book', isPrimary: true }],
+    images: [{ url: 'https://picsum.photos/seed/book1/600/600', alt: 'Walking in Purpose book', isPrimary: true }],
     sku: 'TK-BOOK-001',
     stock: 150,
     brand: 'TKAYKONCEPTS',
@@ -80,7 +88,7 @@ const products = [
     price: 29.99,
     category: 'apparel',
     tags: ['apparel', 'identity', 'rooted'],
-    images: [{ url: '/placeholder-tshirt.jpg', alt: 'Rooted Identity T-Shirt', isPrimary: true }],
+    images: [{ url: 'https://picsum.photos/seed/apparel1/600/600', alt: 'Rooted Identity T-Shirt', isPrimary: true }],
     variants: [
       {
         name: 'Size',
@@ -116,7 +124,7 @@ const products = [
     compareAtPrice: 44.99,
     category: 'games',
     tags: ['games', 'family', 'faith'],
-    images: [{ url: '/placeholder-game.jpg', alt: 'Faith & Family Board Game', isPrimary: true }],
+    images: [{ url: 'https://picsum.photos/seed/game1/600/600', alt: 'Faith & Family Board Game', isPrimary: true }],
     sku: 'TK-GAME-001',
     stock: 75,
     brand: 'TKAYKONCEPTS',
@@ -132,7 +140,7 @@ const products = [
     price: 12.99,
     category: 'devotionals',
     tags: ['devotional', 'purpose', 'daily'],
-    images: [{ url: '/placeholder-devotional.jpg', alt: '30-Day Purpose Devotional', isPrimary: true }],
+    images: [{ url: 'https://picsum.photos/seed/devotional1/600/600', alt: '30-Day Purpose Devotional', isPrimary: true }],
     sku: 'TK-DEV-001',
     stock: 200,
     brand: 'TKAYKONCEPTS',
@@ -147,7 +155,7 @@ const products = [
     price: 16.99,
     category: 'accessories',
     tags: ['journal', 'identity', 'faith'],
-    images: [{ url: '/placeholder-journal.jpg', alt: 'Identity in Christ Journal', isPrimary: true }],
+    images: [{ url: 'https://picsum.photos/seed/journal1/600/600', alt: 'Identity in Christ Journal', isPrimary: true }],
     sku: 'TK-ACC-001',
     stock: 120,
     brand: 'TKAYKONCEPTS',
@@ -162,7 +170,7 @@ const products = [
     price: 14.99,
     category: 'merchandise',
     tags: ['mug', 'faith', 'merchandise'],
-    images: [{ url: '/placeholder-mug.jpg', alt: 'Faith Over Fear Mug', isPrimary: true }],
+    images: [{ url: 'https://picsum.photos/seed/mug1/600/600', alt: 'Faith Over Fear Mug', isPrimary: true }],
     sku: 'TK-MERCH-001',
     stock: 80,
     brand: 'TKAYKONCEPTS',
@@ -176,7 +184,7 @@ const products = [
     price: 19.99,
     category: 'games',
     tags: ['games', 'scripture', 'education'],
-    images: [{ url: '/placeholder-cards.jpg', alt: 'Scripture Memory Card Game', isPrimary: true }],
+    images: [{ url: 'https://picsum.photos/seed/game2/600/600', alt: 'Scripture Memory Card Game', isPrimary: true }],
     sku: 'TK-GAME-002',
     stock: 90,
     brand: 'TKAYKONCEPTS',
@@ -191,7 +199,7 @@ const products = [
     price: 49.99,
     category: 'apparel',
     tags: ['apparel', 'hoodie', 'rooted'],
-    images: [{ url: '/placeholder-hoodie.jpg', alt: 'Rooted Identity Hoodie', isPrimary: true }],
+    images: [{ url: 'https://picsum.photos/seed/hoodie1/600/600', alt: 'Rooted Identity Hoodie', isPrimary: true }],
     variants: [
       {
         name: 'Size',

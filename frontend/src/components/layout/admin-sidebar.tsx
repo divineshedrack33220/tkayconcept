@@ -43,9 +43,11 @@ const sidebarLinks = [
 interface AdminSidebarProps {
   collapsed?: boolean;
   onToggle?: () => void;
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
-export function AdminSidebar({ collapsed = false, onToggle }: AdminSidebarProps) {
+export function AdminSidebar({ collapsed = false, onToggle, mobileOpen = false, onCloseMobile }: AdminSidebarProps) {
   const pathname = usePathname();
   const { signOut } = useClerk();
 
@@ -53,23 +55,34 @@ export function AdminSidebar({ collapsed = false, onToggle }: AdminSidebarProps)
     <aside
       className={cn(
         "fixed left-0 top-0 z-40 flex h-screen flex-col bg-primary-dark text-white transition-all duration-300",
-        collapsed ? "w-[68px]" : "w-64"
+        collapsed ? "w-[68px]" : "w-64",
+        // Mobile: hidden by default, slide in when open
+        "max-lg:-translate-x-full",
+        mobileOpen && "max-lg:translate-x-0"
       )}
     >
       {/* Header */}
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
         {!collapsed && (
-          <Link href="/admin">
+          <Link href="/admin" onClick={onCloseMobile}>
             <span className="text-lg font-bold">
               TKAY<span className="text-accent">K</span>
             </span>
           </Link>
         )}
+        {/* Desktop collapse toggle */}
         <button
           onClick={onToggle}
-          className="rounded-lg p-1.5 text-gray-400 hover:bg-white/10 hover:text-white"
+          className="rounded-lg p-1.5 text-gray-400 hover:bg-white/10 hover:text-white max-lg:hidden"
         >
           <ChevronLeft className={cn("h-4 w-4 transition-transform", collapsed && "rotate-180")} />
+        </button>
+        {/* Mobile close */}
+        <button
+          onClick={onCloseMobile}
+          className="rounded-lg p-1.5 text-gray-400 hover:bg-white/10 hover:text-white lg:hidden"
+        >
+          <span className="text-lg leading-none">&times;</span>
         </button>
       </div>
 
@@ -82,6 +95,7 @@ export function AdminSidebar({ collapsed = false, onToggle }: AdminSidebarProps)
               <li key={link.href}>
                 <Link
                   href={link.href}
+                  onClick={onCloseMobile}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive

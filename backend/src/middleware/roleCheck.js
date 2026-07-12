@@ -17,8 +17,5 @@ const checkRole = (...roles) => {
 };
 
 const isAdmin = checkRole('super_admin', 'admin');
-const isContentManager = checkRole('super_admin', 'admin', 'content_manager');
-const isInventoryManager = checkRole('super_admin', 'admin', 'inventory_manager');
-const isSupport = checkRole('super_admin', 'admin', 'support');
 
-module.exports = { checkRole, isAdmin, isContentManager, isInventoryManager, isSupport };
+module.exports = { checkRole, isAdmin };

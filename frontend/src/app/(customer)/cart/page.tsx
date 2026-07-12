@@ -16,8 +16,8 @@ export default function CartPage() {
   const items = useCartStore((s) => s.items);
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
-  const totalItems = useCartStore((s) => s.totalItems);
-  const subtotal = useCartStore((s) => s.subtotal);
+  const totalItems = useCartStore((s) => s.items.reduce((sum, item) => sum + item.quantity, 0));
+  const subtotal = useCartStore((s) => s.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0));
 
   const shipping = subtotal >= 75 ? 0 : 9.99;
   const tax = subtotal * 0.08;

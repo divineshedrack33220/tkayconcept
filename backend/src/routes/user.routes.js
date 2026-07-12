@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { requireAuth, authenticate } = require('../middleware/auth');
 const { checkRole } = require('../middleware/roleCheck');
+const { authLimiter } = require('../middleware/rateLimiter');
 const {
   syncUser,
   getProfile,
@@ -15,8 +16,8 @@ const {
   updateUserRole,
 } = require('../controllers/user.controller');
 
-// Sync Clerk user to MongoDB (no auth required - called after registration)
-router.post('/sync', syncUser);
+// Sync Clerk user to MongoDB (no auth required - called after registration, rate limited)
+router.post('/sync', authLimiter, syncUser);
 
 // Profile routes (require auth)
 router.get('/me', requireAuth, getProfile);

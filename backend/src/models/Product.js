@@ -136,7 +136,7 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-productSchema.pre('save', function (next) {
+productSchema.pre('save', function () {
   if (this.isModified('name') && !this.slug) {
     this.slug = this.name
       .toLowerCase()
@@ -145,7 +145,6 @@ productSchema.pre('save', function (next) {
       .replace(/-+/g, '-')
       .trim();
   }
-  next();
 });
 
 productSchema.index({ slug: 1 });

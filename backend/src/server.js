@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const corsOptions = require('./config/cors');
 const errorHandler = require('./middleware/errorHandler');
-const { generalLimiter } = require('./middleware/rateLimiter');
+const { generalLimiter, authLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,7 +29,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.post('/api/bootstrap/admin', async (req, res) => {
+app.post('/api/bootstrap/admin', authLimiter, async (req, res) => {
   try {
     const User = require('./models/User');
     const adminExists = await User.findOne({ role: { $in: ['admin', 'super_admin'] } });
@@ -70,6 +70,23 @@ app.use('/api/media', require('./routes/media.routes'));
 app.use('/api/testimonials', require('./routes/testimonial'));
 app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/api/coupons', require('./routes/coupon'));
+app.use('/api/reviews', require('./routes/review'));
+
+app.get('/api/track', async (req, res) => {
+  try {
+    const { orderNumber, email } = req.query;
+    if (!orderNumber || !email) return res.status(400).json({ error: 'orderNumber and email are required' });
+    const Order = require('./models/Order');
+    const User = require('./models/User');
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.status(404).json({ error: 'Order not found' });
+    const order = await Order.findOne({ orderNumber, customer: user._id }).select('orderNumber status paymentStatus trackingNumber createdAt updatedAt items total shippingAddress');
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    res.json({ data: order });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.use(errorHandler);
 

@@ -7,16 +7,23 @@ import {
   ShoppingBag,
   Minus,
   Plus,
-  ChevronRight,
   Package,
   Shield,
   Truck,
   RotateCcw,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Rating } from "@/components/ui/rating";
 import { Spinner } from "@/components/ui/spinner";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { ShareButtons } from "@/components/ui/share-buttons";
+import { ReviewsSection } from "@/components/shop/reviews-section";
 import { useCartStore } from "@/stores/cartStore";
+import { useWishlistStore } from "@/stores/wishlistStore";
+import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
+import { useAuth } from "@clerk/nextjs";
+import { addRecentlyViewed } from "@/components/home/recently-viewed";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import type { Product } from "@/types";
@@ -25,6 +32,11 @@ export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
+  const { isSignedIn } = useAuth();
+  const authApi = useAuthenticatedApi();
+  const wishlistHasItem = useWishlistStore((s) => s.hasItem);
+  const wishlistAddItem = useWishlistStore((s) => s.addItem);
+  const wishlistRemoveItem = useWishlistStore((s) => s.removeItem);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -33,12 +45,44 @@ export default function ProductDetailPage() {
     value: string;
   } | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  useEffect(() => {
+    if (!product || !isSignedIn) return;
+    authApi.get(`/wishlist/check/${product._id}`)
+      .then((res) => setIsWishlisted(res.data.isWishlisted))
+      .catch(() => {});
+  }, [product?._id, isSignedIn]);
+
+  const handleToggleWishlist = async () => {
+    if (!product) return;
+    if (!isSignedIn) {
+      toast.error("Sign in to add to wishlist");
+      return;
+    }
+    try {
+      if (isWishlisted) {
+        await authApi.delete(`/wishlist/${product._id}`);
+        wishlistRemoveItem(product._id);
+        setIsWishlisted(false);
+        toast.success("Removed from wishlist");
+      } else {
+        await authApi.post(`/wishlist/${product._id}`);
+        wishlistAddItem(product);
+        setIsWishlisted(true);
+        toast.success("Added to wishlist!");
+      }
+    } catch {
+      toast.error("Failed to update wishlist");
+    }
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await api.get(`/products/${params.id}`);
         setProduct(res.data.data);
+        addRecentlyViewed(params.id as string);
       } catch {
         toast.error("Product not found");
         router.push("/shop");
@@ -68,7 +112,7 @@ export default function ProductDetailPage() {
   const primaryImage =
     product.images.find((img) => img.isPrimary)?.url ||
     product.images[0]?.url ||
-    "/placeholder-product.jpg";
+    "/placeholder-book.svg";
 
   const hasDiscount =
     product.compareAtPrice && product.compareAtPrice > product.price;
@@ -79,27 +123,15 @@ export default function ProductDetailPage() {
       )
     : 0;
 
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
   return (
     <div className="section-padding container-custom">
-      {/* Breadcrumbs */}
-      <nav className="mb-8 flex items-center gap-2 text-sm text-gray-500">
-        <Link href="/" className="hover:text-accent">
-          Home
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <Link href="/shop" className="hover:text-accent">
-          Shop
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <Link
-          href={`/shop/${product.category?.slug}`}
-          className="hover:text-accent capitalize"
-        >
-          {product.category?.name}
-        </Link>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-gray-900">{product.name}</span>
-      </nav>
+      <Breadcrumbs items={[
+        { label: "Shop", href: "/shop" },
+        { label: product.category?.name || "Category", href: `/shop/${product.category?.slug}` },
+        { label: product.name },
+      ]} />
 
       <div className="grid gap-10 lg:grid-cols-2">
         {/* Images */}
@@ -123,11 +155,7 @@ export default function ProductDetailPage() {
                       : "border-gray-100 hover:border-gray-300"
                   }`}
                 >
-                  <img
-                    src={img.url}
-                    alt={img.alt}
-                    className="h-full w-full object-cover"
-                  />
+                  <img src={img.url} alt={img.alt} className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>
@@ -137,51 +165,38 @@ export default function ProductDetailPage() {
         {/* Details */}
         <div>
           <div className="mb-1 flex items-center gap-2">
-            <span className="text-sm font-medium text-accent">
-              {product.brand}
-            </span>
+            <span className="text-sm font-medium text-accent">{product.brand}</span>
             {product.isBestSeller && (
-              <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-semibold text-accent">
-                Best Seller
-              </span>
+              <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-semibold text-accent">Best Seller</span>
             )}
             {product.isNewArrival && (
-              <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
-                New
-              </span>
+              <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">New</span>
             )}
           </div>
 
-          <h1 className="mb-3 text-3xl font-bold text-primary">
-            {product.name}
-          </h1>
+          <h1 className="mb-3 text-3xl font-bold text-primary">{product.name}</h1>
 
           <div className="mb-4 flex items-center gap-3">
             <Rating value={product.averageRating} />
-            <span className="text-sm text-gray-500">
-              ({product.totalReviews} reviews)
-            </span>
+            <span className="text-sm text-gray-500">({product.totalReviews} reviews)</span>
           </div>
 
           <div className="mb-6 flex items-baseline gap-3">
-            <span className="text-3xl font-bold text-primary">
-              ${product.price.toFixed(2)}
-            </span>
+            <span className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</span>
             {hasDiscount && (
               <>
-                <span className="text-lg text-gray-400 line-through">
-                  ${product.compareAtPrice!.toFixed(2)}
-                </span>
-                <span className="rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600">
-                  -{discountPercent}%
-                </span>
+                <span className="text-lg text-gray-400 line-through">${product.compareAtPrice!.toFixed(2)}</span>
+                <span className="rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600">-{discountPercent}%</span>
               </>
             )}
           </div>
 
-          <p className="mb-6 leading-relaxed text-gray-600">
-            {product.description}
-          </p>
+          <p className="mb-6 leading-relaxed text-gray-600">{product.description}</p>
+
+          {/* Share */}
+          <div className="mb-6">
+            <ShareButtons title={product.name} url={shareUrl} />
+          </div>
 
           {/* Variants */}
           {product.variants.length > 0 && (
@@ -189,21 +204,13 @@ export default function ProductDetailPage() {
               {product.variants.map((variant) => (
                 <div key={variant.name} className="mb-4">
                   <label className="mb-2 block text-sm font-medium text-gray-700">
-                    {variant.name}:{" "}
-                    <span className="text-accent">
-                      {selectedVariant?.value || "Select"}
-                    </span>
+                    {variant.name}: <span className="text-accent">{selectedVariant?.value || "Select"}</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {variant.options.map((opt) => (
                       <button
                         key={opt.value}
-                        onClick={() =>
-                          setSelectedVariant({
-                            name: variant.name,
-                            value: opt.value,
-                          })
-                        }
+                        onClick={() => setSelectedVariant({ name: variant.name, value: opt.value })}
                         disabled={opt.stock === 0}
                         className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                           selectedVariant?.value === opt.value
@@ -227,12 +234,9 @@ export default function ProductDetailPage() {
           <div className="mb-6">
             {product.stock > 0 ? (
               <p className="text-sm text-green-600">
-                <Package className="mr-1 inline h-4 w-4" />
-                In Stock
+                <Package className="mr-1 inline h-4 w-4" /> In Stock
                 {product.stock <= product.lowStockThreshold && (
-                  <span className="ml-2 text-orange-500">
-                    (Only {product.stock} left)
-                  </span>
+                  <span className="ml-2 text-orange-500">(Only {product.stock} left)</span>
                 )}
               </p>
             ) : (
@@ -243,33 +247,28 @@ export default function ProductDetailPage() {
           {/* Quantity + Add to Cart */}
           <div className="mb-8 flex items-center gap-4">
             <div className="flex items-center rounded-lg border border-gray-200">
-              <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="p-3 text-gray-600 hover:text-accent"
-              >
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 text-gray-600 hover:text-accent">
                 <Minus className="h-4 w-4" />
               </button>
-              <span className="min-w-[48px] text-center text-sm font-semibold">
-                {quantity}
-              </span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="p-3 text-gray-600 hover:text-accent"
-              >
+              <span className="min-w-[48px] text-center text-sm font-semibold">{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} className="p-3 text-gray-600 hover:text-accent">
                 <Plus className="h-4 w-4" />
               </button>
             </div>
-
-            <Button
-              variant="accent"
-              size="lg"
-              className="flex-1"
-              onClick={handleAddToCart}
-              disabled={product.stock === 0}
-            >
-              <ShoppingBag className="h-5 w-5" />
-              Add to Cart
+            <Button variant="accent" size="lg" className="flex-1" onClick={handleAddToCart} disabled={product.stock === 0}>
+              <ShoppingBag className="h-5 w-5" /> Add to Cart
             </Button>
+            <button
+              onClick={handleToggleWishlist}
+              className={`flex h-12 w-12 items-center justify-center rounded-lg border-2 transition-colors ${
+                isWishlisted
+                  ? "border-red-200 bg-red-50 text-red-500"
+                  : "border-gray-200 text-gray-400 hover:border-red-200 hover:text-red-500"
+              }`}
+              title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              <Heart className={`h-5 w-5 ${isWishlisted ? "fill-red-500" : ""}`} />
+            </button>
           </div>
 
           {/* Trust Badges */}
@@ -289,6 +288,9 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Reviews */}
+      <ReviewsSection productId={product._id} />
     </div>
   );
 }

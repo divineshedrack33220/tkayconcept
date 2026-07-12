@@ -61,7 +61,7 @@ categorySchema.virtual('children', {
   foreignField: 'parent',
 });
 
-categorySchema.pre('save', function (next) {
+categorySchema.pre('save', function () {
   if (this.isModified('name') && !this.slug) {
     this.slug = this.name
       .toLowerCase()
@@ -70,7 +70,6 @@ categorySchema.pre('save', function (next) {
       .replace(/-+/g, '-')
       .trim();
   }
-  next();
 });
 
 categorySchema.index({ slug: 1 });

@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { SITE_NAME } from "@/lib/constants";
-import { SOCIAL_LINKS } from "@/lib/constants";
-import { Globe, Mail, MessageSquare, Share2, AtSign } from "lucide-react";
+import { SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
+import { Camera, Globe, Video, AtSign, MessageCircle } from "lucide-react";
 
 const footerLinks = {
   shop: [
@@ -22,6 +21,7 @@ const footerLinks = {
   ],
   support: [
     { label: "FAQ", href: "/faq" },
+    { label: "Track Order", href: "/track" },
     { label: "Shipping Policy", href: "/shipping" },
     { label: "Return Policy", href: "/returns" },
     { label: "Privacy Policy", href: "/privacy" },
@@ -30,11 +30,11 @@ const footerLinks = {
 };
 
 const socialIcons = [
-  { icon: AtSign, href: SOCIAL_LINKS.instagram, label: "Instagram" },
+  { icon: Camera, href: SOCIAL_LINKS.instagram, label: "Instagram" },
   { icon: Globe, href: SOCIAL_LINKS.facebook, label: "Facebook" },
-  { icon: Share2, href: SOCIAL_LINKS.twitter, label: "Twitter" },
-  { icon: MessageSquare, href: SOCIAL_LINKS.youtube, label: "YouTube" },
-  { icon: Mail, href: SOCIAL_LINKS.whatsapp, label: "WhatsApp" },
+  { icon: AtSign, href: SOCIAL_LINKS.twitter, label: "Twitter" },
+  { icon: Video, href: SOCIAL_LINKS.youtube, label: "YouTube" },
+  { icon: MessageCircle, href: SOCIAL_LINKS.whatsapp, label: "WhatsApp" },
 ];
 
 export function Footer() {
@@ -77,10 +77,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.shop.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 transition-colors hover:text-white"
-                  >
+                  <Link href={link.href} className="text-sm text-gray-300 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -96,10 +93,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 transition-colors hover:text-white"
-                  >
+                  <Link href={link.href} className="text-sm text-gray-300 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -115,10 +109,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.support.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 transition-colors hover:text-white"
-                  >
+                  <Link href={link.href} className="text-sm text-gray-300 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>

@@ -1,11 +1,23 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { BarChart3, DollarSign, ShoppingCart, Users, Package, TrendingUp } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, Package } from "lucide-react";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
-import { toast } from "sonner";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
 
 interface DashboardStats {
   totalProducts: number;
@@ -15,6 +27,8 @@ interface DashboardStats {
   recentOrders: { _id: string; orderNumber: string; total: number; status: string; createdAt: string }[];
   topProducts: { name: string; totalSold: number; revenue: number }[];
 }
+
+const PIE_COLORS = ["#F59E0B", "#3B82F6", "#6366F1", "#8B5CF6", "#10B981", "#EF4444"];
 
 export default function AdminAnalyticsPage() {
   const authApi = useAuthenticatedApi();
@@ -44,6 +58,20 @@ export default function AdminAnalyticsPage() {
     { label: "Total Users", value: stats.totalUsers, icon: Users, color: "bg-amber-50 text-amber-600" },
   ] : [];
 
+  const topProductsData = stats?.topProducts?.map((p) => ({
+    name: p.name.length > 20 ? p.name.slice(0, 20) + "..." : p.name,
+    revenue: p.revenue,
+    sold: p.totalSold,
+  })) || [];
+
+  const statusData = stats?.recentOrders?.reduce<Record<string, number>>((acc, o) => {
+    acc[o.status] = (acc[o.status] || 0) + 1;
+    return acc;
+  }, {});
+  const pieData = statusData
+    ? Object.entries(statusData).map(([name, value]) => ({ name, value }))
+    : [];
+
   return (
     <AdminLayout>
       <div className="mb-8">
@@ -52,13 +80,19 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-gray-100 bg-white p-5">
-              <Skeleton className="mb-3 h-4 w-24" />
-              <Skeleton className="h-8 w-16" />
-            </div>
-          ))}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-xl border border-gray-100 bg-white p-5">
+                <Skeleton className="mb-3 h-4 w-24" />
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <Skeleton className="h-72 rounded-xl" />
+            <Skeleton className="h-72 rounded-xl" />
+          </div>
         </div>
       ) : (
         <>
@@ -77,6 +111,55 @@ export default function AdminAnalyticsPage() {
           </div>
 
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Revenue by Top Products */}
+            <div className="rounded-xl border border-gray-100 bg-white p-6">
+              <h3 className="mb-4 font-semibold text-primary">Revenue by Product</h3>
+              {topProductsData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={topProductsData} margin={{ top: 5, right: 20, bottom: 60, left: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-35} textAnchor="end" interval={0} />
+                    <YAxis tick={{ fontSize: 12 }} />
+                    <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Revenue"]} />
+                    <Bar dataKey="revenue" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <p className="py-8 text-center text-sm text-gray-400">No product data yet</p>
+              )}
+            </div>
+
+            {/* Orders by Status Pie */}
+            <div className="rounded-xl border border-gray-100 bg-white p-6">
+              <h3 className="mb-4 font-semibold text-primary">Orders by Status</h3>
+              {pieData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={280}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      dataKey="value"
+                      paddingAngle={3}
+                    >
+                      {pieData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <p className="py-8 text-center text-sm text-gray-400">No order data yet</p>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Recent Orders */}
             <div className="rounded-xl border border-gray-100 bg-white p-6">
               <h3 className="mb-4 font-semibold text-primary">Recent Orders</h3>
               {stats?.recentOrders?.length ? (
@@ -88,6 +171,7 @@ export default function AdminAnalyticsPage() {
                         <span className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
                           order.status === "delivered" ? "bg-green-100 text-green-700" :
                           order.status === "shipped" ? "bg-blue-100 text-blue-700" :
+                          order.status === "cancelled" ? "bg-red-100 text-red-700" :
                           "bg-gray-100 text-gray-600"
                         }`}>{order.status}</span>
                       </div>
@@ -96,10 +180,11 @@ export default function AdminAnalyticsPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-400">No orders yet</p>
+                <p className="py-8 text-center text-sm text-gray-400">No orders yet</p>
               )}
             </div>
 
+            {/* Top Products Table */}
             <div className="rounded-xl border border-gray-100 bg-white p-6">
               <h3 className="mb-4 font-semibold text-primary">Top Products</h3>
               {stats?.topProducts?.length ? (
@@ -115,7 +200,7 @@ export default function AdminAnalyticsPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-400">No product data yet</p>
+                <p className="py-8 text-center text-sm text-gray-400">No product data yet</p>
               )}
             </div>
           </div>

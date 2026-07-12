@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
   Search,
@@ -18,7 +21,9 @@ import { Modal } from "@/components/ui/modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { BLOG_CATEGORIES } from "@/lib/constants";
+import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "sonner";
+import { blogSchema, type BlogInput } from "@/lib/validations";
 
 interface BlogPost {
   _id: string;
@@ -33,126 +38,94 @@ interface BlogPost {
   author: { firstName: string; lastName: string };
 }
 
-const emptyForm = {
-  title: "",
-  excerpt: "",
-  content: "",
-  category: "faith",
-  status: "draft" as "draft" | "published" | "scheduled",
-  tags: "",
-};
-
 export default function AdminBlogPage() {
   const authApi = useAuthenticatedApi();
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState(emptyForm);
-  const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
+  const debouncedSearch = useDebounce(search, 300);
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
-    try {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(blogSchema),
+    defaultValues: { title: "", excerpt: "", content: "", category: "faith" as const, status: "draft" as const, tags: [] as string[] },
+  });
+
+  const tagsInput = watch("tags");
+
+  const { data: postsData, isLoading: loading } = useQuery({
+    queryKey: ["admin-blog", page, debouncedSearch, statusFilter],
+    queryFn: async () => {
       const params = new URLSearchParams();
       params.set("page", page.toString());
       params.set("limit", "15");
-      if (search) params.set("search", search);
+      if (debouncedSearch) params.set("search", debouncedSearch);
       if (statusFilter) params.set("status", statusFilter);
-
       const res = await authApi.get(`/blog/admin/all?${params.toString()}`);
-      setPosts(res.data.data);
-      setTotal(res.data.total);
-      setTotalPages(res.data.totalPages);
-    } catch {
-      toast.error("Failed to load posts");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, search, statusFilter]);
+      return res.data as { data: BlogPost[]; total: number; totalPages: number };
+    },
+  });
 
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+  const posts = postsData?.data || [];
+  const total = postsData?.total || 0;
+  const totalPages = postsData?.totalPages || 1;
+
+  const createMutation = useMutation({
+    mutationFn: (data: BlogInput) => authApi.post("/blog/admin", data),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-blog"] }); toast.success("Post created!"); setShowModal(false); },
+    onError: () => toast.error("Failed to create post"),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<BlogInput> }) => authApi.put(`/blog/admin/${id}`, data),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-blog"] }); toast.success("Post updated!"); setShowModal(false); },
+    onError: () => toast.error("Failed to update post"),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => authApi.delete(`/blog/admin/${id}`),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-blog"] }); toast.success("Post deleted"); },
+    onError: () => toast.error("Failed to delete post"),
+  });
+
+  const togglePublishMutation = useMutation({
+    mutationFn: (post: BlogPost) => {
+      const newStatus = post.status === "published" ? "draft" : "published";
+      return authApi.put(`/blog/admin/${post._id}`, {
+        status: newStatus,
+        publishedAt: newStatus === "published" ? new Date().toISOString() : undefined,
+      });
+    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-blog"] }); toast.success("Status updated"); },
+    onError: () => toast.error("Failed to update status"),
+  });
 
   const openCreate = () => {
     setEditingId(null);
-    setForm(emptyForm);
+    reset({ title: "", excerpt: "", content: "", category: "faith", status: "draft", tags: [] });
     setShowModal(true);
   };
 
   const openEdit = (post: BlogPost) => {
     setEditingId(post._id);
-    setForm({
-      title: post.title,
-      excerpt: post.excerpt,
-      content: "",
-      category: post.category,
-      status: post.status,
-      tags: "",
-    });
+    reset({ title: post.title, excerpt: post.excerpt, content: "", category: post.category as BlogInput["category"], status: post.status, tags: [] });
     setShowModal(true);
   };
 
-  const handleSave = async () => {
-    if (!form.title || !form.excerpt) {
-      toast.error("Title and excerpt are required");
-      return;
-    }
-    setSaving(true);
-    try {
-      const payload = {
-        ...form,
-        tags: form.tags ? form.tags.split(",").map((t) => t.trim()) : [],
-      };
-
-      if (editingId) {
-        await authApi.put(`/blog/admin/${editingId}`, payload);
-        toast.success("Post updated!");
-      } else {
-        await authApi.post("/blog/admin", payload);
-        toast.success("Post created!");
-      }
-      setShowModal(false);
-      fetchPosts();
-    } catch {
-      toast.error("Failed to save post");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Delete "${title}"?`)) return;
-    setDeleting(id);
-    try {
-      await authApi.delete(`/blog/admin/${id}`);
-      toast.success("Post deleted");
-      fetchPosts();
-    } catch {
-      toast.error("Failed to delete post");
-    } finally {
-      setDeleting(null);
-    }
-  };
-
-  const handlePublishToggle = async (post: BlogPost) => {
-    const newStatus = post.status === "published" ? "draft" : "published";
-    try {
-      await authApi.put(`/blog/admin/${post._id}`, {
-        status: newStatus,
-        publishedAt: newStatus === "published" ? new Date().toISOString() : undefined,
-      });
-      toast.success(newStatus === "published" ? "Post published!" : "Post unpublished");
-      fetchPosts();
-    } catch {
-      toast.error("Failed to update status");
+  const onSubmit = (data: BlogInput) => {
+    if (editingId) {
+      updateMutation.mutate({ id: editingId, data });
+    } else {
+      createMutation.mutate(data);
     }
   };
 
@@ -171,7 +144,6 @@ export default function AdminBlogPage() {
         </Button>
       </div>
 
-      {/* Filters */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -195,7 +167,6 @@ export default function AdminBlogPage() {
         <span className="self-center text-sm text-gray-500">{total} posts</span>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-100 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b bg-gray-50">
@@ -252,7 +223,7 @@ export default function AdminBlogPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       <button
-                        onClick={() => handlePublishToggle(post)}
+                        onClick={() => togglePublishMutation.mutate(post)}
                         className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-green-600"
                         title={post.status === "published" ? "Unpublish" : "Publish"}
                       >
@@ -265,11 +236,11 @@ export default function AdminBlogPage() {
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(post._id, post.title)}
-                        disabled={deleting === post._id}
+                        onClick={() => { if (confirm(`Delete "${post.title}"?`)) deleteMutation.mutate(post._id); }}
+                        disabled={deleteMutation.isPending}
                         className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
                       >
-                        {deleting === post._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                        {deleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                       </button>
                     </div>
                   </td>
@@ -282,53 +253,37 @@ export default function AdminBlogPage() {
 
       <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-6" />
 
-      {/* Create/Edit Modal */}
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         title={editingId ? "Edit Post" : "New Post"}
         size="lg"
       >
-        <div className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Title *</label>
-            <Input
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Post title"
-            />
+            <Input {...register("title")} placeholder="Post title" />
+            {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>}
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Excerpt *</label>
-            <textarea
-              value={form.excerpt}
-              onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-              placeholder="Brief summary of the post"
-              rows={2}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-            />
+            <textarea {...register("excerpt")} placeholder="Brief summary of the post" rows={2}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20" />
+            {errors.excerpt && <p className="mt-1 text-xs text-red-500">{errors.excerpt.message}</p>}
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Content (HTML)</label>
-            <textarea
-              value={form.content}
-              onChange={(e) => setForm({ ...form, content: e.target.value })}
-              placeholder="Full post content (HTML supported)"
-              rows={8}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm font-mono focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-            />
+            <textarea {...register("content")} placeholder="Full post content (HTML supported)" rows={8}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm font-mono focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20" />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Category</label>
-              <select
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-              >
+              <select {...register("category")}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20">
                 {BLOG_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat} className="capitalize">{cat}</option>
                 ))}
@@ -336,11 +291,8 @@ export default function AdminBlogPage() {
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Status</label>
-              <select
-                value={form.status}
-                onChange={(e) => setForm({ ...form, status: e.target.value as "draft" | "published" })}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-              >
+              <select {...register("status")}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20">
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
               </select>
@@ -350,20 +302,23 @@ export default function AdminBlogPage() {
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Tags (comma-separated)</label>
             <Input
-              value={form.tags}
-              onChange={(e) => setForm({ ...form, tags: e.target.value })}
+              value={tagsInput?.join(", ") || ""}
+              onChange={(e) => {
+                const tags = e.target.value.split(",").map((t) => t.trim()).filter(Boolean);
+                setValue("tags", tags, { shouldValidate: true });
+              }}
               placeholder="faith, purpose, identity"
             />
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="ghost" onClick={() => setShowModal(false)}>Cancel</Button>
-            <Button variant="accent" onClick={handleSave} disabled={saving}>
-              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button variant="ghost" type="button" onClick={() => setShowModal(false)}>Cancel</Button>
+            <Button variant="accent" type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+              {(createMutation.isPending || updateMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {editingId ? "Update" : "Create"} Post
             </Button>
           </div>
-        </div>
+        </form>
       </Modal>
     </AdminLayout>
   );
