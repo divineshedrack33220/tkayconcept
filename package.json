@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
-    "start": "concurrently -k -n api,web -c blue,green \"cd backend && PORT=5000 node src/server.js\" \"cd frontend && npx next start\""
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install",
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
   },
   "dependencies": {
-    "concurrently": "^9.1.0"
+    "next": "16.2.10"
   }
 }

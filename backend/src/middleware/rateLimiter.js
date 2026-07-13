@@ -6,7 +6,6 @@ const generalLimiter = rateLimit({
   message: { message: 'Too many requests, please try again later' },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.ip,
   skip: (req) => req.method === 'GET',
 });
 
