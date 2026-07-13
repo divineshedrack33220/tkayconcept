@@ -1,6 +1,6 @@
 import { Providers } from "@/providers";
 
-export default function AuthLayout({
+export default function AdminRootLayout({
   children,
 }: {
   children: React.ReactNode;
