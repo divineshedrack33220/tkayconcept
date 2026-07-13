@@ -10,7 +10,12 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => config,
+  (config) => {
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+    }
+    return config;
+  },
   (error) => Promise.reject(error)
 );
 

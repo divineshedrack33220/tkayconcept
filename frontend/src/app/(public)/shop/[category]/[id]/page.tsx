@@ -118,16 +118,17 @@ export default function ProductDetailPage() {
           setProduct(res.data.data);
           addRecentlyViewed(params.id as string);
         }
-      } catch {
+      } catch (err: unknown) {
+        if (controller.signal.aborted) return;
         toast.error("Product not found");
         router.push("/shop");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
     fetchProduct();
     return () => controller.abort();
-  }, [params.id, router]);
+  }, [params.id]);
 
   const handleAddToCart = () => {
     if (!product) return;

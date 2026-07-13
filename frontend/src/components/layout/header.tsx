@@ -27,6 +27,7 @@ import { SearchPanel } from "@/components/shared/search-panel";
 import { CartDrawer } from "@/components/shared/cart-drawer";
 import { CurrencySelector } from "@/components/shared/currency-selector";
 import { LanguageSelector } from "@/components/shared/language-selector";
+import { useTranslation } from "@/i18n";
 
 const megaMenuData = {
   categories: PRODUCT_CATEGORIES.map((cat) => ({
@@ -35,16 +36,6 @@ const megaMenuData = {
     image: `https://picsum.photos/seed/tkay-${cat}/200/200`,
   })),
 };
-
-const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Shop", href: "/shop", hasMega: true },
-  { label: "Rooted Identity", href: "/rooted-identity" },
-  { label: "Custom Printing", href: "/custom-printing" },
-  { label: "Blog", href: "/blog" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
 
 export function Header() {
   const { isSignedIn, user } = useUser();
@@ -55,6 +46,15 @@ export function Header() {
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
+
+  const navLinks = [
+    { label: t("nav.home"), href: "/" },
+    { label: t("nav.shop"), href: "/shop", hasMega: true },
+    { label: t("nav.rootedIdentity"), href: "/rooted-identity" },
+    { label: t("nav.customPrinting"), href: "/custom-printing" },
+    { label: t("nav.contact"), href: "/contact" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -176,13 +176,13 @@ export function Header() {
                       <p className="text-xs text-gray-500">{user?.primaryEmailAddress?.emailAddress}</p>
                     </div>
                     <Link href="/account" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
-                      <User className="h-4 w-4" /> My Account
+                      <User className="h-4 w-4" /> {t("auth.myAccount")}
                     </Link>
                     <Link href="/orders" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
-                      <Package className="h-4 w-4" /> My Orders
+                      <Package className="h-4 w-4" /> {t("auth.myOrders")}
                     </Link>
                     <Link href="/wishlist" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
-                      <Heart className="h-4 w-4" /> Wishlist
+                      <Heart className="h-4 w-4" /> {t("auth.wishlist")}
                     </Link>
                     <Link href="/gift-cards" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
                       <Gift className="h-4 w-4" /> Gift Cards
@@ -197,13 +197,13 @@ export function Header() {
                     )}
                     <hr className="my-1" />
                     <button onClick={() => signOut()} className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-gray-50">
-                      <LogOut className="h-4 w-4" /> Sign Out
+                      <LogOut className="h-4 w-4" /> {t("auth.signOut")}
                     </button>
                   </div>
                 </div>
               ) : (
                 <Link href="/sign-in">
-                  <Button variant="primary" size="sm" className="hidden sm:flex">Sign In</Button>
+                  <Button variant="primary" size="sm" className="hidden sm:flex">{t("auth.signIn")}</Button>
                 </Link>
               )}
 
@@ -294,21 +294,21 @@ export function Header() {
                     </div>
                   </div>
                   <Link href="/account" onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
-                    <User className="h-4 w-4" /> My Account
+                    <User className="h-4 w-4" /> {t("auth.myAccount")}
                   </Link>
                   <Link href="/orders" onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
-                    <Package className="h-4 w-4" /> My Orders
+                    <Package className="h-4 w-4" /> {t("auth.myOrders")}
                   </Link>
                   <Link href="/wishlist" onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
-                    <Heart className="h-4 w-4" /> Wishlist
+                    <Heart className="h-4 w-4" /> {t("auth.wishlist")}
                   </Link>
                   <button onClick={() => { signOut(); toggleMobileMenu(); }} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-600 hover:bg-gray-50">
-                    <LogOut className="h-4 w-4" /> Sign Out
+                    <LogOut className="h-4 w-4" /> {t("auth.signOut")}
                   </button>
                 </div>
               ) : (
                 <Link href="/sign-in" onClick={toggleMobileMenu}>
-                  <Button variant="accent" className="w-full">Sign In</Button>
+                  <Button variant="accent" className="w-full">{t("auth.signIn")}</Button>
                 </Link>
               )}
             </div>

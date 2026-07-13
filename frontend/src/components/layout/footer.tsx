@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
 import { Camera, Globe, Video, AtSign, MessageCircle, Shield, Truck, RotateCcw, CreditCard } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
 const footerLinks = {
   shop: [
@@ -15,7 +18,6 @@ const footerLinks = {
     { label: "About Us", href: "/about" },
     { label: "Rooted Identity", href: "/rooted-identity" },
     { label: "Custom Printing", href: "/custom-printing" },
-    { label: "Blog", href: "/blog" },
     { label: "Community", href: "/community" },
     { label: "Contact", href: "/contact" },
   ],
@@ -47,6 +49,34 @@ const paymentMethods = [
 ];
 
 export function Footer() {
+  const { t } = useTranslation();
+
+  const footerLinks = {
+    shop: [
+      { label: "Books", href: "/shop/books" },
+      { label: "Games", href: "/shop/games" },
+      { label: "Apparel", href: "/shop/apparel" },
+      { label: "Merchandise", href: "/shop/merchandise" },
+      { label: "Devotionals", href: "/shop/devotionals" },
+      { label: "Accessories", href: "/shop/accessories" },
+    ],
+    company: [
+      { label: "About Us", href: "/about" },
+      { label: t("nav.rootedIdentity"), href: "/rooted-identity" },
+      { label: t("nav.customPrinting"), href: "/custom-printing" },
+      { label: "Community", href: "/community" },
+      { label: t("nav.contact"), href: "/contact" },
+    ],
+    support: [
+      { label: "FAQ", href: "/faq" },
+      { label: "Track Order", href: "/track" },
+      { label: t("footer.shippingPolicy"), href: "/shipping" },
+      { label: t("footer.returnPolicy"), href: "/returns" },
+      { label: t("footer.privacyPolicy"), href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+    ],
+  };
+
   return (
     <footer className="bg-primary-dark text-white">
       {/* Trust bar */}
@@ -103,15 +133,15 @@ export function Footer() {
 
             {/* Mini newsletter */}
             <div className="mt-6">
-              <p className="mb-2 text-sm font-semibold">Subscribe for updates</p>
+              <p className="mb-2 text-sm font-semibold">{t("footer.subscribe")}</p>
               <div className="flex gap-2">
                 <input
                   type="email"
-                  placeholder="Your email"
+                  placeholder={t("footer.emailPlaceholder")}
                   className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                 />
                 <button className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-light">
-                  Subscribe
+                  {t("footer.subscribeBtn")}
                 </button>
               </div>
             </div>

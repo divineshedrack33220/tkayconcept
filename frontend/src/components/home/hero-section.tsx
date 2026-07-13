@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Star, Truck, Shield, RotateCcw } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
 const trustItems = [
   { icon: Star, text: "4.9/5 Rated", sub: "500+ Reviews" },
@@ -13,6 +14,8 @@ const trustItems = [
 ];
 
 export function HeroSection() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative flex min-h-[85vh] items-center overflow-hidden bg-primary-dark">
       {/* Animated gradient background */}
@@ -45,34 +48,36 @@ export function HeroSection() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
               </span>
-              <span className="text-sm font-medium text-accent">New Collection Available</span>
+              <span className="text-sm font-medium text-accent">{t("hero.badge")}</span>
             </motion.div>
 
             <h1 className="text-5xl font-bold leading-[1.1] text-white md:text-6xl lg:text-7xl">
-              Faith.
-              <br />
-              <span className="bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent">
-                Purpose.
-              </span>
-              <br />
-              Identity.
+              {t("hero.title").split("\n").map((line, i) => (
+                <span key={i}>
+                  {i > 0 && <br />}
+                  {i === 1 ? (
+                    <span className="bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent">
+                      {line}
+                    </span>
+                  ) : line}
+                </span>
+              ))}
             </h1>
 
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-gray-300">
-              Creating products that inspire people to live boldly and purposefully.
-              Explore our curated collections designed to strengthen your faith journey.
+              {t("hero.subtitle")}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
               <Link href="/shop">
                 <Button variant="accent" size="lg" className="group relative overflow-hidden px-8">
-                  <span className="relative z-10">Shop Now</span>
+                  <span className="relative z-10">{t("hero.shopNow")}</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-accent-dark to-accent opacity-0 transition-opacity group-hover:opacity-100" />
                 </Button>
               </Link>
               <Link href="/about">
                 <Button variant="secondary" size="lg" className="border-white/20 text-white hover:border-white/40 hover:bg-white/10">
-                  Learn More
+                  {t("hero.learnMore")}
                 </Button>
               </Link>
             </div>
@@ -90,7 +95,7 @@ export function HeroSection() {
                 ))}
               </div>
               <div className="text-sm">
-                <p className="font-semibold text-white">2,500+ Happy Customers</p>
+                <p className="font-semibold text-white">{t("hero.socialProof")}</p>
                 <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />

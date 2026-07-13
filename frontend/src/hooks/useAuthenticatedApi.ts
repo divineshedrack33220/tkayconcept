@@ -20,12 +20,24 @@ export function useAuthenticatedApi() {
     },
     async post(url: string, data?: unknown) {
       const token = await getToken();
+      if (data instanceof FormData) {
+        return api.post(url, data, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          timeout: 60000,
+        });
+      }
       return api.post(url, data, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
     },
     async put(url: string, data?: unknown) {
       const token = await getToken();
+      if (data instanceof FormData) {
+        return api.put(url, data, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          timeout: 60000,
+        });
+      }
       return api.put(url, data, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
