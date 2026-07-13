@@ -3,6 +3,8 @@ import { Footer } from "@/components/layout/footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { I18nProvider } from "@/i18n";
 
+export const dynamic = "force-dynamic";
+
 export default function CustomerLayout({
   children,
 }: {
