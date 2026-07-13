@@ -10,3 +10,5 @@ services:
         value: production
       - key: NEXT_PUBLIC_API_URL
         value: /api
+      - key: FRONTEND_URL
+        sync: false
