@@ -29,18 +29,20 @@ export function SearchPanel() {
       setResults([]);
       return;
     }
+    let cancelled = false;
+    const controller = new AbortController();
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await api.get(`/products?search=${encodeURIComponent(query.trim())}&limit=8`);
-        setResults(res.data.data || []);
+        const res = await api.get(`/products?search=${encodeURIComponent(query.trim())}&limit=8`, { signal: controller.signal });
+        if (!cancelled) setResults(res.data.data || []);
       } catch {
-        setResults([]);
+        if (!cancelled) setResults([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }, 300);
-    return () => clearTimeout(timer);
+    return () => { cancelled = true; clearTimeout(timer); controller.abort(); };
   }, [query]);
 
   const handleSelect = (product: Product) => {

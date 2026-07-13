@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ShoppingBag, Check, Plus } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
@@ -17,11 +17,16 @@ export function FrequentlyBoughtTogether({ currentProduct }: FrequentlyBoughtTog
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const addItem = useCartStore((s) => s.addItem);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!currentProduct.category?._id) return;
-    api.get(`/products?category=${currentProduct.category.slug}&limit=4&sort=-averageRating`)
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    api.get(`/products?category=${currentProduct.category.slug}&limit=4&sort=-averageRating`, { signal: controller.signal })
       .then((res) => {
+        if (controller.signal.aborted) return;
         const recs = (res.data.data || [])
           .filter((p: Product) => p._id !== currentProduct._id)
           .slice(0, 3);
@@ -29,6 +34,7 @@ export function FrequentlyBoughtTogether({ currentProduct }: FrequentlyBoughtTog
         setSelected(new Set(recs.map((p: Product) => p._id)));
       })
       .catch(() => {});
+    return () => controller.abort();
   }, [currentProduct.category?._id, currentProduct.category?.slug, currentProduct._id]);
 
   const toggleItem = (id: string) => {

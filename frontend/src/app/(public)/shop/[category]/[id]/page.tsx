@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -63,9 +63,11 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!product || !isSignedIn) return;
-    authApi.get(`/wishlist/check/${product._id}`)
-      .then((res) => setIsWishlisted(res.data.data?.isWishlisted ?? res.data.isWishlisted))
+    const controller = new AbortController();
+    authApi.get(`/wishlist/check/${product._id}`, { signal: controller.signal })
+      .then((res) => { if (!controller.signal.aborted) setIsWishlisted(res.data.data?.isWishlisted ?? res.data.isWishlisted); })
       .catch(() => {});
+    return () => controller.abort();
   }, [product?._id, isSignedIn]);
 
   useEffect(() => {
@@ -108,11 +110,14 @@ export default function ProductDetailPage() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchProduct = async () => {
       try {
-        const res = await api.get(`/products/${params.id}`);
-        setProduct(res.data.data);
-        addRecentlyViewed(params.id as string);
+        const res = await api.get(`/products/${params.id}`, { signal: controller.signal });
+        if (!controller.signal.aborted) {
+          setProduct(res.data.data);
+          addRecentlyViewed(params.id as string);
+        }
       } catch {
         toast.error("Product not found");
         router.push("/shop");
@@ -121,6 +126,7 @@ export default function ProductDetailPage() {
       }
     };
     fetchProduct();
+    return () => controller.abort();
   }, [params.id, router]);
 
   const handleAddToCart = () => {

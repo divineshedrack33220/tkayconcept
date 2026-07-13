@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ShoppingBag, Package, Heart, Eye, Zap } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
@@ -17,7 +17,7 @@ interface ProductCardProps {
   layout?: "grid" | "list";
 }
 
-export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
+const ProductCardInner = memo(function ProductCardInner({ product, layout = "grid" }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
   const [imgError, setImgError] = useState(false);
   const { isSignedIn } = useAuth();
@@ -28,12 +28,17 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(() => wishlistHasItem(product._id));
   const [isHovered, setIsHovered] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!isSignedIn) return;
-    authApi.get(`/wishlist/check/${product._id}`)
-      .then((res) => setIsWishlisted(res.data.data?.isWishlisted ?? res.data.isWishlisted))
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    authApi.get(`/wishlist/check/${product._id}`, { signal: controller.signal })
+      .then((res) => { if (!controller.signal.aborted) setIsWishlisted(res.data.data?.isWishlisted ?? res.data.isWishlisted); })
       .catch(() => {});
+    return () => controller.abort();
   }, [product._id, isSignedIn]);
 
   const handleToggleWishlist = async (e: React.MouseEvent) => {
@@ -304,4 +309,8 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
       </div>
     </Link>
   );
-}
+});
+
+ProductCardInner.displayName = "ProductCard";
+
+export const ProductCard = ProductCardInner;

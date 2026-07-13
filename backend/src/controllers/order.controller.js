@@ -24,18 +24,22 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: 'Shipping address is required' });
     }
 
-    const user = await User.findOne({ clerkId: req.user.sub });
+    const user = await User.findOne({ clerkId: req.user.sub }).lean();
     if (!user) {
       return res.status(404).json({ message: 'User not found. Please sync your account first.' });
     }
 
-    // Validate products and calculate totals
+    // Validate products and calculate totals — batch query instead of N+1
+    const productIds = items.map((i) => i.productId);
+    const products = await Product.find({ _id: { $in: productIds }, isActive: true }).lean();
+    const productMap = new Map(products.map((p) => [p._id.toString(), p]));
+
     let subtotal = 0;
     const orderItems = [];
 
     for (const item of items) {
-      const product = await Product.findById(item.productId);
-      if (!product || !product.isActive) {
+      const product = productMap.get(item.productId);
+      if (!product) {
         return res.status(400).json({ message: `Product not found: ${item.productId}` });
       }
 
@@ -74,12 +78,14 @@ const createOrder = async (req, res) => {
       notes: notes || '',
     });
 
-    // Decrement stock
-    for (const item of items) {
-      await Product.findByIdAndUpdate(item.productId, {
-        $inc: { stock: -item.quantity },
-      });
-    }
+    // Decrement stock — batch update
+    const bulkOps = items.map((item) => ({
+      updateOne: {
+        filter: { _id: item.productId },
+        update: { $inc: { stock: -item.quantity } },
+      },
+    }));
+    await Product.bulkWrite(bulkOps);
 
     // Send order confirmation email (non-blocking)
     sendEmail({
@@ -114,7 +120,7 @@ const createOrder = async (req, res) => {
 // GET /api/orders - Get current user's orders
 const getMyOrders = async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.user.sub });
+    const user = await User.findOne({ clerkId: req.user.sub }).lean();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -147,7 +153,7 @@ const getMyOrders = async (req, res) => {
 // GET /api/orders/:orderId - Get single order
 const getOrder = async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.user.sub });
+    const user = await User.findOne({ clerkId: req.user.sub }).lean();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -155,7 +161,7 @@ const getOrder = async (req, res) => {
     const order = await Order.findOne({
       _id: req.params.orderId,
       user: user._id,
-    }).populate('items.product', 'name slug images');
+    }).populate('items.product', 'name slug images').lean();
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -188,7 +194,8 @@ const getAllOrders = async (req, res) => {
         .skip(skip)
         .limit(parseInt(limit))
         .populate('user', 'firstName lastName email')
-        .populate('items.product', 'name slug images'),
+        .populate('items.product', 'name slug images')
+        .lean(),
       Order.countDocuments(filter),
     ]);
 

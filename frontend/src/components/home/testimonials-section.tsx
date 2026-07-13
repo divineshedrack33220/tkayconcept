@@ -25,10 +25,12 @@ export function TestimonialsSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    api.get("/testimonials/public?limit=10")
-      .then((res) => setTestimonials(res.data.data))
+    const controller = new AbortController();
+    api.get("/testimonials/public?limit=10", { signal: controller.signal })
+      .then((res) => { if (!controller.signal.aborted) setTestimonials(res.data.data); })
       .catch(() => {})
-      .finally(() => setLoading(false));
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
   }, []);
 
   const scroll = (dir: "left" | "right") => {

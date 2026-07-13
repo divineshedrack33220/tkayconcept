@@ -34,10 +34,12 @@ export function FeaturedCategories() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    api.get("/categories?active=true&limit=8")
-      .then((res) => setCategories(res.data.data || []))
+    const controller = new AbortController();
+    api.get("/categories?active=true&limit=8", { signal: controller.signal })
+      .then((res) => { if (!controller.signal.aborted) setCategories(res.data.data || []); })
       .catch(() => {})
-      .finally(() => setLoading(false));
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
   }, []);
 
   const displayCategories = categories.length > 0

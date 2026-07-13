@@ -43,12 +43,15 @@ const orderSchema = new mongoose.Schema(
       default: 'pending',
     },
     trackingNumber: { type: String, default: '' },
+    trackingUrl: { type: String, default: '' },
+    carrier: { type: String, default: '' },
     notes: { type: String, default: '' },
   },
   { timestamps: true }
 );
 
 orderSchema.index({ user: 1, createdAt: -1 });
-orderSchema.index({ orderNumber: 1 });
+orderSchema.index({ orderStatus: 1, createdAt: -1 });
+orderSchema.index({ paymentStatus: 1 });
 
 module.exports = mongoose.model('Order', orderSchema);

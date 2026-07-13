@@ -44,6 +44,9 @@ export default function CheckoutPage() {
   const [processing, setProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [giftCardCode, setGiftCardCode] = useState("");
+  const [giftCardDiscount, setGiftCardDiscount] = useState(0);
+  const [applyingGiftCard, setApplyingGiftCard] = useState(false);
 
   const [shippingForm, setShippingForm] = useState({
     label: "Home",
@@ -56,7 +59,24 @@ export default function CheckoutPage() {
 
   const shipping = subtotal >= 75 ? 0 : 9.99;
   const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const afterGiftCard = Math.max(0, subtotal + shipping + tax - giftCardDiscount);
+  const total = afterGiftCard;
+
+  const handleApplyGiftCard = async () => {
+    if (!giftCardCode) return;
+    setApplyingGiftCard(true);
+    try {
+      const res = await authApi.post("/gift-cards/validate", { code: giftCardCode });
+      const balance = res.data.data.balance;
+      const discount = Math.min(balance, subtotal + shipping + tax);
+      setGiftCardDiscount(discount);
+      toast.success(`Gift card applied! -$${discount.toFixed(2)}`);
+    } catch {
+      toast.error("Invalid or expired gift card");
+    } finally {
+      setApplyingGiftCard(false);
+    }
+  };
 
   useEffect(() => {
     if (!isSignedIn) return;
@@ -119,6 +139,8 @@ export default function CheckoutPage() {
         items: orderItems,
         shippingAddress: shippingForm,
         paymentMethod: "stripe",
+        giftCardCode: giftCardDiscount > 0 ? giftCardCode : undefined,
+        giftCardDiscount: giftCardDiscount > 0 ? giftCardDiscount : undefined,
       });
 
       const newOrder = orderRes.data.data;
@@ -532,10 +554,32 @@ export default function CheckoutPage() {
               <span className="text-gray-600">Tax</span>
               <span>${tax.toFixed(2)}</span>
             </div>
+            {giftCardDiscount > 0 && (
+              <div className="flex justify-between text-emerald-600">
+                <span>Gift Card</span>
+                <span className="font-semibold">-${giftCardDiscount.toFixed(2)}</span>
+              </div>
+            )}
             <hr />
             <div className="flex justify-between text-base font-bold">
               <span>Total</span>
               <span>${total.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {/* Gift Card Input */}
+          <div className="mt-4 border-t pt-4">
+            <p className="mb-2 text-xs font-medium text-gray-500">HAVE A GIFT CARD?</p>
+            <div className="flex gap-2">
+              <Input
+                value={giftCardCode}
+                onChange={(e) => setGiftCardCode(e.target.value.toUpperCase())}
+                placeholder="TKGC-XXXX"
+                className="flex-1 font-mono text-xs"
+              />
+              <Button variant="outline" size="sm" onClick={handleApplyGiftCard} disabled={applyingGiftCard}>
+                {applyingGiftCard ? <Loader2 className="h-3 w-3 animate-spin" /> : "Apply"}
+              </Button>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,17 +14,19 @@ export function FeaturedProducts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchProducts = async () => {
       try {
-        const res = await api.get("/products/featured");
-        setProducts(res.data.data);
+        const res = await api.get("/products/featured", { signal: controller.signal });
+        if (!controller.signal.aborted) setProducts(res.data.data);
       } catch {
         // silent
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
     fetchProducts();
+    return () => controller.abort();
   }, []);
 
   if (loading) {

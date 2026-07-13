@@ -1,19 +1,24 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { DollarSign, ShoppingCart, Users, Package } from "lucide-react";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
+
+const BarChartLazy = lazy(() =>
+  import("recharts").then((m) => ({ default: m.BarChart }))
+);
+const PieChartLazy = lazy(() =>
+  import("recharts").then((m) => ({ default: m.PieChart }))
+);
 import {
-  BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
   Pie,
   Cell,
   Legend,
@@ -28,7 +33,7 @@ interface DashboardStats {
   topProducts: { name: string; totalSold: number; revenue: number }[];
 }
 
-const PIE_COLORS = ["#F59E0B", "#3B82F6", "#6366F1", "#8B5CF6", "#10B981", "#EF4444"];
+const PIE_COLORS = ["#5A206D", "#A07A00", "#3B82F6", "#6366F1", "#10B981", "#EF4444"];
 
 export default function AdminAnalyticsPage() {
   const authApi = useAuthenticatedApi();
@@ -115,15 +120,17 @@ export default function AdminAnalyticsPage() {
             <div className="rounded-xl border border-gray-100 bg-white p-6">
               <h3 className="mb-4 font-semibold text-primary">Revenue by Product</h3>
               {topProductsData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={topProductsData} margin={{ top: 5, right: 20, bottom: 60, left: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-35} textAnchor="end" interval={0} />
-                    <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Revenue"]} />
-                    <Bar dataKey="revenue" fill="#F59E0B" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <Suspense fallback={<Skeleton className="h-[280px] w-full" />}>
+                  <ResponsiveContainer width="100%" height={280}>
+                    <BarChartLazy data={topProductsData} margin={{ top: 5, right: 20, bottom: 60, left: 10 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-35} textAnchor="end" interval={0} />
+                      <YAxis tick={{ fontSize: 12 }} />
+                      <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Revenue"]} />
+                      <Bar dataKey="revenue" fill="#5A206D" radius={[4, 4, 0, 0]} />
+                    </BarChartLazy>
+                  </ResponsiveContainer>
+                </Suspense>
               ) : (
                 <p className="py-8 text-center text-sm text-gray-400">No product data yet</p>
               )}
@@ -133,25 +140,27 @@ export default function AdminAnalyticsPage() {
             <div className="rounded-xl border border-gray-100 bg-white p-6">
               <h3 className="mb-4 font-semibold text-primary">Orders by Status</h3>
               {pieData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={280}>
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      dataKey="value"
-                      paddingAngle={3}
-                    >
-                      {pieData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
+                <Suspense fallback={<Skeleton className="h-[280px] w-full" />}>
+                  <ResponsiveContainer width="100%" height={280}>
+                    <PieChartLazy>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        dataKey="value"
+                        paddingAngle={3}
+                      >
+                        {pieData.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChartLazy>
+                  </ResponsiveContainer>
+                </Suspense>
               ) : (
                 <p className="py-8 text-center text-sm text-gray-400">No order data yet</p>
               )}

@@ -1,15 +1,18 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { useCurrencyStore } from "@/stores/currencyStore";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(price: number, currency = "USD"): string {
+export function formatPrice(price: number, currency?: string): string {
+  const storeCurrency = useCurrencyStore.getState().currency;
+  const code = currency || storeCurrency.code;
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency,
-  }).format(price);
+    currency: code,
+  }).format(price * storeCurrency.rate);
 }
 
 export function formatDate(date: string | Date): string {

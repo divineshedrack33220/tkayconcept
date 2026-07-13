@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Star, Loader2 } from "lucide-react";
@@ -29,6 +29,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   const {
     register,
@@ -45,13 +46,16 @@ export function ReviewsSection({ productId }: { productId: string }) {
   const formRating = watch("rating");
 
   const fetchReviews = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
-      const res = await api.get(`/reviews/product/${productId}?limit=20`);
-      setReviews(res.data.data);
-    } catch { /* */ } finally { setLoading(false); }
+      const res = await api.get(`/reviews/product/${productId}?limit=20`, { signal: controller.signal });
+      if (!controller.signal.aborted) setReviews(res.data.data);
+    } catch { /* */ } finally { if (!controller.signal.aborted) setLoading(false); }
   }, [productId]);
 
-  useEffect(() => { fetchReviews(); }, [fetchReviews]);
+  useEffect(() => { fetchReviews(); return () => abortRef.current?.abort(); }, [fetchReviews]);
 
   const onSubmit = async (data: ReviewInput) => {
     try {

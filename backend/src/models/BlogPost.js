@@ -29,7 +29,6 @@ blogPostSchema.pre('validate', function () {
   }
 });
 
-blogPostSchema.index({ slug: 1 });
 blogPostSchema.index({ status: 1, publishedAt: -1 });
 blogPostSchema.index({ title: 'text', content: 'text' });
 

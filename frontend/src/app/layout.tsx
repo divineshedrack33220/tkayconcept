@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     siteName: "TKAYKONCEPTS INT'L",
   },
+  other: {
+    "theme-color": "#5A206D",
+  },
 };
 
 export default function RootLayout({

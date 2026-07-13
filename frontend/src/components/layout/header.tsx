@@ -15,6 +15,8 @@ import {
   LogOut,
   Package,
   Settings,
+  Gift,
+  Truck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
@@ -23,6 +25,8 @@ import { useUIStore } from "@/stores/uiStore";
 import { PRODUCT_CATEGORIES } from "@/lib/constants";
 import { SearchPanel } from "@/components/shared/search-panel";
 import { CartDrawer } from "@/components/shared/cart-drawer";
+import { CurrencySelector } from "@/components/shared/currency-selector";
+import { LanguageSelector } from "@/components/shared/language-selector";
 
 const megaMenuData = {
   categories: PRODUCT_CATEGORIES.map((cat) => ({
@@ -123,6 +127,13 @@ export function Header() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-1">
+              <div className="hidden lg:block">
+                <CurrencySelector />
+              </div>
+              <div className="hidden lg:block">
+                <LanguageSelector />
+              </div>
+
               <button onClick={toggleSearch} className="rounded-lg p-2.5 text-gray-600 hover:bg-gray-100 transition-colors">
                 <Search className="h-5 w-5" />
               </button>
@@ -172,6 +183,12 @@ export function Header() {
                     </Link>
                     <Link href="/wishlist" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
                       <Heart className="h-4 w-4" /> Wishlist
+                    </Link>
+                    <Link href="/gift-cards" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                      <Gift className="h-4 w-4" /> Gift Cards
+                    </Link>
+                    <Link href="/track" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                      <Truck className="h-4 w-4" /> Track Order
                     </Link>
                     {(user?.publicMetadata?.role === "admin" || user?.publicMetadata?.role === "super_admin") && (
                       <Link href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">

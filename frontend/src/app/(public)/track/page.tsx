@@ -1,129 +1,199 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Package, Truck, CheckCircle, Clock, Loader2 } from "lucide-react";
+import { Package, Search, Loader2, CheckCircle2, Clock, Truck, MapPin, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { formatPrice } from "@/lib/utils";
 import api from "@/lib/api";
+import type { Order } from "@/types";
 
-interface TrackingOrder {
-  orderNumber: string;
-  status: string;
-  paymentStatus: string;
-  trackingNumber: string;
-  total: number;
-  createdAt: string;
-  updatedAt: string;
-  items: { name: string; quantity: number; price: number }[];
-}
-
-const statusSteps = [
-  { key: "pending", label: "Order Placed", icon: Clock },
-  { key: "confirmed", label: "Confirmed", icon: CheckCircle },
-  { key: "processing", label: "Processing", icon: Package },
+const STATUS_STEPS = [
+  { key: "pending", label: "Order Placed", icon: Package },
+  { key: "confirmed", label: "Confirmed", icon: CheckCircle2 },
+  { key: "processing", label: "Processing", icon: Clock },
   { key: "shipped", label: "Shipped", icon: Truck },
-  { key: "delivered", label: "Delivered", icon: CheckCircle },
+  { key: "delivered", label: "Delivered", icon: MapPin },
 ];
 
-export default function TrackOrderPage() {
+const STATUS_COLORS: Record<string, string> = {
+  pending: "text-yellow-600 bg-yellow-50",
+  confirmed: "text-blue-600 bg-blue-50",
+  processing: "text-indigo-600 bg-indigo-50",
+  shipped: "text-purple-600 bg-purple-50",
+  delivered: "text-green-600 bg-green-50",
+  cancelled: "text-red-600 bg-red-50",
+};
+
+export default function OrderTrackingPage() {
   const [orderNumber, setOrderNumber] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [order, setOrder] = useState<TrackingOrder | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState("");
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!orderNumber || !email) {
+      setError("Please enter both order number and email");
+      return;
+    }
     setLoading(true);
     setError("");
     setOrder(null);
     try {
       const res = await api.get(`/track?orderNumber=${encodeURIComponent(orderNumber)}&email=${encodeURIComponent(email)}`);
       setOrder(res.data.data);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { error?: string } } })?.response?.data?.error || "Order not found");
-    } finally { setLoading(false); }
+    } catch {
+      setError("Order not found. Please check your details and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const currentStep = order ? statusSteps.findIndex((s) => s.key === order.status) : -1;
+  const currentStepIndex = order ? STATUS_STEPS.findIndex((s) => s.key === order.orderStatus) : -1;
 
   return (
-    <div className="section-padding container-custom max-w-3xl">
-      <Breadcrumbs items={[{ label: "Order Tracking" }]} />
-      <h1 className="heading-primary mb-2">Track Your Order</h1>
-      <p className="mb-8 text-gray-500">Enter your order number and email to see the status of your order.</p>
-
-      <form onSubmit={handleSearch} className="mb-10 rounded-xl border border-gray-100 bg-white p-6">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Order Number</label>
-            <Input value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} placeholder="e.g. TK-2026-0001" required />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Email Address</label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" required />
-          </div>
+    <div>
+      <section className="bg-primary py-16 text-white">
+        <div className="container-custom text-center">
+          <Package className="mx-auto mb-4 h-12 w-12 text-accent" />
+          <h1 className="mb-2 text-4xl font-bold">Track Your Order</h1>
+          <p className="text-gray-300">Enter your order number and email to see the latest status</p>
         </div>
-        <Button variant="accent" type="submit" className="mt-4" isLoading={loading}>
-          <Search className="mr-2 h-4 w-4" /> Track Order
-        </Button>
-      </form>
+      </section>
 
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600">{error}</div>
-      )}
-
-      {order && (
-        <div className="rounded-xl border border-gray-100 bg-white p-6">
-          <div className="mb-6 flex items-center justify-between">
+      <section className="section-padding container-custom">
+        <div className="mx-auto max-w-lg">
+          <form onSubmit={handleTrack} className="mb-10 space-y-4 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
             <div>
-              <h2 className="text-lg font-bold text-primary">{order.orderNumber}</h2>
-              <p className="text-sm text-gray-500">Placed on {new Date(order.createdAt).toLocaleDateString()}</p>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Order Number</label>
+              <Input
+                value={orderNumber}
+                onChange={(e) => setOrderNumber(e.target.value)}
+                placeholder="e.g. TK-260712-ABCD"
+              />
             </div>
-            <span className="rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent capitalize">{order.status}</span>
-          </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Email Address</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+              />
+            </div>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <Button variant="accent" type="submit" className="w-full" disabled={loading}>
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+              Track Order
+            </Button>
+          </form>
 
-          {/* Progress Steps */}
-          <div className="mb-8 flex items-center justify-between">
-            {statusSteps.map((step, i) => {
-              const done = i <= currentStep;
-              return (
-                <div key={step.key} className="flex flex-1 flex-col items-center">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${done ? "bg-accent text-white" : "bg-gray-100 text-gray-400"}`}>
-                    <step.icon className="h-5 w-5" />
-                  </div>
-                  <span className={`mt-2 text-center text-xs ${done ? "font-medium text-accent" : "text-gray-400"}`}>{step.label}</span>
+          {order && (
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+              {/* Header */}
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-gray-500">ORDER NUMBER</p>
+                  <p className="text-lg font-bold text-primary">{order.orderNumber}</p>
                 </div>
-              );
-            })}
-          </div>
+                <span className={`rounded-full px-3 py-1 text-xs font-bold ${STATUS_COLORS[order.orderStatus] || "bg-gray-100 text-gray-600"}`}>
+                  {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
+                </span>
+              </div>
 
-          {order.trackingNumber && (
-            <div className="mb-6 rounded-lg bg-green-50 p-4">
-              <p className="text-sm font-medium text-green-800">Tracking Number</p>
-              <p className="mt-1 font-mono text-sm text-green-700">{order.trackingNumber}</p>
+              {/* Progress Timeline */}
+              <div className="mb-8">
+                <div className="relative flex items-center justify-between">
+                  {/* Connecting line */}
+                  <div className="absolute left-0 right-0 top-4 h-0.5 bg-gray-200" />
+                  <div
+                    className="absolute left-0 top-4 h-0.5 bg-accent transition-all duration-500"
+                    style={{ width: `${currentStepIndex >= 0 ? (currentStepIndex / (STATUS_STEPS.length - 1)) * 100 : 0}%` }}
+                  />
+
+                  {STATUS_STEPS.map((step, i) => {
+                    const isActive = i <= currentStepIndex;
+                    const isCurrent = i === currentStepIndex;
+                    return (
+                      <div key={step.key} className="relative z-10 flex flex-col items-center">
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+                          isActive ? "bg-accent text-white shadow-md shadow-accent/20" : "bg-gray-100 text-gray-400"
+                        } ${isCurrent ? "ring-4 ring-accent/20" : ""}`}>
+                          <step.icon className="h-4 w-4" />
+                        </div>
+                        <p className={`mt-2 text-[10px] font-medium ${isActive ? "text-accent" : "text-gray-400"}`}>
+                          {step.label}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Cancelled notice */}
+              {order.orderStatus === "cancelled" && (
+                <div className="mb-6 flex items-center gap-2 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+                  <XCircle className="h-5 w-5" />
+                  This order has been cancelled.
+                </div>
+              )}
+
+              {/* Tracking Info */}
+              {order.trackingNumber && (
+                <div className="mb-6 rounded-xl bg-gray-50 p-4">
+                  <p className="mb-1 text-xs font-medium text-gray-500">TRACKING</p>
+                  <p className="text-sm font-bold text-gray-900">{order.trackingNumber}</p>
+                  {order.carrier && <p className="text-xs text-gray-500">Carrier: {order.carrier}</p>}
+                  {order.trackingUrl && (
+                    <a href={order.trackingUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-xs font-semibold text-accent hover:underline">
+                      Track on carrier website →
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {/* Items */}
+              <div className="mb-4">
+                <p className="mb-2 text-xs font-medium text-gray-500">ITEMS</p>
+                <div className="space-y-2">
+                  {order.items.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                        <img src={item.image || "/placeholder-book.svg"} alt={item.name} className="h-full w-full object-cover" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                        <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                      </div>
+                      <p className="text-sm font-medium">{formatPrice(item.price * item.quantity)}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="border-t pt-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Total</span>
+                  <span className="font-bold text-primary">{formatPrice(order.total)}</span>
+                </div>
+              </div>
+
+              {/* Shipping Address */}
+              {order.shippingAddress && (
+                <div className="mt-4 rounded-xl bg-gray-50 p-4">
+                  <p className="mb-1 text-xs font-medium text-gray-500">SHIPPING TO</p>
+                  <p className="text-sm text-gray-700">
+                    {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
+                  </p>
+                </div>
+              )}
             </div>
           )}
-
-          <div className="border-t border-gray-100 pt-4">
-            <h3 className="mb-3 text-sm font-semibold text-gray-700">Order Items</h3>
-            {order.items.map((item, i) => (
-              <div key={i} className="flex items-center justify-between py-2">
-                <div>
-                  <span className="text-sm text-gray-900">{item.name}</span>
-                  <span className="ml-2 text-xs text-gray-400">x{item.quantity}</span>
-                </div>
-                <span className="text-sm font-medium">${(item.price * item.quantity).toFixed(2)}</span>
-              </div>
-            ))}
-            <div className="mt-3 flex justify-between border-t border-gray-100 pt-3">
-              <span className="font-semibold text-gray-900">Total</span>
-              <span className="font-bold text-primary">${order.total.toFixed(2)}</span>
-            </div>
-          </div>
         </div>
-      )}
+      </section>
     </div>
   );
 }

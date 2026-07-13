@@ -20,6 +20,8 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
+  Mail,
+  AlertTriangle,
 } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 
@@ -37,6 +39,8 @@ const sidebarLinks = [
   { label: "Coupons", href: "/admin/coupons", icon: Ticket },
   { label: "Homepage Builder", href: "/admin/homepage-builder", icon: Home },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { label: "Marketing", href: "/admin/marketing", icon: Mail },
+  { label: "Abandoned Carts", href: "/admin/abandoned-carts", icon: AlertTriangle },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

@@ -8,7 +8,7 @@ const Wishlist = require('../models/Wishlist');
 // GET /api/wishlist - Get current user's wishlist
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.user.sub });
+    const user = await User.findOne({ clerkId: req.user.sub }).lean();
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const items = await Wishlist.find({ user: user._id })
@@ -29,7 +29,7 @@ router.get('/', requireAuth, async (req, res) => {
 // POST /api/wishlist/:productId - Add to wishlist
 router.post('/:productId', requireAuth, async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.user.sub });
+    const user = await User.findOne({ clerkId: req.user.sub }).lean();
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const existing = await Wishlist.findOne({ user: user._id, product: req.params.productId });
@@ -48,7 +48,7 @@ router.post('/:productId', requireAuth, async (req, res) => {
 // DELETE /api/wishlist/:productId - Remove from wishlist
 router.delete('/:productId', requireAuth, async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.user.sub });
+    const user = await User.findOne({ clerkId: req.user.sub }).lean();
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     await Wishlist.findOneAndDelete({ user: user._id, product: req.params.productId });
@@ -62,10 +62,10 @@ router.delete('/:productId', requireAuth, async (req, res) => {
 // GET /api/wishlist/check/:productId - Check if product is in wishlist
 router.get('/check/:productId', requireAuth, async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.user.sub });
+    const user = await User.findOne({ clerkId: req.user.sub }).lean();
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const exists = await Wishlist.findOne({ user: user._id, product: req.params.productId });
+    const exists = await Wishlist.findOne({ user: user._id, product: req.params.productId }).select('_id').lean();
     res.json({ data: { isWishlisted: !!exists } });
   } catch (error) {
     res.status(500).json({ message: 'Failed to check wishlist' });

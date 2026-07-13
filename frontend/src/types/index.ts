@@ -113,6 +113,8 @@ export interface Order {
   paymentStatus: "pending" | "paid" | "failed" | "refunded";
   orderStatus: "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled";
   trackingNumber: string;
+  trackingUrl: string;
+  carrier: string;
   notes: string;
   createdAt: string;
   updatedAt: string;

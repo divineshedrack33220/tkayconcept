@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 app.use(helmet());
+app.use(compression());
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
 
@@ -71,6 +73,9 @@ app.use('/api/testimonials', require('./routes/testimonial'));
 app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/api/coupons', require('./routes/coupon'));
 app.use('/api/reviews', require('./routes/review'));
+app.use('/api/abandoned-carts', require('./routes/abandoned-cart.routes'));
+app.use('/api/marketing', require('./routes/marketing.routes'));
+app.use('/api/gift-cards', require('./routes/gift-card.routes'));
 
 app.get('/api/track', async (req, res) => {
   try {
@@ -80,7 +85,7 @@ app.get('/api/track', async (req, res) => {
     const User = require('./models/User');
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) return res.status(404).json({ error: 'Order not found' });
-    const order = await Order.findOne({ orderNumber, customer: user._id }).select('orderNumber status paymentStatus trackingNumber createdAt updatedAt items total shippingAddress');
+    const order = await Order.findOne({ orderNumber, user: user._id }).select('orderNumber orderStatus paymentStatus trackingNumber trackingUrl carrier createdAt updatedAt items total shippingAddress');
     if (!order) return res.status(404).json({ error: 'Order not found' });
     res.json({ data: order });
   } catch (err) {
@@ -89,6 +94,63 @@ app.get('/api/track', async (req, res) => {
 });
 
 app.use(errorHandler);
+
+// Automated abandoned cart recovery — runs every 30 minutes
+const AbandonedCart = require('./models/AbandonedCart');
+const User = require('./models/User');
+
+async function processAbandonedCarts() {
+  try {
+    const cutoff = new Date(Date.now() - 30 * 60 * 1000);
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const carts = await AbandonedCart.find({
+      recoveryEmailSent: false,
+      recovered: false,
+      createdAt: { $lte: cutoff, $gte: sevenDaysAgo },
+    }).populate('user', 'firstName email');
+
+    for (const cart of carts) {
+      const userName = cart.user?.firstName || 'there';
+      const itemList = cart.items.map(
+        (item) => `<tr><td style="padding:8px;border-bottom:1px solid #eee;">${item.name}</td><td style="padding:8px;border-bottom:1px solid #eee;">x${item.quantity}</td><td style="padding:8px;border-bottom:1px solid #eee;">$${(item.price * item.quantity).toFixed(2)}</td></tr>`
+      ).join('');
+
+      const { sendEmail } = require('./utils/email');
+      sendEmail({
+        to: cart.email,
+        subject: 'You left something behind!',
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+            <h2 style="color:#1a1a2e;">Still thinking about these?</h2>
+            <p>Hi ${userName},</p>
+            <p>You left some great items in your cart. They're selling fast — don't miss out!</p>
+            <table style="width:100%;border-collapse:collapse;margin:20px 0;">
+              <tr style="background:#f9f9f9;"><td style="padding:8px;font-weight:bold;">Item</td><td style="padding:8px;font-weight:bold;">Qty</td><td style="padding:8px;font-weight:bold;">Price</td></tr>
+              ${itemList}
+              <tr><td colspan="2" style="padding:8px;font-weight:bold;">Subtotal</td><td style="padding:8px;font-weight:bold;">$${cart.subtotal.toFixed(2)}</td></tr>
+            </table>
+            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/shop" style="display:inline-block;background:#F59E0B;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;">Complete Your Order</a>
+            <p style="color:#666;font-size:12px;margin-top:30px;">TKAYKONCEPTS INT'L - Faith. Purpose. Identity.</p>
+          </div>
+        `,
+      }).catch(() => {});
+
+      cart.recoveryEmailSent = true;
+      await cart.save();
+    }
+
+    if (carts.length > 0) {
+      console.log(`[Cron] Sent ${carts.length} abandoned cart recovery emails`);
+    }
+  } catch (error) {
+    console.error('[Cron] Abandoned cart error:', error.message);
+  }
+}
+
+// Run every 30 minutes
+setInterval(processAbandonedCarts, 30 * 60 * 1000);
+// Run once on startup after 5 minutes
+setTimeout(processAbandonedCarts, 5 * 60 * 1000);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);

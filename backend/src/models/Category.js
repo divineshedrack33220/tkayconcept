@@ -72,7 +72,6 @@ categorySchema.pre('save', function () {
   }
 });
 
-categorySchema.index({ slug: 1 });
 categorySchema.index({ parent: 1 });
 categorySchema.index({ sortOrder: 1 });
 
