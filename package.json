@@ -1,0 +1,12 @@
+{
+  "name": "tkayconcept",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "start": "concurrently -k -n api,web -c blue,green \"cd backend && PORT=5000 node src/server.js\" \"cd frontend && npx next start\""
+  },
+  "dependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
