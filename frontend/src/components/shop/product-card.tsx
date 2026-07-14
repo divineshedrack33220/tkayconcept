@@ -247,24 +247,17 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
             <Heart className={`h-4 w-4 ${isWishlisted ? "fill-red-500" : ""}`} />
           </button>
 
-          {/* Add to cart button - always visible on mobile, hover on desktop */}
+          {/* Add to cart button - desktop only hover */}
           <button
             onClick={handleAddToCart}
-            className={`absolute right-2 top-12 z-10 flex h-9 w-9 items-center justify-center rounded-full shadow-sm backdrop-blur-sm transition-all active:scale-90 sm:h-10 sm:w-10 sm:opacity-0 sm:group-hover:opacity-100 ${
+            className={`absolute right-2 top-12 z-10 hidden sm:flex h-10 w-10 items-center justify-center rounded-full shadow-sm backdrop-blur-sm transition-all hover:scale-110 ${
               addedToCart
-                ? "bg-emerald-500 text-white sm:bg-emerald-500 sm:text-white"
-                : "bg-white/90 text-gray-600 active:bg-accent active:text-white sm:bg-white sm:text-gray-600 sm:hover:bg-accent sm:hover:text-white"
-            } ${!isHovered ? "sm:translate-x-1" : ""}`}
+                ? "bg-emerald-500 text-white"
+                : "bg-white text-gray-600 hover:bg-accent hover:text-white"
+            } ${!isHovered ? "translate-x-1 opacity-0 group-hover:opacity-100" : "opacity-100 translate-x-0"}`}
             title={t("shop.addToCart")}
           >
-            {addedToCart ? (
-              <Zap className="h-4 w-4" />
-            ) : (
-              <Plus className="h-4 w-4 sm:hidden" />
-            )}
-            {!addedToCart && (
-              <ShoppingBag className="h-4 w-4 hidden sm:block" />
-            )}
+            <ShoppingBag className="h-4 w-4" />
           </button>
 
           {/* Quick view bar - only on desktop hover */}
@@ -299,7 +292,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
             </span>
           </div>
 
-          <div className="mt-2 sm:mt-3 flex items-baseline justify-between gap-2">
+          <div className="mt-2 sm:mt-3">
             <div className="flex items-baseline gap-1.5">
               <span className="text-base sm:text-lg font-bold text-primary">
                 ${product.price.toFixed(2)}
@@ -310,16 +303,27 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
                 </span>
               )}
             </div>
-            {/* Mobile add-to-cart text button */}
+            {/* Mobile add-to-cart button */}
             <button
               onClick={handleAddToCart}
-              className={`touch-feedback rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all sm:hidden ${
+              className={`mt-2 w-full flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[13px] font-semibold transition-all active:scale-[0.98] sm:hidden touch-feedback ${
                 addedToCart
                   ? "bg-emerald-500 text-white"
-                  : "bg-primary/10 text-primary active:bg-primary active:text-white"
+                  : "bg-primary text-white active:bg-primary-light"
               }`}
+              style={{ minHeight: 40 }}
             >
-              {addedToCart ? t("product.added") : "+" + t("product.addToCart")}
+              {addedToCart ? (
+                <>
+                  <Zap className="h-3.5 w-3.5" />
+                  {t("product.added")}
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="h-3.5 w-3.5" />
+                  {t("product.addToCart")}
+                </>
+              )}
             </button>
           </div>
         </div>
