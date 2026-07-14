@@ -2,7 +2,7 @@
 
 import { memo, useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ShoppingBag, Package, Heart, Eye, Zap } from "lucide-react";
+import { ShoppingBag, Package, Heart, Eye, Zap, Plus } from "lucide-react";
 import { useSafeAuth } from "@/lib/safe-clerk";
 import { Rating } from "@/components/ui/rating";
 import { FlashSaleTimer } from "@/components/ui/flash-sale-timer";
@@ -96,14 +96,14 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
     return (
       <Link
         href={`/shop/${product.category?.slug}/${product._id}`}
-        className="group flex gap-4 overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-gray-200/50"
+        className="group flex gap-3 sm:gap-4 overflow-hidden rounded-2xl border border-gray-100/80 bg-white p-3 elevation-1 touch-feedback sm:elevation-2"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-xl bg-gray-50 sm:h-40 sm:w-40">
+        <div className="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-gray-50 sm:h-40 sm:w-40">
           {imgError ? (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/5 to-primary/5">
-              <Package className="h-10 w-10 text-gray-300" />
+              <Package className="h-8 w-8 sm:h-10 sm:w-10 text-gray-300" />
             </div>
           ) : (
             <>
@@ -128,49 +128,50 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
               )}
             </>
           )}
-          <div className="absolute left-2 top-2 z-10 flex flex-col gap-1">
+          <div className="absolute left-1.5 top-1.5 z-10 flex flex-col gap-1 sm:left-2 sm:top-2">
             {hasDiscount && (
               <FlashSaleTimer discountPercent={discountPercent} endDate={product.saleEndDate} />
             )}
             {product.isNewArrival && (
-              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-xs font-bold text-white shadow-sm">
+              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-white shadow-sm">
                 {t("product.new")}
               </span>
             )}
           </div>
           <button
             onClick={handleToggleWishlist}
-            className={`absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md transition-all hover:scale-110 ${
-              isWishlisted ? "text-red-500" : "text-gray-500 hover:text-red-500"
+            className={`absolute right-1.5 top-1.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition-all active:scale-90 ${
+              isWishlisted ? "text-red-500" : "text-gray-500 active:text-red-500"
             }`}
           >
             <Heart className={`h-3.5 w-3.5 ${isWishlisted ? "fill-red-500" : ""}`} />
           </button>
         </div>
-        <div className="flex min-w-0 flex-1 flex-col py-1">
-          <p className="mb-0.5 text-xs font-semibold uppercase tracking-wider text-accent">{product.brand}</p>
-          <h3 className="mb-1 text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-accent transition-colors">{product.name}</h3>
+        <div className="flex min-w-0 flex-1 flex-col py-0.5">
+          <p className="mb-0.5 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-accent">{product.brand}</p>
+          <h3 className="mb-0.5 text-[13px] sm:text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-accent transition-colors">{product.name}</h3>
           {product.shortDescription && (
-            <p className="mb-2 text-xs text-gray-500 line-clamp-2">{product.shortDescription}</p>
+            <p className="mb-1.5 text-[11px] sm:text-xs text-gray-500 line-clamp-1 sm:line-clamp-2">{product.shortDescription}</p>
           )}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Rating value={product.averageRating} size="sm" />
-            <span className="text-xs text-gray-400">({product.totalReviews})</span>
+            <span className="text-[10px] sm:text-xs text-gray-400">({product.totalReviews})</span>
           </div>
           <div className="mt-auto flex items-center justify-between pt-2">
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-base sm:text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
               {hasDiscount && (
-                <span className="text-sm text-gray-400 line-through">${product.compareAtPrice!.toFixed(2)}</span>
+                <span className="text-xs sm:text-sm text-gray-400 line-through">${product.compareAtPrice!.toFixed(2)}</span>
               )}
             </div>
             <button
               onClick={handleAddToCart}
-              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+              className={`touch-feedback rounded-xl px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold transition-all ${
                 addedToCart
                   ? "bg-emerald-500 text-white"
-                  : "bg-primary text-white hover:bg-primary-light"
+                  : "bg-primary text-white active:bg-primary-light"
               }`}
+              style={{ minHeight: 36 }}
             >
               {addedToCart ? t("product.added") : t("product.addToCart")}
             </button>
@@ -187,12 +188,12 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:shadow-gray-200/50 group-hover:-translate-y-1">
+      <div className="overflow-hidden rounded-2xl border border-gray-100/80 bg-white elevation-1 transition-all duration-300 group-hover:elevation-3 group-hover:-translate-y-0.5 sm:group-hover:-translate-y-1">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-50">
           {imgError ? (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/5 to-primary/5">
-              <Package className="h-12 w-12 text-gray-300" />
+              <Package className="h-10 w-10 sm:h-12 sm:w-12 text-gray-300" />
             </div>
           ) : (
             <>
@@ -219,54 +220,55 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
           )}
 
           {/* Badges */}
-          <div className="absolute left-2 top-2 z-10 flex max-w-[calc(100%-16px)] flex-col gap-1 sm:left-3 sm:top-3 sm:max-w-[calc(100%-24px)]">
+          <div className="absolute left-1.5 top-1.5 z-10 flex max-w-[calc(100%-48px)] flex-col gap-1 sm:left-3 sm:top-3 sm:max-w-[calc(100%-24px)]">
             {hasDiscount && (
               <FlashSaleTimer discountPercent={discountPercent} endDate={product.saleEndDate} />
             )}
             {product.isNewArrival && (
-              <span className="rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+              <span className="rounded-full bg-emerald-500 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-bold text-white shadow-sm">
                 {t("product.new")}
               </span>
             )}
             {product.isBestSeller && (
-              <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+              <span className="rounded-full bg-accent px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-bold text-white shadow-sm">
                 {t("product.bestSeller")}
               </span>
             )}
           </div>
 
-          {/* Quick actions */}
-          <div className={`absolute right-3 top-3 z-10 flex flex-col gap-2 transition-all duration-300 ${
-            isHovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-2"
-          }`}>
-            <button
-              onClick={handleToggleWishlist}
-              className={`flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg transition-all hover:scale-110 ${
-                isWishlisted ? "text-red-500" : "text-gray-600 hover:text-red-500"
-              }`}
-              title={isWishlisted ? t("product.removeFromWishlist") : t("product.addToWishlist")}
-            >
-              <Heart className={`h-4 w-4 ${isWishlisted ? "fill-red-500" : ""}`} />
-            </button>
-            <button
-              onClick={handleAddToCart}
-              className={`flex h-10 w-10 items-center justify-center rounded-full shadow-lg transition-all hover:scale-110 ${
-                addedToCart
-                  ? "bg-emerald-500 text-white"
-                  : "bg-white text-gray-600 hover:bg-accent hover:text-white"
-              }`}
-              title={t("shop.addToCart")}
-            >
-              {addedToCart ? (
-                <Zap className="h-4 w-4" />
-              ) : (
-                <ShoppingBag className="h-4 w-4" />
-              )}
-            </button>
-          </div>
+          {/* Wishlist button - always visible on mobile, hover on desktop */}
+          <button
+            onClick={handleToggleWishlist}
+            className={`absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition-all active:scale-90 sm:h-10 sm:w-10 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-0 ${
+              isWishlisted ? "text-red-500 sm:text-red-500" : "text-gray-500 active:text-red-500 sm:text-gray-600 sm:hover:text-red-500"
+            } ${!isHovered ? "sm:translate-x-1" : ""}`}
+            title={isWishlisted ? t("product.removeFromWishlist") : t("product.addToWishlist")}
+          >
+            <Heart className={`h-4 w-4 ${isWishlisted ? "fill-red-500" : ""}`} />
+          </button>
 
-          {/* Quick view bar */}
-          <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-4 transition-all duration-300 ${
+          {/* Add to cart button - always visible on mobile, hover on desktop */}
+          <button
+            onClick={handleAddToCart}
+            className={`absolute right-2 top-12 z-10 flex h-9 w-9 items-center justify-center rounded-full shadow-sm backdrop-blur-sm transition-all active:scale-90 sm:h-10 sm:w-10 sm:opacity-0 sm:group-hover:opacity-100 ${
+              addedToCart
+                ? "bg-emerald-500 text-white sm:bg-emerald-500 sm:text-white"
+                : "bg-white/90 text-gray-600 active:bg-accent active:text-white sm:bg-white sm:text-gray-600 sm:hover:bg-accent sm:hover:text-white"
+            } ${!isHovered ? "sm:translate-x-1" : ""}`}
+            title={t("shop.addToCart")}
+          >
+            {addedToCart ? (
+              <Zap className="h-4 w-4" />
+            ) : (
+              <Plus className="h-4 w-4 sm:hidden" />
+            )}
+            {!addedToCart && (
+              <ShoppingBag className="h-4 w-4 hidden sm:block" />
+            )}
+          </button>
+
+          {/* Quick view bar - only on desktop hover */}
+          <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-3 sm:p-4 transition-all duration-300 hidden sm:block ${
             isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}>
             <div className="flex items-center justify-center gap-1 text-sm font-medium text-white">
@@ -277,35 +279,48 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
         </div>
 
         {/* Info */}
-        <div className="p-4">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-accent">
+        <div className="p-3 sm:p-4">
+          <p className="mb-0.5 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-accent">
             {product.brand}
           </p>
-          <h3 className="mb-1 text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-accent transition-colors">
+          <h3 className="mb-0.5 text-[13px] sm:text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-accent transition-colors">
             {product.name}
           </h3>
           {product.shortDescription && (
-            <p className="mb-2 text-xs text-gray-500 line-clamp-1">
+            <p className="mb-1.5 text-[11px] sm:text-xs text-gray-500 line-clamp-1">
               {product.shortDescription}
             </p>
           )}
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Rating value={product.averageRating} size="sm" />
-            <span className="text-xs text-gray-400">
+            <span className="text-[10px] sm:text-xs text-gray-400">
               ({product.totalReviews})
             </span>
           </div>
 
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-lg font-bold text-primary">
-              ${product.price.toFixed(2)}
-            </span>
-            {hasDiscount && (
-              <span className="text-sm text-gray-400 line-through">
-                ${product.compareAtPrice!.toFixed(2)}
+          <div className="mt-2 sm:mt-3 flex items-baseline justify-between gap-2">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-base sm:text-lg font-bold text-primary">
+                ${product.price.toFixed(2)}
               </span>
-            )}
+              {hasDiscount && (
+                <span className="text-[11px] sm:text-sm text-gray-400 line-through">
+                  ${product.compareAtPrice!.toFixed(2)}
+                </span>
+              )}
+            </div>
+            {/* Mobile add-to-cart text button */}
+            <button
+              onClick={handleAddToCart}
+              className={`touch-feedback rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all sm:hidden ${
+                addedToCart
+                  ? "bg-emerald-500 text-white"
+                  : "bg-primary/10 text-primary active:bg-primary active:text-white"
+              }`}
+            >
+              {addedToCart ? t("product.added") : "+" + t("product.addToCart")}
+            </button>
           </div>
         </div>
       </div>

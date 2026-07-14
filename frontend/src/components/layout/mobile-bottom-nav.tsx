@@ -29,8 +29,8 @@ export function MobileBottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 bg-white/95 backdrop-blur-sm safe-area-inset lg:hidden">
-      <div className="flex items-center justify-around py-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100/50 bg-white/95 backdrop-blur-xl lg:hidden safe-area-bottom">
+      <div className="flex items-center justify-around px-2 pb-1 pt-1.5">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.href && pathname === item.href;
@@ -40,13 +40,14 @@ export function MobileBottomNav() {
               <button
                 key={item.label}
                 onClick={() => handleAction(item.action)}
-                className="flex flex-col items-center gap-0.5 px-4 py-1 text-gray-500"
+                className="relative flex flex-col items-center justify-center gap-0.5 rounded-2xl px-4 py-2 text-gray-400 transition-all duration-200 active:scale-90 active:text-accent"
+                style={{ minWidth: 56, minHeight: 48 }}
               >
-                <Icon className="h-5 w-5" />
-                <span className="text-[10px] font-medium">{item.label}</span>
+                <Icon className="h-[22px] w-[22px] transition-transform duration-200" strokeWidth={isActive ? 2.5 : 1.8} />
+                <span className="text-[10px] font-medium leading-none">{item.label}</span>
                 {item.action === "cart" && totalItems > 0 && (
-                  <span className="absolute -mt-5 ml-3 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[8px] font-bold text-white">
-                    {totalItems}
+                  <span className="absolute -top-0.5 right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-white shadow-sm elevation-1">
+                    {totalItems > 99 ? "99+" : totalItems}
                   </span>
                 )}
               </button>
@@ -57,15 +58,23 @@ export function MobileBottomNav() {
             <Link
               key={item.label}
               href={(isSignedIn || item.href === "/") && item.href ? item.href : "/sign-in"}
-              className={`flex flex-col items-center gap-0.5 px-4 py-1 ${
-                isActive ? "text-accent" : "text-gray-500"
-              }`}
+              className="relative flex flex-col items-center justify-center gap-0.5 rounded-2xl px-4 py-2 transition-all duration-200 active:scale-90"
+              style={{ minWidth: 56, minHeight: 48 }}
             >
-              <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <div className={`relative flex items-center justify-center transition-all duration-200 ${
+                isActive ? "text-accent" : "text-gray-400"
+              }`}>
+                {isActive && (
+                  <div className="absolute -inset-2 -top-1 rounded-2xl bg-accent/10" />
+                )}
+                <Icon className="relative h-[22px] w-[22px]" strokeWidth={isActive ? 2.5 : 1.8} />
+              </div>
+              <span className={`text-[10px] font-medium leading-none transition-colors ${
+                isActive ? "text-accent" : "text-gray-400"
+              }`}>{item.label}</span>
               {item.label === "Wishlist" && wishlistCount > 0 && (
-                <span className="absolute -mt-5 ml-3 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white">
-                  {wishlistCount}
+                <span className="absolute -top-0.5 right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white shadow-sm elevation-1">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
                 </span>
               )}
             </Link>

@@ -8,7 +8,7 @@ import { Newsletter } from "@/components/shared/newsletter";
 
 export default function HomePage() {
   return (
-    <>
+    <div className="lg:pb-0 pb-20">
       <HeroSection />
       <FeaturedCategories />
       <FeaturedProducts />
@@ -16,6 +16,6 @@ export default function HomePage() {
       <BlogPreview />
       <RecentlyViewed />
       <Newsletter />
-    </>
+    </div>
   );
 }

@@ -106,16 +106,16 @@ export default function ShopContent() {
   return (
     <div className="section-padding container-custom">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-primary mb-2">Shop</h1>
-        <p className="text-gray-600">
+      <div className="mb-5 sm:mb-8">
+        <h1 className="heading-primary mb-1 sm:mb-2">Shop</h1>
+        <p className="text-xs sm:text-sm text-gray-600">
           {total} {total === 1 ? "product" : "products"} found
         </p>
       </div>
 
       {/* Search + Filters Bar */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <form onSubmit={handleSearch} className="flex gap-2 sm:max-w-md">
+      <div className="mb-4 sm:mb-6 flex flex-col gap-3 sm:gap-4">
+        <form onSubmit={handleSearch} className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
@@ -123,28 +123,37 @@ export default function ShopContent() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products..."
-              className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+              className="input-field pl-10 !py-2.5 text-[14px] sm:text-sm"
+              inputMode="search"
+              enterKeyHint="search"
             />
           </div>
-          <Button variant="primary" type="submit" size="md">
+          <button type="submit" className="touch-feedback rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white active:bg-primary-light" style={{ minHeight: 44 }}>
             Search
-          </Button>
+          </button>
         </form>
 
-        <div className="flex items-center gap-3">
-          <Button
-            variant={showFilters ? "primary" : "outline"}
-            size="sm"
+        <div className="flex items-center gap-2">
+          <button
             onClick={() => setShowFilters(!showFilters)}
+            className={`touch-feedback flex items-center gap-1.5 rounded-xl border px-3.5 py-2.5 text-[13px] sm:text-sm font-medium transition-all active:scale-95 ${
+              showFilters ? "border-accent bg-accent/10 text-accent" : "border-gray-200 text-gray-600 active:bg-gray-50"
+            }`}
+            style={{ minHeight: 40 }}
           >
-            <SlidersHorizontal className="h-4 w-4" />
+            <SlidersHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             Filters
-          </Button>
+            {hasActiveFilters && (
+              <span className="ml-1 h-4 w-4 flex items-center justify-center rounded-full bg-accent text-[9px] text-white">
+                {[category, brand, priceRange !== "0-0", search].filter(Boolean).length}
+              </span>
+            )}
+          </button>
 
-          <div className="hidden sm:flex items-center rounded-lg border border-gray-300">
+          <div className="hidden sm:flex items-center rounded-xl border border-gray-200">
             <button
               onClick={() => setViewMode("grid")}
-              className={`flex h-9 w-9 items-center justify-center rounded-l-lg transition-colors ${
+              className={`flex h-9 w-9 items-center justify-center rounded-l-xl transition-colors ${
                 viewMode === "grid" ? "bg-primary text-white" : "text-gray-400 hover:bg-gray-50"
               }`}
               title="Grid view"
@@ -153,7 +162,7 @@ export default function ShopContent() {
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`flex h-9 w-9 items-center justify-center rounded-r-lg transition-colors ${
+              className={`flex h-9 w-9 items-center justify-center rounded-r-xl transition-colors ${
                 viewMode === "list" ? "bg-primary text-white" : "text-gray-400 hover:bg-gray-50"
               }`}
               title="List view"
@@ -162,14 +171,15 @@ export default function ShopContent() {
             </button>
           </div>
 
-          <div className="relative">
+          <div className="relative ml-auto">
             <select
               value={sort}
               onChange={(e) => {
                 setSort(e.target.value);
                 setPage(1);
               }}
-              className="appearance-none rounded-lg border border-gray-300 bg-white py-2.5 pl-3 pr-8 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+              className="appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-[13px] sm:text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+              style={{ minHeight: 40 }}
             >
               {SORT_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -177,7 +187,7 @@ export default function ShopContent() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
           </div>
         </div>
       </div>
@@ -230,15 +240,15 @@ export default function ShopContent() {
 
       {/* Filter Sidebar (collapsible) */}
       {showFilters && (
-        <div className="mb-6 overflow-hidden rounded-xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm">
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-3">
+        <div className="mb-5 sm:mb-6 overflow-hidden rounded-xl border border-gray-100/80 bg-white p-4 sm:p-6 elevation-2 animate-slide-in-up">
+          <div className="grid gap-5 sm:gap-6 grid-cols-1 sm:grid-cols-3">
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-primary">Category</h3>
-              <div className="space-y-2">
+              <h3 className="mb-2.5 sm:mb-3 text-[13px] sm:text-sm font-semibold text-primary">Category</h3>
+              <div className="flex flex-wrap gap-1.5 sm:space-y-2 sm:flex-col">
                 <button
                   onClick={() => { setCategory(""); setPage(1); }}
-                  className={`block w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                    !category ? "bg-accent/10 text-accent font-medium" : "text-gray-600 hover:bg-gray-50"
+                  className={`touch-feedback rounded-lg px-3 py-2 text-left text-[13px] sm:text-sm transition-all ${
+                    !category ? "bg-accent/10 text-accent font-medium" : "text-gray-600 active:bg-gray-50 hover:bg-gray-50"
                   }`}
                 >
                   All Categories
@@ -247,8 +257,8 @@ export default function ShopContent() {
                   <button
                     key={cat}
                     onClick={() => { setCategory(cat); setPage(1); }}
-                    className={`block w-full rounded-lg px-3 py-2 text-left text-sm capitalize transition-colors ${
-                      category === cat ? "bg-accent/10 text-accent font-medium" : "text-gray-600 hover:bg-gray-50"
+                    className={`touch-feedback rounded-lg px-3 py-2 text-left text-[13px] sm:text-sm capitalize transition-all ${
+                      category === cat ? "bg-accent/10 text-accent font-medium" : "text-gray-600 active:bg-gray-50 hover:bg-gray-50"
                     }`}
                   >
                     {cat}
@@ -258,14 +268,14 @@ export default function ShopContent() {
             </div>
 
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-primary">Price Range</h3>
-              <div className="space-y-2">
+              <h3 className="mb-2.5 sm:mb-3 text-[13px] sm:text-sm font-semibold text-primary">Price Range</h3>
+              <div className="flex flex-wrap gap-1.5 sm:space-y-2 sm:flex-col">
                 {PRICE_RANGES.map((range) => (
                   <button
                     key={range.label}
                     onClick={() => { setPriceRange(`${range.min}-${range.max}`); setPage(1); }}
-                    className={`block w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                      priceRange === `${range.min}-${range.max}` ? "bg-accent/10 text-accent font-medium" : "text-gray-600 hover:bg-gray-50"
+                    className={`touch-feedback rounded-lg px-3 py-2 text-left text-[13px] sm:text-sm transition-all ${
+                      priceRange === `${range.min}-${range.max}` ? "bg-accent/10 text-accent font-medium" : "text-gray-600 active:bg-gray-50 hover:bg-gray-50"
                     }`}
                   >
                     {range.label}
@@ -275,14 +285,14 @@ export default function ShopContent() {
             </div>
 
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-primary">Brand</h3>
-              <div className="space-y-2">
+              <h3 className="mb-2.5 sm:mb-3 text-[13px] sm:text-sm font-semibold text-primary">Brand</h3>
+              <div className="flex flex-wrap gap-1.5 sm:space-y-2 sm:flex-col">
                 {["TKAYKONCEPTS", "Rooted Identity"].map((b) => (
                   <button
                     key={b}
                     onClick={() => { setBrand(brand === b ? "" : b); setPage(1); }}
-                    className={`block w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                      brand === b ? "bg-accent/10 text-accent font-medium" : "text-gray-600 hover:bg-gray-50"
+                    className={`touch-feedback rounded-lg px-3 py-2 text-left text-[13px] sm:text-sm transition-all ${
+                      brand === b ? "bg-accent/10 text-accent font-medium" : "text-gray-600 active:bg-gray-50 hover:bg-gray-50"
                     }`}
                   >
                     {b}
@@ -296,9 +306,9 @@ export default function ShopContent() {
 
       {/* Product Grid */}
       {loading ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-gray-100 bg-white p-3">
+            <div key={i} className="rounded-xl border border-gray-100/80 bg-white p-3">
               <Skeleton className="mb-3 aspect-square w-full rounded-lg" />
               <Skeleton className="mb-2 h-3 w-16" />
               <Skeleton className="mb-1 h-4 w-3/4" />
@@ -308,31 +318,36 @@ export default function ShopContent() {
           ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-16 text-center">
-          <Search className="mx-auto mb-3 h-10 w-10 text-gray-300" />
-          <p className="mb-2 text-gray-500">No products found</p>
-          <p className="mb-4 text-sm text-gray-400">Try adjusting your filters or search</p>
-          <Button variant="outline" size="sm" onClick={clearFilters}>Clear Filters</Button>
+        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-12 sm:py-16 text-center">
+          <Search className="mx-auto mb-3 h-8 w-8 sm:h-10 sm:w-10 text-gray-300" />
+          <p className="mb-2 text-sm sm:text-base text-gray-500">No products found</p>
+          <p className="mb-4 text-xs sm:text-sm text-gray-400">Try adjusting your filters or search</p>
+          <button onClick={clearFilters} className="touch-feedback rounded-xl border border-gray-300 px-4 py-2.5 text-[13px] sm:text-sm font-medium text-gray-600 active:bg-gray-50" style={{ minHeight: 40 }}>
+            Clear Filters
+          </button>
         </div>
       ) : viewMode === "list" ? (
         <>
-          <div className="space-y-3">
+          <div className="space-y-2.5 sm:space-y-3">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} layout="list" />
             ))}
           </div>
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-8" />
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-6 sm:mt-8" />
         </>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} layout="grid" />
             ))}
           </div>
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-8" />
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-6 sm:mt-8" />
         </>
       )}
+
+      {/* Bottom padding for mobile fixed nav */}
+      <div className="h-20 lg:hidden" />
     </div>
   );
 }

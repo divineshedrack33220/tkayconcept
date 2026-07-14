@@ -178,13 +178,13 @@ export function Header() {
 
   return (
     <>
-      <header className={`sticky top-0 z-50 border-b bg-white transition-shadow duration-300 ${
-        scrolled ? "shadow-md border-gray-100" : "border-gray-100"
+      <header className={`sticky top-0 z-50 border-b bg-white/95 backdrop-blur-xl transition-all duration-300 safe-area-top ${
+        scrolled ? "shadow-md border-gray-100/50" : "border-gray-100/50"
       }`}>
         <div className="container-custom">
-          <div className="flex h-16 items-center justify-between gap-4">
-            <Link href="/" className="flex-shrink-0">
-              <span className="text-xl font-bold text-primary">
+          <div className="flex h-[52px] sm:h-16 items-center justify-between gap-2 sm:gap-4">
+            <Link href="/" className="flex-shrink-0 touch-feedback rounded-xl px-1 py-1">
+              <span className="text-lg sm:text-xl font-bold text-primary">
                 TKAY<span className="text-accent">KONCEPTS</span>
               </span>
             </Link>
@@ -236,7 +236,7 @@ export function Header() {
               ))}
             </nav>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5 sm:gap-1">
               <div className="hidden lg:block">
                 <CurrencySelector />
               </div>
@@ -244,8 +244,8 @@ export function Header() {
                 <LanguageSelector />
               </div>
 
-              <button onClick={toggleSearch} className="rounded-lg p-2.5 text-gray-600 hover:bg-gray-100 transition-colors">
-                <Search className="h-5 w-5" />
+              <button onClick={toggleSearch} className="touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
+                <Search className="h-[22px] w-[22px]" />
               </button>
 
               {CLERK_ENABLED_EXPORT && <DesktopUserMenu />}
@@ -256,60 +256,60 @@ export function Header() {
                 </Link>
               )}
 
-              <button onClick={toggleCart} className="relative rounded-lg p-2.5 text-gray-600 hover:bg-gray-100 transition-colors">
-                <ShoppingBag className="h-5 w-5" />
+              <button onClick={toggleCart} className="relative touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
+                <ShoppingBag className="h-[22px] w-[22px]" />
                 {totalItems > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white animate-fade-in">
-                    {totalItems}
+                  <span className="absolute -right-0 -top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-white shadow-sm animate-scale-in">
+                    {totalItems > 99 ? "99+" : totalItems}
                   </span>
                 )}
               </button>
 
-              <button onClick={toggleMobileMenu} className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 lg:hidden">
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <button onClick={toggleMobileMenu} className="touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 lg:hidden" style={{ minWidth: 44, minHeight: 44 }}>
+                {isMobileMenuOpen ? <X className="h-[22px] w-[22px]" /> : <Menu className="h-[22px] w-[22px]" />}
               </button>
             </div>
           </div>
         </div>
 
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden" onClick={toggleMobileMenu} />
+          <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden animate-fade-in" onClick={toggleMobileMenu} />
         )}
 
         <div
-          className={`fixed inset-y-0 left-0 z-50 w-80 bg-white shadow-2xl transition-transform duration-300 ease-out lg:hidden ${
+          className={`fixed inset-y-0 left-0 z-50 w-[min(320px,85vw)] bg-white shadow-2xl transition-transform duration-300 ease-out lg:hidden ${
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 safe-area-top">
               <Link href="/" onClick={toggleMobileMenu} className="text-lg font-bold text-primary">
                 TKAY<span className="text-accent">KONCEPTS</span>
               </Link>
-              <button onClick={toggleMobileMenu} className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100">
+              <button onClick={toggleMobileMenu} className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 active:bg-gray-200 touch-feedback">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto px-3 py-4">
+            <nav className="flex-1 overflow-y-auto px-3 py-3 scroll-y-momentum">
               {navLinks.map((link) => (
                 <div key={link.label}>
                   {link.hasMega ? (
                     <>
                       <button
                         onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
-                        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                        className="flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
                       >
                         {link.label}
                         <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${mobileExpanded === link.label ? "rotate-90" : ""}`} />
                       </button>
                       {mobileExpanded === link.label && (
-                        <div className="ml-4 border-l-2 border-accent/20 pl-4 pb-2">
-                          <Link href={link.href} onClick={toggleMobileMenu} className="block rounded-lg px-3 py-2 text-sm font-semibold text-accent hover:bg-accent/5">
+                        <div className="ml-4 border-l-2 border-accent/20 pl-4 pb-2 animate-slide-in-up">
+                          <Link href={link.href} onClick={toggleMobileMenu} className="block rounded-lg px-3 py-2.5 text-[15px] font-semibold text-accent hover:bg-accent/5 active:bg-accent/10">
                             View All Products
                           </Link>
                           {megaMenuData.categories.map((cat) => (
-                            <Link key={cat.name} href={cat.href} onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-accent">
+                            <Link key={cat.name} href={cat.href} onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] text-gray-600 hover:bg-gray-50 hover:text-accent active:bg-gray-100 touch-feedback">
                               <img src={cat.image} alt={cat.name} className="h-8 w-8 rounded-lg object-cover" />
                               {cat.name}
                             </Link>
@@ -321,7 +321,7 @@ export function Header() {
                     <Link
                       href={link.href}
                       onClick={toggleMobileMenu}
-                      className="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                      className="block rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
                     >
                       {link.label}
                     </Link>
@@ -330,7 +330,7 @@ export function Header() {
               ))}
             </nav>
 
-            <div className="border-t border-gray-100 px-5 py-4">
+            <div className="border-t border-gray-100 px-5 py-4 safe-area-bottom">
               {CLERK_ENABLED_EXPORT && <MobileUserDrawer />}
               {!CLERK_ENABLED_EXPORT && (
                 <Link href="/sign-in" onClick={toggleMobileMenu}>

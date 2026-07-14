@@ -16,8 +16,79 @@
 }
 
 @layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior-y: none;
+  }
+
   body {
     @apply bg-white text-primary antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: contain;
+  }
+
+  /* Momentum scrolling on iOS/Android */
+  .scroll-y-momentum {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Safe area insets for notched phones */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Android-style ripple on tap */
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  .ripple::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(0,0,0,0.08) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .ripple:active::after {
+    opacity: 1;
+    transition: opacity 0s;
+  }
+
+  /* Smooth touch feedback - instant press, smooth release */
+  .touch-feedback {
+    transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s ease;
+  }
+  .touch-feedback:active {
+    transform: scale(0.97);
+    transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  /* Android-style elevation shadows */
+  .elevation-1 {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .elevation-2 {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+  }
+  .elevation-3 {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.05);
   }
 
   * {
@@ -30,32 +101,42 @@
     @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 
+  /* Mobile-first container with comfortable padding */
+  .mobile-container {
+    @apply mx-auto w-full max-w-lg px-4;
+  }
+
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50;
+    @apply inline-flex items-center justify-center rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 active:scale-[0.98];
+    min-height: 48px;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-lg border-2 border-primary bg-transparent px-6 py-3 text-sm font-semibold text-primary transition-all hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+    @apply inline-flex items-center justify-center rounded-xl border-2 border-primary bg-transparent px-6 py-3.5 text-sm font-semibold text-primary transition-all hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 active:scale-[0.98];
+    min-height: 48px;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 active:bg-gray-200;
+    min-height: 44px;
   }
 
   .input-field {
-    @apply w-full rounded-lg border border-gray-300 px-4 py-3 text-sm transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20;
+    @apply w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-[15px] transition-colors focus:border-accent focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20;
+    min-height: 48px;
+    -webkit-appearance: none;
   }
 
   .section-padding {
-    @apply py-16 md:py-24;
+    @apply py-8 md:py-16 lg:py-24;
   }
 
   .heading-primary {
-    @apply text-3xl font-bold tracking-tight text-primary md:text-4xl lg:text-5xl;
+    @apply text-2xl font-bold tracking-tight text-primary sm:text-3xl md:text-4xl lg:text-5xl;
   }
 
   .heading-secondary {
-    @apply text-2xl font-bold tracking-tight text-primary md:text-3xl;
+    @apply text-xl font-bold tracking-tight text-primary sm:text-2xl md:text-3xl;
   }
 
   .text-gradient {
@@ -69,6 +150,12 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Android Material-style card */
+  .card-mobile {
+    @apply rounded-2xl border border-gray-100/80 bg-white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+  }
 }
 
 @keyframes slide-in-right {
@@ -81,6 +168,11 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
+@keyframes slide-in-bottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -91,6 +183,21 @@
   50% { transform: translateY(-10px); }
 }
 
+@keyframes scale-in {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 .animate-slide-in-right {
   animation: slide-in-right 0.3s ease-out;
 }
@@ -99,10 +206,39 @@
   animation: slide-in-up 0.4s ease-out;
 }
 
+.animate-slide-in-bottom {
+  animation: slide-in-bottom 0.35s cubic-bezier(0.2, 0, 0, 1);
+}
+
 .animate-fade-in {
   animation: fade-in 0.5s ease-out;
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.4) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Skeleton loading */
+.skeleton {
+  @apply rounded-xl bg-gray-100;
+  position: relative;
+  overflow: hidden;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.5) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
