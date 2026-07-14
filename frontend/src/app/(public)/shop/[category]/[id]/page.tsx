@@ -356,51 +356,49 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Quantity + Add to Cart */}
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex items-center rounded-xl border-2 border-gray-200">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex items-center rounded-xl border border-gray-200">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 aria-label="Decrease quantity"
-                className="p-3 text-gray-600 transition-colors hover:text-accent"
+                className="flex h-10 w-10 items-center justify-center text-gray-600 transition-colors hover:text-accent"
               >
                 <Minus className="h-4 w-4" />
               </button>
-              <span className="min-w-[48px] text-center text-sm font-bold">{quantity}</span>
+              <span className="min-w-[40px] text-center text-sm font-bold">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
                 aria-label="Increase quantity"
-                className="p-3 text-gray-600 transition-colors hover:text-accent"
+                className="flex h-10 w-10 items-center justify-center text-gray-600 transition-colors hover:text-accent"
               >
                 <Plus className="h-4 w-4" />
               </button>
             </div>
-            <Button
-              variant="accent"
-              size="lg"
-              className="flex-1"
+            <button
               onClick={handleAddToCart}
               disabled={product.stock === 0}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] touch-feedback min-h-[44px] ${
+                addedToCart
+                  ? "bg-emerald-500 text-white"
+                  : "bg-accent text-white hover:bg-accent-dark"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {addedToCart ? (
-                <>
-                  <Check className="h-5 w-5" /> Added to Cart!
-                </>
+                <><Check className="h-4 w-4" /> Added!</>
               ) : (
-                <>
-                  <ShoppingBag className="h-5 w-5" /> Add to Cart
-                </>
+                <><ShoppingBag className="h-4 w-4" /> Add to Cart</>
               )}
-            </Button>
+            </button>
             <button
               onClick={handleToggleWishlist}
               aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-              className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 transition-all ${
+              className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all ${
                 isWishlisted
                   ? "border-red-200 bg-red-50 text-red-500"
                   : "border-gray-200 text-gray-400 hover:border-red-200 hover:text-red-500"
               }`}
             >
-              <Heart className={`h-5 w-5 ${isWishlisted ? "fill-red-500" : ""}`} />
+              <Heart className={`h-4 w-4 ${isWishlisted ? "fill-red-500" : ""}`} />
             </button>
           </div>
 

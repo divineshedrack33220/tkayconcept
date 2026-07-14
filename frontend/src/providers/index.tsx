@@ -4,8 +4,14 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "sonner";
+import { useKeepAlive } from "@/hooks/useKeepAlive";
 
 export const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+function KeepAlive() {
+  useKeepAlive();
+  return null;
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -25,6 +31,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   const content = (
     <QueryClientProvider client={queryClient}>
+      <KeepAlive />
       {children}
       <Toaster position="bottom-right" richColors closeButton />
     </QueryClientProvider>
