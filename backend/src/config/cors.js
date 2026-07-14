@@ -2,9 +2,10 @@ const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
       process.env.FRONTEND_URL,
+      'https://tkayconcept-frontend.onrender.com',
       'http://localhost:3000',
       'http://localhost:3001',
-    ];
+    ].filter(Boolean);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {

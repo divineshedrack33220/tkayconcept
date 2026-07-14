@@ -7,6 +7,7 @@ const fallbackUser = { isSignedIn: false, user: null } as const;
 const fallbackClerk = { signOut: async () => {} } as const;
 
 export function useSafeAuth() {
+  if (!CLERK_ENABLED) return fallbackAuth;
   try {
     return clerkUseAuth();
   } catch {
@@ -15,6 +16,7 @@ export function useSafeAuth() {
 }
 
 export function useSafeUser() {
+  if (!CLERK_ENABLED) return fallbackUser;
   try {
     return clerkUseUser();
   } catch {
@@ -23,6 +25,7 @@ export function useSafeUser() {
 }
 
 export function useSafeClerk() {
+  if (!CLERK_ENABLED) return fallbackClerk;
   try {
     return clerkUseClerk();
   } catch {
