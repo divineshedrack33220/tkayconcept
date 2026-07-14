@@ -10,14 +10,7 @@ import { OfflineBanner } from "@/components/ui/offline-banner";
 import { BackendStatusProvider } from "@/components/providers/backend-status";
 
 const ClerkProviderWrapper = dynamic(
-  () => import("@clerk/nextjs").then((m) => {
-    const ClerkInner = ({ children }: { children: ReactNode }) => (
-      <m.ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk"}>
-        {children}
-      </m.ClerkProvider>
-    );
-    return { default: ClerkInner };
-  }),
+  () => import("./clerk-provider-wrap").then((m) => m.ClerkProviderWrap),
   { ssr: false }
 );
 

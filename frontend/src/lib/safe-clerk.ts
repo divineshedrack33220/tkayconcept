@@ -1,3 +1,5 @@
+import { useClerkCtx } from "@/lib/clerk-context";
+
 const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
 export const CLERK_ENABLED = !!CLERK_KEY;
 
@@ -20,48 +22,23 @@ type SafeUser = {
 };
 type SafeClerk = { signOut: () => Promise<void> };
 
-let clerkMod: Record<string, unknown> | null = null;
-
-function loadClerk() {
-  if (clerkMod) return clerkMod;
-  if (typeof window === "undefined") return null;
-  try {
-    clerkMod = require("@clerk/nextjs");
-    return clerkMod;
-  } catch {
-    return null;
-  }
-}
-
 export function useSafeAuth(): SafeAuth {
   if (!CLERK_ENABLED) return fallbackAuth;
-  const mod = loadClerk();
-  if (!mod) return fallbackAuth;
-  try {
-    return (mod as { useAuth: () => SafeAuth }).useAuth();
-  } catch {
-    return fallbackAuth;
-  }
+  const ctx = useClerkCtx();
+  if (!ctx) return fallbackAuth;
+  return ctx.auth;
 }
 
 export function useSafeUser(): SafeUser {
   if (!CLERK_ENABLED) return fallbackUser;
-  const mod = loadClerk();
-  if (!mod) return fallbackUser;
-  try {
-    return (mod as { useUser: () => SafeUser }).useUser();
-  } catch {
-    return fallbackUser;
-  }
+  const ctx = useClerkCtx();
+  if (!ctx) return fallbackUser;
+  return ctx.user;
 }
 
 export function useSafeClerk(): SafeClerk {
   if (!CLERK_ENABLED) return fallbackClerk;
-  const mod = loadClerk();
-  if (!mod) return fallbackClerk;
-  try {
-    return (mod as { useClerk: () => SafeClerk }).useClerk();
-  } catch {
-    return fallbackClerk;
-  }
+  const ctx = useClerkCtx();
+  if (!ctx) return fallbackClerk;
+  return { signOut: ctx.signOut };
 }
