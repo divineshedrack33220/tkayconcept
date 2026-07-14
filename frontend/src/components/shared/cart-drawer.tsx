@@ -169,7 +169,7 @@ export function CartDrawer() {
                     <div className="flex min-w-0 flex-1 flex-col">
                       <p className="text-[13px] sm:text-sm font-semibold text-gray-900 line-clamp-1">{item.product.name}</p>
                       {item.variant && (
-                        <p className="mt-0.5 text-[11px] sm:text-xs text-gray-500">{item.variant.name}: {item.variant.value}</p>
+                        <p className="mt-0.5 text-[11px] sm:text-xs text-gray-500">{Object.entries(item.variant).map(([k, v]) => `${k}: ${v}`).join(" · ")}</p>
                       )}
                       <p className="mt-auto pt-1 text-[13px] sm:text-sm font-bold text-primary">{formatPrice(item.product.price)}</p>
                       <div className="mt-2 flex items-center gap-2">

@@ -37,6 +37,14 @@ import api from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
+function getColorHex(color: string): string {
+  const map: Record<string, string> = {
+    "Black": "#1a1a1a", "White": "#ffffff", "Navy": "#1e3a5f",
+    "Olive Green": "#556b2f", "Sand": "#c2b280", "Charcoal Grey": "#36454f",
+  };
+  return map[color] || "#888888";
+}
+
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -313,22 +321,27 @@ export default function ProductDetailPage() {
                     {variant.name}: <span className="text-accent">{selectedVariant[variant.name] || "Select"}</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {variant.options.map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setSelectedVariant((prev) => ({ ...prev, [variant.name]: opt.value }))}
-                        disabled={opt.stock === 0}
-                        className={`rounded-xl border-2 px-5 py-2.5 text-sm font-semibold transition-all ${
-                          selectedVariant[variant.name] === opt.value
-                            ? "border-accent bg-accent text-white shadow-md shadow-accent/20"
-                            : opt.stock === 0
-                            ? "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300 line-through"
-                            : "border-gray-200 hover:border-accent hover:text-accent"
-                        }`}
-                      >
-                        {opt.value}
-                      </button>
-                    ))}
+                    {variant.options.map((opt) => {
+                      const isColor = variant.name === "Color";
+                      const isActive = selectedVariant[variant.name] === opt.value;
+                      return (
+                        <button
+                          key={opt.value}
+                          onClick={() => setSelectedVariant((prev) => ({ ...prev, [variant.name]: opt.value }))}
+                          disabled={opt.stock === 0}
+                          className={`${
+                            isColor
+                              ? `h-10 w-10 rounded-full border-2 transition-all ${isActive ? "ring-2 ring-accent ring-offset-2 scale-110" : "hover:scale-105"} ${opt.stock === 0 ? "cursor-not-allowed opacity-30" : ""}`
+                              : `rounded-xl border-2 px-5 py-2.5 text-sm font-semibold transition-all ${isActive ? "border-accent bg-accent text-white shadow-md shadow-accent/20" : opt.stock === 0 ? "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300 line-through" : "border-gray-200 hover:border-accent hover:text-accent"}`
+                          }`}
+                          style={isColor ? { backgroundColor: getColorHex(opt.value), borderColor: isActive ? "var(--color-accent, #D4AF37)" : "#e5e7eb" } : undefined}
+                          title={opt.value}
+                          aria-label={`${variant.name}: ${opt.value}`}
+                        >
+                          {!isColor && opt.value}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}

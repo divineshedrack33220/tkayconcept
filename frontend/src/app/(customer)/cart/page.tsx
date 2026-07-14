@@ -85,7 +85,7 @@ export default function CartPage() {
                     </Link>
                     {item.variant && (
                       <p className="mt-0.5 text-xs text-gray-500">
-                        {item.variant.name}: {item.variant.value}
+                        {Object.entries(item.variant).map(([k, v]) => `${k}: ${v}`).join(" · ")}
                       </p>
                     )}
                   </div>

@@ -469,7 +469,7 @@ export default function CheckoutPage() {
                     >
                       <span className="text-gray-700">
                         {item.product.name} x{item.quantity}
-                        {item.variant && ` (${item.variant.value})`}
+                        {item.variant && ` (${Object.values(item.variant).join(", ")})`}
                       </span>
                       <span className="font-medium">
                         ${(item.product.price * item.quantity).toFixed(2)}

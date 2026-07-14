@@ -131,7 +131,7 @@ export default function OrdersPage() {
                             <div key={idx} className="flex items-center justify-between text-sm">
                               <span className="text-gray-700">
                                 {item.name} x{item.quantity}
-                                {item.variant && ` (${item.variant.value})`}
+                                {item.variant && ` (${Object.values(item.variant).join(", ")})`}
                               </span>
                               <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
                             </div>
