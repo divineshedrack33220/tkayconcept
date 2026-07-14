@@ -1,25 +1,34 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-const isCustomerRoute = createRouteMatcher([
-  "/cart",
-  "/checkout",
-  "/account(.*)",
-  "/orders",
-  "/wishlist",
-]);
+const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-export const proxy = clerkMiddleware(async (auth, req) => {
-  if (isAdminRoute(req) || isCustomerRoute(req)) {
-    const { userId } = await auth();
-    if (!userId) {
-      const signInUrl = new URL("/sign-in", req.url);
-      signInUrl.searchParams.set("redirect_url", req.url);
-      return NextResponse.redirect(signInUrl);
+export async function proxy(req: NextRequest) {
+  if (!CLERK_ENABLED) return NextResponse.next();
+
+  const { clerkMiddleware, createRouteMatcher } = await import("@clerk/nextjs/server");
+
+  const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+  const isCustomerRoute = createRouteMatcher([
+    "/cart",
+    "/checkout",
+    "/account(.*)",
+    "/orders",
+    "/wishlist",
+  ]);
+
+  const handler = clerkMiddleware(async (auth, req) => {
+    if (isAdminRoute(req) || isCustomerRoute(req)) {
+      const { userId } = await auth();
+      if (!userId) {
+        const signInUrl = new URL("/sign-in", req.url);
+        signInUrl.searchParams.set("redirect_url", req.url);
+        return NextResponse.redirect(signInUrl);
+      }
     }
-  }
-});
+  });
+
+  return handler(req, {} as never) as Promise<NextResponse>;
+}
 
 export const config = {
   matcher: [
