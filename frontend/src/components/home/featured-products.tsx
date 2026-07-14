@@ -7,6 +7,7 @@ import { ProductCard } from "@/components/shop/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollReveal, ScrollRevealStagger, StaggerItem } from "@/components/ui/scroll-reveal";
 import { useTranslation } from "@/i18n";
+import { useRefetchOnWakeUp } from "@/hooks/useRefetchOnWakeUp";
 import api from "@/lib/api";
 import type { Product } from "@/types";
 
@@ -14,9 +15,11 @@ export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
+  const refetchKey = useRefetchOnWakeUp();
 
   useEffect(() => {
     const controller = new AbortController();
+    setLoading(true);
     const fetchProducts = async () => {
       try {
         const res = await api.get("/products/featured?limit=12", { signal: controller.signal });
@@ -29,7 +32,7 @@ export function FeaturedProducts() {
     };
     fetchProducts();
     return () => controller.abort();
-  }, []);
+  }, [refetchKey]);
 
   if (loading) {
     return (

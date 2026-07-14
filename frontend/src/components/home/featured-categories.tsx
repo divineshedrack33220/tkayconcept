@@ -6,6 +6,7 @@ import { BookOpen, Gamepad2, Palette, Printer, Shirt, ShoppingBag, Heart, Watch,
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { useTranslation } from "@/i18n";
+import { useRefetchOnWakeUp } from "@/hooks/useRefetchOnWakeUp";
 import api from "@/lib/api";
 import type { Category } from "@/types";
 
@@ -35,15 +36,17 @@ export function FeaturedCategories() {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+  const refetchKey = useRefetchOnWakeUp();
 
   useEffect(() => {
     const controller = new AbortController();
+    setLoading(true);
     api.get("/categories?active=true&limit=8", { signal: controller.signal })
       .then((res) => { if (!controller.signal.aborted) setCategories(res.data.data || []); })
       .catch(() => {})
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, []);
+  }, [refetchKey]);
 
   const displayCategories = categories.length > 0
     ? categories.slice(0, 8).map((c) => ({

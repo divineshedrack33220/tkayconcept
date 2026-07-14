@@ -6,6 +6,7 @@ import { Rating } from "@/components/ui/rating";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { useTranslation } from "@/i18n";
+import { useRefetchOnWakeUp } from "@/hooks/useRefetchOnWakeUp";
 import api from "@/lib/api";
 import type { Testimonial } from "@/types";
 
@@ -14,15 +15,17 @@ export function TestimonialsSection() {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+  const refetchKey = useRefetchOnWakeUp();
 
   useEffect(() => {
     const controller = new AbortController();
+    setLoading(true);
     api.get("/testimonials/public?limit=10", { signal: controller.signal })
       .then((res) => { if (!controller.signal.aborted) setTestimonials(res.data.data); })
       .catch(() => {})
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, []);
+  }, [refetchKey]);
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;

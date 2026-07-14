@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { useKeepAlive } from "@/hooks/useKeepAlive";
 import { OfflineBanner } from "@/components/ui/offline-banner";
+import { BackendStatusProvider } from "@/components/providers/backend-status";
 
 export const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -43,12 +44,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   const inner = (
-    <>
+    <BackendStatusProvider>
       <OfflineBanner />
       <KeepAlive />
       {children}
       <Toaster position="bottom-right" richColors closeButton />
-    </>
+    </BackendStatusProvider>
   );
 
   const content = (
