@@ -1,5 +1,3 @@
-import { useAuth as clerkUseAuth, useUser as clerkUseUser, useClerk as clerkUseClerk } from "@clerk/nextjs";
-
 const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
 export const CLERK_ENABLED = !!CLERK_KEY;
 
@@ -22,10 +20,25 @@ type SafeUser = {
 };
 type SafeClerk = { signOut: () => Promise<void> };
 
+let clerkMod: Record<string, unknown> | null = null;
+
+function loadClerk() {
+  if (clerkMod) return clerkMod;
+  if (typeof window === "undefined") return null;
+  try {
+    clerkMod = require("@clerk/nextjs");
+    return clerkMod;
+  } catch {
+    return null;
+  }
+}
+
 export function useSafeAuth(): SafeAuth {
   if (!CLERK_ENABLED) return fallbackAuth;
+  const mod = loadClerk();
+  if (!mod) return fallbackAuth;
   try {
-    return clerkUseAuth() as SafeAuth;
+    return (mod as { useAuth: () => SafeAuth }).useAuth();
   } catch {
     return fallbackAuth;
   }
@@ -33,8 +46,10 @@ export function useSafeAuth(): SafeAuth {
 
 export function useSafeUser(): SafeUser {
   if (!CLERK_ENABLED) return fallbackUser;
+  const mod = loadClerk();
+  if (!mod) return fallbackUser;
   try {
-    return clerkUseUser() as unknown as SafeUser;
+    return (mod as { useUser: () => SafeUser }).useUser();
   } catch {
     return fallbackUser;
   }
@@ -42,8 +57,10 @@ export function useSafeUser(): SafeUser {
 
 export function useSafeClerk(): SafeClerk {
   if (!CLERK_ENABLED) return fallbackClerk;
+  const mod = loadClerk();
+  if (!mod) return fallbackClerk;
   try {
-    return clerkUseClerk() as SafeClerk;
+    return (mod as { useClerk: () => SafeClerk }).useClerk();
   } catch {
     return fallbackClerk;
   }
