@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { useAuth } from "@clerk/nextjs";
+import { useTranslation } from "@/i18n";
 import { toast } from "sonner";
 import api from "@/lib/api";
 
@@ -14,6 +15,7 @@ const AMOUNTS = [25, 50, 75, 100, 150, 200];
 export default function GiftCardsPage() {
   const { isSignedIn } = useAuth();
   const authApi = useAuthenticatedApi();
+  const { t } = useTranslation();
   const [amount, setAmount] = useState(50);
   const [customAmount, setCustomAmount] = useState("");
   const [recipientEmail, setRecipientEmail] = useState("");
@@ -31,11 +33,11 @@ export default function GiftCardsPage() {
 
   const handlePurchase = async () => {
     if (!isSignedIn) {
-      toast.error("Sign in to purchase a gift card");
+      toast.error(t("giftCard.signInToPurchase"));
       return;
     }
     if (finalAmount < 5 || finalAmount > 500) {
-      toast.error("Amount must be between $5 and $500");
+      toast.error(t("giftCard.amountError"));
       return;
     }
     setPurchasing(true);
@@ -48,9 +50,9 @@ export default function GiftCardsPage() {
       });
       setPurchasedCode(res.data.data.code);
       setPurchased(true);
-      toast.success("Gift card purchased!");
+      toast.success(t("giftCard.purchasedSuccess"));
     } catch {
-      toast.error("Failed to purchase gift card");
+      toast.error(t("giftCard.purchaseError"));
     } finally {
       setPurchasing(false);
     }
@@ -58,11 +60,11 @@ export default function GiftCardsPage() {
 
   const handleRedeem = async () => {
     if (!isSignedIn) {
-      toast.error("Sign in to redeem a gift card");
+      toast.error(t("giftCard.signInToRedeem"));
       return;
     }
     if (!redeemCode) {
-      toast.error("Enter a gift card code");
+      toast.error(t("giftCard.enterCode"));
       return;
     }
     setRedeeming(true);
@@ -71,7 +73,7 @@ export default function GiftCardsPage() {
       setRedeemedBalance(res.data.data.balance);
       toast.success(`Gift card valid! Balance: $${res.data.data.balance}`);
     } catch {
-      toast.error("Invalid or expired gift card");
+      toast.error(t("giftCard.invalidCard"));
     } finally {
       setRedeeming(false);
     }
@@ -80,7 +82,7 @@ export default function GiftCardsPage() {
   const copyCode = async () => {
     try {
       await navigator.clipboard.writeText(purchasedCode);
-      toast.success("Code copied!");
+      toast.success(t("giftCard.codeCopied"));
     } catch {}
   };
 
@@ -89,8 +91,8 @@ export default function GiftCardsPage() {
       <section className="bg-gradient-to-r from-accent to-accent-dark py-16 text-white">
         <div className="container-custom text-center">
           <Gift className="mx-auto mb-4 h-12 w-12" />
-          <h1 className="mb-2 text-4xl font-bold">Gift Cards</h1>
-          <p className="text-white/80">Give the gift of choice — perfect for any occasion</p>
+          <h1 className="mb-2 text-4xl font-bold">{t("giftCard.title")}</h1>
+          <p className="text-white/80">{t("giftCard.subtitle")}</p>
         </div>
       </section>
 
@@ -105,7 +107,7 @@ export default function GiftCardsPage() {
               }`}
             >
               <CreditCard className="mr-2 inline h-4 w-4" />
-              Buy Gift Card
+              {t("giftCard.buyGiftCard")}
             </button>
             <button
               onClick={() => setActiveTab("redeem")}
@@ -114,7 +116,7 @@ export default function GiftCardsPage() {
               }`}
             >
               <Gift className="mr-2 inline h-4 w-4" />
-              Redeem Code
+              {t("giftCard.redeemCode")}
             </button>
           </div>
 
@@ -122,22 +124,22 @@ export default function GiftCardsPage() {
             purchased ? (
               <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
                 <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-500" />
-                <h2 className="mb-2 text-2xl font-bold text-gray-900">Gift Card Purchased!</h2>
-                <p className="mb-6 text-gray-500">Share this code with the recipient:</p>
+                <h2 className="mb-2 text-2xl font-bold text-gray-900">{t("giftCard.purchasedSuccess")}</h2>
+                <p className="mb-6 text-gray-500">{t("giftCard.shareCode")}</p>
                 <div className="mx-auto mb-6 flex max-w-sm items-center justify-center gap-3 rounded-xl border-2 border-dashed border-accent/30 bg-accent/5 p-6">
                   <span className="text-2xl font-bold tracking-widest text-accent">{purchasedCode}</span>
                   <button onClick={copyCode} className="rounded-lg bg-accent p-2 text-white hover:bg-accent-light">
                     <Copy className="h-5 w-5" />
                   </button>
                 </div>
-                <p className="mb-4 text-sm text-gray-500">Value: ${finalAmount} · Expires in 1 year</p>
+                <p className="mb-4 text-sm text-gray-500">{t("giftCard.valueExpires", { amount: finalAmount })}</p>
                 {recipientEmail && (
-                  <p className="text-xs text-gray-400">A notification has been sent to {recipientEmail}</p>
+                  <p className="text-xs text-gray-400">{t("giftCard.notificationSent", { email: recipientEmail })}</p>
                 )}
               </div>
             ) : (
               <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-                <h2 className="mb-6 text-xl font-bold text-gray-900">Select Amount</h2>
+                <h2 className="mb-6 text-xl font-bold text-gray-900">{t("giftCard.selectAmount")}</h2>
 
                 {/* Amount Grid */}
                 <div className="mb-6 grid grid-cols-3 gap-3">
@@ -157,7 +159,7 @@ export default function GiftCardsPage() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Custom Amount ($5-$500)</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">{t("giftCard.customAmount")}</label>
                   <Input
                     type="number"
                     min="5"
@@ -171,7 +173,7 @@ export default function GiftCardsPage() {
                 <div className="mb-6 space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-gray-700">Recipient Email</label>
+                      <label className="mb-1 block text-sm font-medium text-gray-700">{t("giftCard.recipientEmail")}</label>
                       <Input
                         type="email"
                         value={recipientEmail}
@@ -180,7 +182,7 @@ export default function GiftCardsPage() {
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-gray-700">Recipient Name</label>
+                      <label className="mb-1 block text-sm font-medium text-gray-700">{t("giftCard.recipientName")}</label>
                       <Input
                         value={recipientName}
                         onChange={(e) => setRecipientName(e.target.value)}
@@ -189,7 +191,7 @@ export default function GiftCardsPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">Personal Message (optional)</label>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">{t("giftCard.message")}</label>
                     <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
@@ -208,9 +210,9 @@ export default function GiftCardsPage() {
             )
           ) : (
             <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-              <h2 className="mb-6 text-xl font-bold text-gray-900">Redeem a Gift Card</h2>
+              <h2 className="mb-6 text-xl font-bold text-gray-900">{t("giftCard.redeem")}</h2>
               <div className="mb-6">
-                <label className="mb-1 block text-sm font-medium text-gray-700">Gift Card Code</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">{t("giftCard.code")}</label>
                 <Input
                   value={redeemCode}
                   onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
@@ -220,13 +222,13 @@ export default function GiftCardsPage() {
               </div>
               <Button variant="accent" size="lg" className="w-full" onClick={handleRedeem} disabled={redeeming}>
                 {redeeming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gift className="h-4 w-4" />}
-                Check Balance
+                {t("giftCard.checkBalance")}
               </Button>
               {redeemedBalance !== null && (
                 <div className="mt-6 rounded-xl bg-emerald-50 p-6 text-center">
-                  <p className="mb-1 text-sm text-emerald-600">Available Balance</p>
+                  <p className="mb-1 text-sm text-emerald-600">{t("giftCard.availableBalance")}</p>
                   <p className="text-3xl font-bold text-emerald-700">${redeemedBalance.toFixed(2)}</p>
-                  <p className="mt-2 text-xs text-emerald-500">Apply this code at checkout to use your balance</p>
+                  <p className="mt-2 text-xs text-emerald-500">{t("giftCard.applyAtCheckout")}</p>
                 </div>
               )}
             </div>

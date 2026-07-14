@@ -40,7 +40,9 @@
   "cart": {
     "title": "Your Cart",
     "items": "{{count}} items",
+    "item": "1 item",
     "empty": "Your cart is empty",
+    "emptyDiscover": "Discover something you love",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
     "free": "Free",
@@ -50,7 +52,9 @@
     "continueShopping": "Continue Shopping",
     "freeShipping": "You qualify for free shipping!",
     "addMore": "Add {{amount}} more for free shipping",
-    "youMayAlsoLike": "You may also like"
+    "youMayAlsoLike": "You may also like",
+    "remove": "Remove",
+    "add": "Add"
   },
   "product": {
     "brand": "Brand",
@@ -66,9 +70,15 @@
     "bundlePrice": "Bundle Price",
     "youSave": "You save {{amount}}",
     "addToCart": "Add to Cart",
-    "added": "Added to Cart!",
+    "added": "Added!",
     "viewingNow": "{{count}} people are viewing this right now",
-    "orderSoon": "Only {{count}} left in stock — order soon!"
+    "orderSoon": "Only {{count}} left in stock — order soon!",
+    "removeFromWishlist": "Remove from wishlist",
+    "addToWishlist": "Add to wishlist",
+    "signInToWishlist": "Sign in to add to wishlist",
+    "addedToWishlist": "Added to wishlist!",
+    "removedFromWishlist": "Removed from wishlist",
+    "wishlistError": "Failed to update wishlist"
   },
   "checkout": {
     "title": "Checkout",
@@ -121,6 +131,7 @@
     "email": "Email Address",
     "trackOrder": "Track Order",
     "notFound": "Order not found. Please check your details and try again.",
+    "pleaseEnterBoth": "Please enter both order number and email",
     "orderPlaced": "Order Placed",
     "confirmed": "Confirmed",
     "processing": "Processing",
@@ -129,21 +140,43 @@
     "cancelled": "This order has been cancelled.",
     "tracking": "TRACKING",
     "items": "ITEMS",
-    "shippingTo": "SHIPPING TO"
+    "shippingTo": "SHIPPING TO",
+    "carrier": "Carrier",
+    "trackOnCarrier": "Track on carrier website",
+    "qty": "Qty",
+    "total": "Total"
   },
   "giftCard": {
     "title": "Gift Cards",
-    "subtitle": "Give the gift of choice",
+    "subtitle": "Give the gift of choice — perfect for any occasion",
     "amount": "Amount",
     "recipientEmail": "Recipient Email",
     "recipientName": "Recipient Name",
-    "message": "Personal Message",
+    "message": "Personal Message (optional)",
     "purchase": "Purchase Gift Card",
+    "buyGiftCard": "Buy Gift Card",
+    "redeem": "Redeem Gift Card",
+    "redeemCode": "Redeem Code",
     "yourCards": "Your Gift Cards",
     "balance": "Balance",
-    "expires": "Expires",
-    "redeem": "Redeem Gift Card",
-    "code": "Gift Card Code"
+    "checkBalance": "Check Balance",
+    "expires": "Expires in 1 year",
+    "code": "Gift Card Code",
+    "selectAmount": "Select Amount",
+    "customAmount": "Custom Amount ($5–$500)",
+    "purchasedSuccess": "Gift Card Purchased!",
+    "shareCode": "Share this code with the recipient:",
+    "valueExpires": "Value: ${{amount}} · Expires in 1 year",
+    "notificationSent": "A notification has been sent to {{email}}",
+    "signInToPurchase": "Sign in to purchase a gift card",
+    "signInToRedeem": "Sign in to redeem a gift card",
+    "enterCode": "Enter a gift card code",
+    "invalidCard": "Invalid or expired gift card",
+    "codeCopied": "Code copied!",
+    "purchaseError": "Failed to purchase gift card",
+    "amountError": "Amount must be between $5 and $500",
+    "availableBalance": "Available Balance",
+    "applyAtCheckout": "Apply this code at checkout to use your balance"
   },
   "currency": {
     "label": "Currency"

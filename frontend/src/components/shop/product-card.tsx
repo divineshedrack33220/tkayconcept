@@ -10,6 +10,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -18,6 +19,7 @@ interface ProductCardProps {
 }
 
 const ProductCardInner = memo(function ProductCardInner({ product, layout = "grid" }: ProductCardProps) {
+  const { t } = useTranslation();
   const addItem = useCartStore((s) => s.addItem);
   const [imgError, setImgError] = useState(false);
   const { isSignedIn } = useAuth();
@@ -45,7 +47,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
     e.preventDefault();
     e.stopPropagation();
     if (!isSignedIn) {
-      toast.error("Sign in to add to wishlist");
+      toast.error(t("product.signInToWishlist"));
       return;
     }
     try {
@@ -53,15 +55,15 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
         await authApi.delete(`/wishlist/${product._id}`);
         wishlistRemoveItem(product._id);
         setIsWishlisted(false);
-        toast.success("Removed from wishlist");
+        toast.success(t("product.removedFromWishlist"));
       } else {
         await authApi.post(`/wishlist/${product._id}`);
         wishlistAddItem(product);
         setIsWishlisted(true);
-        toast.success("Added to wishlist!");
+        toast.success(t("product.addedToWishlist"));
       }
     } catch {
-      toast.error("Failed to update wishlist");
+      toast.error(t("product.wishlistError"));
     }
   };
 
@@ -86,7 +88,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
     e.stopPropagation();
     addItem(product);
     setAddedToCart(true);
-    toast.success(`${product.name} added to cart!`);
+    toast.success(t("product.addToCart") + "!");
     setTimeout(() => setAddedToCart(false), 1500);
   };
 
@@ -132,7 +134,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
             )}
             {product.isNewArrival && (
               <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-xs font-bold text-white shadow-sm">
-                New
+                {t("product.new")}
               </span>
             )}
           </div>
@@ -170,7 +172,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
                   : "bg-primary text-white hover:bg-primary-light"
               }`}
             >
-              {addedToCart ? "Added!" : "Add to Cart"}
+              {addedToCart ? t("product.added") : t("product.addToCart")}
             </button>
           </div>
         </div>
@@ -223,12 +225,12 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
             )}
             {product.isNewArrival && (
               <span className="rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
-                New
+                {t("product.new")}
               </span>
             )}
             {product.isBestSeller && (
               <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-white shadow-sm">
-                Best Seller
+                {t("product.bestSeller")}
               </span>
             )}
           </div>
@@ -242,7 +244,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
               className={`flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg transition-all hover:scale-110 ${
                 isWishlisted ? "text-red-500" : "text-gray-600 hover:text-red-500"
               }`}
-              title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              title={isWishlisted ? t("product.removeFromWishlist") : t("product.addToWishlist")}
             >
               <Heart className={`h-4 w-4 ${isWishlisted ? "fill-red-500" : ""}`} />
             </button>
@@ -253,7 +255,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
                   ? "bg-emerald-500 text-white"
                   : "bg-white text-gray-600 hover:bg-accent hover:text-white"
               }`}
-              title="Add to cart"
+              title={t("shop.addToCart")}
             >
               {addedToCart ? (
                 <Zap className="h-4 w-4" />
@@ -269,7 +271,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
           }`}>
             <div className="flex items-center justify-center gap-1 text-sm font-medium text-white">
               <Eye className="h-4 w-4" />
-              Quick View
+              {t("shop.quickView")}
             </div>
           </div>
         </div>

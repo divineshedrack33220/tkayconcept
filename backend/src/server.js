@@ -1,4 +1,4 @@
-require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -152,10 +152,8 @@ setInterval(processAbandonedCarts, 30 * 60 * 1000);
 // Run once on startup after 5 minutes
 setTimeout(processAbandonedCarts, 5 * 60 * 1000);
 
-if (!process.env.SKIP_LISTEN) {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+});
 
 module.exports = app;

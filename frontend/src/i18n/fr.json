@@ -40,7 +40,9 @@
   "cart": {
     "title": "Votre Panier",
     "items": "{{count}} articles",
+    "item": "1 article",
     "empty": "Votre panier est vide",
+    "emptyDiscover": "Découvrez quelque chose que vous aimez",
     "subtotal": "Sous-total",
     "shipping": "Livraison",
     "free": "Gratuite",
@@ -50,7 +52,9 @@
     "continueShopping": "Continuer les Achats",
     "freeShipping": "Vous êtes éligible à la livraison gratuite!",
     "addMore": "Ajoutez {{amount}} de plus pour la livraison gratuite",
-    "youMayAlsoLike": "Vous Aimerez Aussi"
+    "youMayAlsoLike": "Vous Aimerez Aussi",
+    "remove": "Supprimer",
+    "add": "Ajouter"
   },
   "product": {
     "brand": "Marque",
@@ -68,7 +72,13 @@
     "addToCart": "Ajouter au Panier",
     "added": "Ajouté!",
     "viewingNow": "{{count}} personnes regardent ce produit",
-    "orderSoon": "Plus que {{count}} en stock — commandez vite!"
+    "orderSoon": "Plus que {{count}} en stock — commandez vite!",
+    "removeFromWishlist": "Retirer de la liste de souhaits",
+    "addToWishlist": "Ajouter à la liste de souhaits",
+    "signInToWishlist": "Connectez-vous pour ajouter à la liste de souhaits",
+    "addedToWishlist": "Ajouté à la liste de souhaits!",
+    "removedFromWishlist": "Retiré de la liste de souhaits",
+    "wishlistError": "Échec de la mise à jour de la liste de souhaits"
   },
   "checkout": {
     "title": "Paiement",
@@ -121,6 +131,7 @@
     "email": "Adresse Email",
     "trackOrder": "Suivre",
     "notFound": "Commande non trouvée. Vérifiez vos informations.",
+    "pleaseEnterBoth": "Veuillez entrer le numéro de commande et l'email",
     "orderPlaced": "Commande Passée",
     "confirmed": "Confirmée",
     "processing": "En Cours",
@@ -129,21 +140,43 @@
     "cancelled": "Cette commande a été annulée.",
     "tracking": "SUIVI",
     "items": "ARTICLES",
-    "shippingTo": "LIVRER À"
+    "shippingTo": "LIVRER À",
+    "carrier": "Transporteur",
+    "trackOnCarrier": "Suivre sur le site du transporteur",
+    "qty": "Qté",
+    "total": "Total"
   },
   "giftCard": {
     "title": "Cartes Cadeaux",
-    "subtitle": "Offrez le choix",
+    "subtitle": "Offrez le choix — idéal pour toute occasion",
     "amount": "Montant",
     "recipientEmail": "Email du Destinataire",
     "recipientName": "Nom du Destinataire",
-    "message": "Message Personnel",
+    "message": "Message Personnel (optionnel)",
     "purchase": "Acheter une Carte Cadeau",
+    "buyGiftCard": "Acheter une Carte Cadeau",
+    "redeem": "Utiliser une Carte Cadeau",
+    "redeemCode": "Utiliser un Code",
     "yourCards": "Vos Cartes Cadeaux",
     "balance": "Solde",
-    "expires": "Expire",
-    "redeem": "Utiliser une Carte Cadeau",
-    "code": "Code de Carte Cadeau"
+    "checkBalance": "Vérifier le Solde",
+    "expires": "Expire dans 1 an",
+    "code": "Code de Carte Cadeau",
+    "selectAmount": "Choisir le Montant",
+    "customAmount": "Montant Personnalisé (5$–500$)",
+    "purchasedSuccess": "Carte Cadeau Achetée!",
+    "shareCode": "Partagez ce code avec le destinataire:",
+    "valueExpires": "Valeur: ${{amount}} · Expire dans 1 an",
+    "notificationSent": "Une notification a été envoyée à {{email}}",
+    "signInToPurchase": "Connectez-vous pour acheter une carte cadeau",
+    "signInToRedeem": "Connectez-vous pour utiliser une carte cadeau",
+    "enterCode": "Entrez un code de carte cadeau",
+    "invalidCard": "Carte cadeau invalide ou expirée",
+    "codeCopied": "Code copié!",
+    "purchaseError": "Échec de l'achat de la carte cadeau",
+    "amountError": "Le montant doit être entre 5$ et 500$",
+    "availableBalance": "Solde Disponible",
+    "applyAtCheckout": "Utilisez ce code lors du paiement pour utiliser votre solde"
   },
   "currency": {
     "label": "Devise"

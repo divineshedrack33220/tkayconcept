@@ -40,7 +40,9 @@
   "cart": {
     "title": "Tu Carrito",
     "items": "{{count}} artículos",
+    "item": "1 artículo",
     "empty": "Tu carrito está vacío",
+    "emptyDiscover": "Descubre algo que te encante",
     "subtotal": "Subtotal",
     "shipping": "Envío",
     "free": "Gratis",
@@ -50,7 +52,9 @@
     "continueShopping": "Seguir Comprando",
     "freeShipping": "¡Calificas para envío gratis!",
     "addMore": "Agrega {{amount}} más para envío gratis",
-    "youMayAlsoLike": "También Te Gustará"
+    "youMayAlsoLike": "También Te Gustará",
+    "remove": "Eliminar",
+    "add": "Agregar"
   },
   "product": {
     "brand": "Marca",
@@ -68,7 +72,13 @@
     "addToCart": "Agregar al Carrito",
     "added": "¡Agregado!",
     "viewingNow": "{{count}} personas están viendo esto ahora",
-    "orderSoon": "Solo quedan {{count}} — ¡ordena pronto!"
+    "orderSoon": "Solo quedan {{count}} — ¡ordena pronto!",
+    "removeFromWishlist": "Quitar de la lista de deseos",
+    "addToWishlist": "Agregar a la lista de deseos",
+    "signInToWishlist": "Inicia sesión para agregar a la lista de deseos",
+    "addedToWishlist": "¡Agregado a la lista de deseos!",
+    "removedFromWishlist": "Eliminado de la lista de deseos",
+    "wishlistError": "Error al actualizar la lista de deseos"
   },
   "checkout": {
     "title": "Pago",
@@ -121,6 +131,7 @@
     "email": "Correo Electrónico",
     "trackOrder": "Rastrear",
     "notFound": "Pedido no encontrado. Verifica tus datos e intenta de nuevo.",
+    "pleaseEnterBoth": "Por favor ingresa el número de pedido y el email",
     "orderPlaced": "Pedido Realizado",
     "confirmed": "Confirmado",
     "processing": "En Proceso",
@@ -129,21 +140,43 @@
     "cancelled": "Este pedido ha sido cancelado.",
     "tracking": "SEGUIMIENTO",
     "items": "ARTÍCULOS",
-    "shippingTo": "ENVIAR A"
+    "shippingTo": "ENVIAR A",
+    "carrier": "Transportista",
+    "trackOnCarrier": "Rastrear en el sitio del transportista",
+    "qty": "Cant",
+    "total": "Total"
   },
   "giftCard": {
     "title": "Tarjetas de Regalo",
-    "subtitle": "Regala la libertad de elegir",
+    "subtitle": "Regala la libertad de elegir — ideal para cualquier ocasión",
     "amount": "Monto",
     "recipientEmail": "Email del Destinatario",
     "recipientName": "Nombre del Destinatario",
-    "message": "Mensaje Personal",
+    "message": "Mensaje Personal (opcional)",
     "purchase": "Comprar Tarjeta de Regalo",
+    "buyGiftCard": "Comprar Tarjeta de Regalo",
+    "redeem": "Canjear Tarjeta de Regalo",
+    "redeemCode": "Canjear Código",
     "yourCards": "Tus Tarjetas de Regalo",
     "balance": "Saldo",
-    "expires": "Expira",
-    "redeem": "Canjear Tarjeta de Regalo",
-    "code": "Código de Tarjeta"
+    "checkBalance": "Verificar Saldo",
+    "expires": "Expira en 1 año",
+    "code": "Código de Tarjeta",
+    "selectAmount": "Elegir Monto",
+    "customAmount": "Monto Personalizado ($5–$500)",
+    "purchasedSuccess": "¡Tarjeta de Regalo Comprada!",
+    "shareCode": "Comparte este código con el destinatario:",
+    "valueExpires": "Valor: ${{amount}} · Expira en 1 año",
+    "notificationSent": "Se ha enviado una notificación a {{email}}",
+    "signInToPurchase": "Inicia sesión para comprar una tarjeta de regalo",
+    "signInToRedeem": "Inicia sesión para canjear una tarjeta de regalo",
+    "enterCode": "Ingresa un código de tarjeta de regalo",
+    "invalidCard": "Tarjeta de regalo inválida o expirada",
+    "codeCopied": "¡Código copiado!",
+    "purchaseError": "Error al comprar la tarjeta de regalo",
+    "amountError": "El monto debe estar entre $5 y $500",
+    "availableBalance": "Saldo Disponible",
+    "applyAtCheckout": "Usa este código en el checkout para aplicar tu saldo"
   },
   "currency": {
     "label": "Moneda"

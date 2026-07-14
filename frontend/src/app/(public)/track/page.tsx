@@ -5,6 +5,7 @@ import { Package, Search, Loader2, CheckCircle2, Clock, Truck, MapPin, XCircle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
 import api from "@/lib/api";
 import type { Order } from "@/types";
 
@@ -26,6 +27,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function OrderTrackingPage() {
+  const { t } = useTranslation();
   const [orderNumber, setOrderNumber] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,7 +37,7 @@ export default function OrderTrackingPage() {
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!orderNumber || !email) {
-      setError("Please enter both order number and email");
+      setError(t("tracking.pleaseEnterBoth"));
       return;
     }
     setLoading(true);
@@ -45,7 +47,7 @@ export default function OrderTrackingPage() {
       const res = await api.get(`/track?orderNumber=${encodeURIComponent(orderNumber)}&email=${encodeURIComponent(email)}`);
       setOrder(res.data.data);
     } catch {
-      setError("Order not found. Please check your details and try again.");
+      setError(t("tracking.notFound"));
     } finally {
       setLoading(false);
     }
@@ -58,8 +60,8 @@ export default function OrderTrackingPage() {
       <section className="bg-primary py-16 text-white">
         <div className="container-custom text-center">
           <Package className="mx-auto mb-4 h-12 w-12 text-accent" />
-          <h1 className="mb-2 text-4xl font-bold">Track Your Order</h1>
-          <p className="text-gray-300">Enter your order number and email to see the latest status</p>
+          <h1 className="mb-2 text-4xl font-bold">{t("tracking.title")}</h1>
+          <p className="text-gray-300">{t("tracking.subtitle")}</p>
         </div>
       </section>
 
@@ -67,7 +69,7 @@ export default function OrderTrackingPage() {
         <div className="mx-auto max-w-lg">
           <form onSubmit={handleTrack} className="mb-10 space-y-4 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Order Number</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t("tracking.orderNumber")}</label>
               <Input
                 value={orderNumber}
                 onChange={(e) => setOrderNumber(e.target.value)}
@@ -75,7 +77,7 @@ export default function OrderTrackingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Email Address</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t("tracking.email")}</label>
               <Input
                 type="email"
                 value={email}
@@ -86,16 +88,16 @@ export default function OrderTrackingPage() {
             {error && <p className="text-sm text-red-500">{error}</p>}
             <Button variant="accent" type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-              Track Order
+              {t("tracking.trackOrder")}
             </Button>
           </form>
 
           {order && (
             <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
               {/* Header */}
-              <div className="mb-6 flex items-center justify-between">
+                <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-gray-500">ORDER NUMBER</p>
+                  <p className="text-xs font-medium text-gray-500">{t("tracking.orderNumber")}</p>
                   <p className="text-lg font-bold text-primary">{order.orderNumber}</p>
                 </div>
                 <span className={`rounded-full px-3 py-1 text-xs font-bold ${STATUS_COLORS[order.orderStatus] || "bg-gray-100 text-gray-600"}`}>
@@ -136,19 +138,19 @@ export default function OrderTrackingPage() {
               {order.orderStatus === "cancelled" && (
                 <div className="mb-6 flex items-center gap-2 rounded-lg bg-red-50 p-4 text-sm text-red-600">
                   <XCircle className="h-5 w-5" />
-                  This order has been cancelled.
+                  {t("tracking.cancelled")}
                 </div>
               )}
 
               {/* Tracking Info */}
               {order.trackingNumber && (
                 <div className="mb-6 rounded-xl bg-gray-50 p-4">
-                  <p className="mb-1 text-xs font-medium text-gray-500">TRACKING</p>
+                  <p className="mb-1 text-xs font-medium text-gray-500">{t("tracking.tracking")}</p>
                   <p className="text-sm font-bold text-gray-900">{order.trackingNumber}</p>
-                  {order.carrier && <p className="text-xs text-gray-500">Carrier: {order.carrier}</p>}
+                  {order.carrier && <p className="text-xs text-gray-500">{t("tracking.carrier")}: {order.carrier}</p>}
                   {order.trackingUrl && (
                     <a href={order.trackingUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-xs font-semibold text-accent hover:underline">
-                      Track on carrier website →
+                      {t("tracking.trackOnCarrier")} →
                     </a>
                   )}
                 </div>
@@ -156,7 +158,7 @@ export default function OrderTrackingPage() {
 
               {/* Items */}
               <div className="mb-4">
-                <p className="mb-2 text-xs font-medium text-gray-500">ITEMS</p>
+                <p className="mb-2 text-xs font-medium text-gray-500">{t("tracking.items")}</p>
                 <div className="space-y-2">
                   {order.items.map((item, idx) => (
                     <div key={idx} className="flex items-center gap-3">
@@ -165,7 +167,7 @@ export default function OrderTrackingPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                        <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                        <p className="text-xs text-gray-500">{t("tracking.qty")}: {item.quantity}</p>
                       </div>
                       <p className="text-sm font-medium">{formatPrice(item.price * item.quantity)}</p>
                     </div>
@@ -176,7 +178,7 @@ export default function OrderTrackingPage() {
               {/* Total */}
               <div className="border-t pt-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Total</span>
+                  <span className="text-gray-500">{t("tracking.total")}</span>
                   <span className="font-bold text-primary">{formatPrice(order.total)}</span>
                 </div>
               </div>
@@ -184,7 +186,7 @@ export default function OrderTrackingPage() {
               {/* Shipping Address */}
               {order.shippingAddress && (
                 <div className="mt-4 rounded-xl bg-gray-50 p-4">
-                  <p className="mb-1 text-xs font-medium text-gray-500">SHIPPING TO</p>
+                  <p className="mb-1 text-xs font-medium text-gray-500">{t("tracking.shippingTo")}</p>
                   <p className="text-sm text-gray-700">
                     {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
                   </p>
