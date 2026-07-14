@@ -247,7 +247,7 @@ export function Header() {
                 <Search className="h-[18px] w-[18px]" />
               </button>
 
-              <div className="hidden sm:block">
+              <div className="hidden sm:flex items-center">
                 {CLERK_ENABLED_EXPORT && <DesktopUserMenu />}
               </div>
 
