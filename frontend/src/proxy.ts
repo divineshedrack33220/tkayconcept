@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
+
 export async function proxy(req: NextRequest) {
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+  if (!CLERK_KEY) {
     return NextResponse.next();
   }
 

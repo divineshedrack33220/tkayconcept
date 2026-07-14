@@ -9,7 +9,7 @@ import { useKeepAlive } from "@/hooks/useKeepAlive";
 import { OfflineBanner } from "@/components/ui/offline-banner";
 import { BackendStatusProvider } from "@/components/providers/backend-status";
 
-export const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+export const CLERK_ENABLED = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk");
 
 function KeepAlive() {
   useKeepAlive();
@@ -58,7 +58,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   if (!CLERK_ENABLED) return content;
 
-  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
 
   return (
     <ClerkErrorBoundary fallback={content}>

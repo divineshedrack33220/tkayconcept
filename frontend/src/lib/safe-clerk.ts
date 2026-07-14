@@ -1,6 +1,8 @@
 import { useAuth as clerkUseAuth, useUser as clerkUseUser, useClerk as clerkUseClerk } from "@clerk/nextjs";
 
-export const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
+
+export const CLERK_ENABLED = !!CLERK_KEY;
 
 const fallbackAuth = { isSignedIn: false, userId: null, getToken: async () => null } as const;
 const fallbackUser = { isSignedIn: false, user: null } as const;
