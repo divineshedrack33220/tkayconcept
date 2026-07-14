@@ -265,8 +265,8 @@ export function Header() {
                 )}
               </button>
 
-              <button onClick={toggleMobileMenu} aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"} className="touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 lg:hidden" style={{ minWidth: 44, minHeight: 44 }}>
-                {isMobileMenuOpen ? <X className="h-[22px] w-[22px]" /> : <Menu className="h-[22px] w-[22px]" />}
+              <button onClick={toggleMobileMenu} aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"} className="touch-feedback flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 active:bg-gray-300 lg:hidden transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
             </div>
           </div>
