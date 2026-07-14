@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ProductCard } from "@/components/shop/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { ScrollReveal, ScrollRevealStagger, StaggerItem } from "@/components/ui/scroll-reveal";
 import api from "@/lib/api";
 import type { Product } from "@/types";
 
@@ -46,36 +47,14 @@ export default function RootedIdentityPage() {
             <a href="#products" className="btn-primary">
               Shop Collection
             </a>
-            <a href="/about" className="rounded-lg border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
+            <a href="#manifesto" className="rounded-lg border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
               Our Story
             </a>
           </div>
         </div>
       </section>
 
-      {/* Manifesto */}
-      <section className="section-padding bg-accent/5">
-        <div className="container-custom text-center">
-          <h2 className="heading-secondary mb-6">The Rooted Identity Manifesto</h2>
-          <div className="mx-auto max-w-2xl space-y-4 text-gray-600">
-            <p>
-              We are rooted in Christ. Our identity is not defined by the world, but
-              by the One who created us. We wear our faith boldly — not as a fashion
-              statement, but as a declaration of purpose.
-            </p>
-            <p>
-              Rooted Identity is for those who know who they are. For those who walk
-              in faith, live with purpose, and refuse to be defined by anything less
-              than God&apos;s truth.
-            </p>
-            <p className="font-semibold text-primary">
-              Be Rooted. Be Bold. Be You.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Products */}
+      {/* Products — at the top */}
       <section id="products" className="section-padding container-custom">
         <h2 className="heading-secondary mb-8 text-center">The Collection</h2>
 
@@ -109,12 +88,38 @@ export default function RootedIdentityPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <ScrollRevealStagger className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
+              <StaggerItem key={product._id}>
+                <ProductCard product={product} />
+              </StaggerItem>
             ))}
-          </div>
+          </ScrollRevealStagger>
         )}
+      </section>
+
+      {/* Manifesto — below products */}
+      <section id="manifesto" className="section-padding bg-accent/5">
+        <div className="container-custom text-center">
+          <ScrollReveal>
+            <h2 className="heading-secondary mb-6">The Rooted Identity Manifesto</h2>
+            <div className="mx-auto max-w-2xl space-y-4 text-gray-600">
+              <p>
+                We are rooted in Christ. Our identity is not defined by the world, but
+                by the One who created us. We wear our faith boldly — not as a fashion
+                statement, but as a declaration of purpose.
+              </p>
+              <p>
+                Rooted Identity is for those who know who they are. For those who walk
+                in faith, live with purpose, and refuse to be defined by anything less
+                than God&apos;s truth.
+              </p>
+              <p className="font-semibold text-primary">
+                Be Rooted. Be Bold. Be You.
+              </p>
+            </div>
+          </ScrollReveal>
+        </div>
       </section>
     </div>
   );

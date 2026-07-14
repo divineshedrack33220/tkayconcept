@@ -58,7 +58,12 @@
     "latestArticlesSub": "Insights for your faith journey",
     "joinCommunity": "Join Our Community",
     "joinCommunitySub": "Subscribe for updates, new releases, and inspiration.",
-    "minRead": "{{count}} min read"
+    "minRead": "{{count}} min read",
+    "newArrivals": "New Arrivals",
+    "newArrivalsSub": "Fresh drops just for you",
+    "bestSellers": "Best Sellers",
+    "bestSellersSub": "What everyone's loving right now",
+    "subscribeBtn": "Subscribe"
   },
   "cart": {
     "title": "Your Cart",

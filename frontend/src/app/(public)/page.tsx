@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/home/hero-section";
 import { FeaturedCategories } from "@/components/home/featured-categories";
 import { FeaturedProducts } from "@/components/home/featured-products";
+import { NewArrivals } from "@/components/home/new-arrivals";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { BlogPreview } from "@/components/home/blog-preview";
 import { RecentlyViewed } from "@/components/home/recently-viewed";
@@ -12,6 +13,7 @@ export default function HomePage() {
       <HeroSection />
       <FeaturedCategories />
       <FeaturedProducts />
+      <NewArrivals />
       <TestimonialsSection />
       <BlogPreview />
       <RecentlyViewed />
