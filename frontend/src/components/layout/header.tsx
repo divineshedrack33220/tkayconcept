@@ -244,7 +244,7 @@ export function Header() {
                 <LanguageSelector />
               </div>
 
-              <button onClick={toggleSearch} className="touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
+              <button onClick={toggleSearch} aria-label="Open search" className="touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
                 <Search className="h-[22px] w-[22px]" />
               </button>
 
@@ -256,7 +256,7 @@ export function Header() {
                 </Link>
               )}
 
-              <button onClick={toggleCart} className="relative touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
+              <button onClick={toggleCart} aria-label={`Open cart${totalItems > 0 ? `, ${totalItems} items` : ""}`} className="relative touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
                 <ShoppingBag className="h-[22px] w-[22px]" />
                 {totalItems > 0 && (
                   <span className="absolute -right-0 -top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-white shadow-sm animate-scale-in">
@@ -265,7 +265,7 @@ export function Header() {
                 )}
               </button>
 
-              <button onClick={toggleMobileMenu} className="touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 lg:hidden" style={{ minWidth: 44, minHeight: 44 }}>
+              <button onClick={toggleMobileMenu} aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"} className="touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 lg:hidden" style={{ minWidth: 44, minHeight: 44 }}>
                 {isMobileMenuOpen ? <X className="h-[22px] w-[22px]" /> : <Menu className="h-[22px] w-[22px]" />}
               </button>
             </div>
@@ -286,7 +286,7 @@ export function Header() {
               <Link href="/" onClick={toggleMobileMenu} className="text-lg font-bold text-primary">
                 TKAY<span className="text-accent">KONCEPTS</span>
               </Link>
-              <button onClick={toggleMobileMenu} className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 active:bg-gray-200 touch-feedback">
+              <button onClick={toggleMobileMenu} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 active:bg-gray-200 touch-feedback">
                 <X className="h-5 w-5" />
               </button>
             </div>

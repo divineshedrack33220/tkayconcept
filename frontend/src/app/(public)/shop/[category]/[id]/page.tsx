@@ -330,6 +330,7 @@ export default function ProductDetailPage() {
             <div className="flex items-center rounded-xl border-2 border-gray-200">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                aria-label="Decrease quantity"
                 className="p-3 text-gray-600 transition-colors hover:text-accent"
               >
                 <Minus className="h-4 w-4" />
@@ -337,6 +338,7 @@ export default function ProductDetailPage() {
               <span className="min-w-[48px] text-center text-sm font-bold">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
+                aria-label="Increase quantity"
                 className="p-3 text-gray-600 transition-colors hover:text-accent"
               >
                 <Plus className="h-4 w-4" />
@@ -361,6 +363,7 @@ export default function ProductDetailPage() {
             </Button>
             <button
               onClick={handleToggleWishlist}
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
               className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 transition-all ${
                 isWishlisted
                   ? "border-red-200 bg-red-50 text-red-500"

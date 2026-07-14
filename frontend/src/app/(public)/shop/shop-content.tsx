@@ -153,19 +153,19 @@ export default function ShopContent() {
           <div className="hidden sm:flex items-center rounded-xl border border-gray-200">
             <button
               onClick={() => setViewMode("grid")}
+              aria-label="Grid view"
               className={`flex h-9 w-9 items-center justify-center rounded-l-xl transition-colors ${
                 viewMode === "grid" ? "bg-primary text-white" : "text-gray-400 hover:bg-gray-50"
               }`}
-              title="Grid view"
             >
               <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode("list")}
+              aria-label="List view"
               className={`flex h-9 w-9 items-center justify-center rounded-r-xl transition-colors ${
                 viewMode === "list" ? "bg-primary text-white" : "text-gray-400 hover:bg-gray-50"
               }`}
-              title="List view"
             >
               <Rows3 className="h-4 w-4" />
             </button>
@@ -199,7 +199,7 @@ export default function ShopContent() {
           {search && (
             <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
               &quot;{search}&quot;
-              <button onClick={() => setSearch("")}>
+              <button onClick={() => setSearch("")} aria-label="Remove search filter">
                 <X className="h-3 w-3" />
               </button>
             </span>
@@ -207,7 +207,7 @@ export default function ShopContent() {
           {category && (
             <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent capitalize">
               {category}
-              <button onClick={() => setCategory("")}>
+              <button onClick={() => setCategory("")} aria-label="Remove category filter">
                 <X className="h-3 w-3" />
               </button>
             </span>
@@ -215,7 +215,7 @@ export default function ShopContent() {
           {brand && (
             <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
               {brand}
-              <button onClick={() => setBrand("")}>
+              <button onClick={() => setBrand("")} aria-label="Remove brand filter">
                 <X className="h-3 w-3" />
               </button>
             </span>
@@ -224,7 +224,7 @@ export default function ShopContent() {
             <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
               {PRICE_RANGES.find((r) => `${r.min}-${r.max}` === priceRange)
                 ?.label || "Price"}
-              <button onClick={() => setPriceRange("0-0")}>
+              <button onClick={() => setPriceRange("0-0")} aria-label="Remove price filter">
                 <X className="h-3 w-3" />
               </button>
             </span>

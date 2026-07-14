@@ -28,6 +28,7 @@ function Pagination({ currentPage, totalPages, onPageChange, className }: Pagina
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
+        aria-label="Go to previous page"
         className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ChevronLeft className="h-4 w-4" />
@@ -55,6 +56,7 @@ function Pagination({ currentPage, totalPages, onPageChange, className }: Pagina
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
+        aria-label="Go to next page"
         className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ChevronRight className="h-4 w-4" />

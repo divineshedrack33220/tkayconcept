@@ -133,8 +133,8 @@ export default function AdminCouponsPage() {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-1">
-                    <button onClick={() => openEdit(c)} className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-accent"><Edit className="h-4 w-4" /></button>
-                    <button onClick={() => { if (confirm("Delete this coupon?")) deleteMutation.mutate(c._id); }} className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
+                    <button onClick={() => openEdit(c)} aria-label="Edit coupon" className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-accent"><Edit className="h-4 w-4" /></button>
+                    <button onClick={() => { if (confirm("Delete this coupon?")) deleteMutation.mutate(c._id); }} aria-label="Delete coupon" className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
                   </div>
                 </td>
               </tr>

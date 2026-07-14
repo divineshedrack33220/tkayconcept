@@ -21,6 +21,7 @@ function Rating({ value, max = 5, size = "md", interactive = false, onChange, cl
           type="button"
           disabled={!interactive}
           onClick={() => interactive && onChange?.(i + 1)}
+          aria-label={interactive ? `Rate ${i + 1} out of ${max} stars` : `${value} out of ${max} stars`}
           className={cn(
             interactive && "cursor-pointer hover:scale-110 transition-transform",
             !interactive && "cursor-default"

@@ -76,7 +76,7 @@ export function SearchPanel() {
         <div className="bg-white sm:rounded-2xl sm:shadow-2xl flex-1 sm:flex-none flex flex-col overflow-hidden animate-slide-in-up sm:animate-scale-in">
           {/* Search input */}
           <form onSubmit={handleSearchAll} className="flex items-center gap-3 border-b border-gray-100 px-4 sm:px-5 py-3 sm:py-4 safe-area-top">
-            <button type="button" onClick={toggleSearch} className="flex h-10 w-10 items-center justify-center rounded-full text-gray-600 active:bg-gray-100 sm:hidden touch-feedback">
+            <button type="button" onClick={toggleSearch} aria-label="Go back" className="flex h-10 w-10 items-center justify-center rounded-full text-gray-600 active:bg-gray-100 sm:hidden touch-feedback">
               <ArrowLeft className="h-5 w-5" />
             </button>
             <Search className="h-5 w-5 text-gray-400 hidden sm:block" />
@@ -91,7 +91,7 @@ export function SearchPanel() {
               enterKeyHint="search"
             />
             {loading && <Loader2 className="h-5 w-5 animate-spin text-gray-400" />}
-            <button type="button" onClick={toggleSearch} className="rounded-full p-2 text-gray-400 hover:bg-gray-100 active:bg-gray-200 hidden sm:flex touch-feedback">
+            <button type="button" onClick={toggleSearch} aria-label="Close search" className="rounded-full p-2 text-gray-400 hover:bg-gray-100 active:bg-gray-200 hidden sm:flex touch-feedback">
               <X className="h-5 w-5" />
             </button>
           </form>

@@ -152,7 +152,8 @@
     "returns30": "30-Day Returns",
     "returnsSub": "Hassle free",
     "flexiblePayment": "Flexible Payment",
-    "flexiblePaymentSub": "Multiple options"
+    "flexiblePaymentSub": "Multiple options",
+    "noSpam": "We respect your privacy. Unsubscribe at any time."
   },
   "common": {
     "loading": "Loading...",

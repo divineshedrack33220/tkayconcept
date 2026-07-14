@@ -45,6 +45,7 @@ export function ShareButtons({ title, url }: { title: string; url: string }) {
       </a>
       <button
         onClick={copyLink}
+        aria-label={copied ? "Link copied" : "Copy product link"}
         className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-gray-400 hover:text-gray-900"
       >
         {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <LinkIcon className="h-3.5 w-3.5" />}

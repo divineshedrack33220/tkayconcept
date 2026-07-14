@@ -140,6 +140,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
           </div>
           <button
             onClick={handleToggleWishlist}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
             className={`absolute right-1.5 top-1.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition-all active:scale-90 ${
               isWishlisted ? "text-red-500" : "text-gray-500 active:text-red-500"
             }`}
@@ -239,6 +240,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
           {/* Wishlist button - always visible on mobile, hover on desktop */}
           <button
             onClick={handleToggleWishlist}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
             className={`absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition-all active:scale-90 sm:h-10 sm:w-10 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-0 ${
               isWishlisted ? "text-red-500 sm:text-red-500" : "text-gray-500 active:text-red-500 sm:text-gray-600 sm:hover:text-red-500"
             } ${!isHovered ? "sm:translate-x-1" : ""}`}
@@ -250,6 +252,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
           {/* Add to cart button - desktop only hover */}
           <button
             onClick={handleAddToCart}
+            aria-label={t("shop.addToCart")}
             className={`absolute right-2 top-12 z-10 hidden sm:flex h-10 w-10 items-center justify-center rounded-full shadow-sm backdrop-blur-sm transition-all hover:scale-110 ${
               addedToCart
                 ? "bg-emerald-500 text-white"

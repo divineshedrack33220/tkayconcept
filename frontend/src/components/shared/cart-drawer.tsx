@@ -96,6 +96,7 @@ export function CartDrawer() {
           </div>
           <button
             onClick={toggleCart}
+            aria-label="Close cart"
             className="flex h-10 w-10 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 active:bg-gray-200 touch-feedback"
           >
             <X className="h-5 w-5" />
@@ -176,6 +177,7 @@ export function CartDrawer() {
                           <button
                             onClick={() => updateQuantity(item.product._id, item.quantity - 1, item.variant)}
                             disabled={item.quantity <= 1}
+                            aria-label="Decrease quantity"
                             className="flex h-9 w-9 items-center justify-center text-gray-500 active:text-accent disabled:opacity-30 touch-feedback"
                           >
                             <Minus className="h-3.5 w-3.5" />
@@ -183,6 +185,7 @@ export function CartDrawer() {
                           <span className="min-w-[32px] text-center text-[13px] font-bold">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.product._id, item.quantity + 1, item.variant)}
+                            aria-label="Increase quantity"
                             className="flex h-9 w-9 items-center justify-center text-gray-500 active:text-accent touch-feedback"
                           >
                             <Plus className="h-3.5 w-3.5" />
@@ -190,6 +193,7 @@ export function CartDrawer() {
                         </div>
                         <button
                           onClick={() => removeItem(item.product._id, item.variant)}
+                          aria-label={`Remove ${item.product.name} from cart`}
                           className="ml-auto flex h-9 w-9 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500 active:bg-red-100 touch-feedback"
                         >
                           <Trash2 className="h-4 w-4" />

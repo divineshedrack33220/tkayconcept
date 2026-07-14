@@ -99,7 +99,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
             <label className="mb-2 block text-sm font-medium text-gray-700">Rating</label>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((r) => (
-                <button key={r} type="button" onClick={() => setValue("rating", r, { shouldValidate: true })} className="p-0.5">
+                <button key={r} type="button" onClick={() => setValue("rating", r, { shouldValidate: true })} aria-label={`Rate ${r} out of 5 stars`} className="p-0.5">
                   <Star className={`h-7 w-7 ${r <= formRating ? "fill-amber-400 text-amber-400" : "text-gray-200"}`} />
                 </button>
               ))}

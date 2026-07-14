@@ -46,6 +46,7 @@ export function FirstPurchasePopup() {
         {/* Close button */}
         <button
           onClick={handleDismiss}
+          aria-label="Close discount popup"
           className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-gray-400 transition-colors hover:text-gray-600"
         >
           <X className="h-4 w-4" />
@@ -71,6 +72,7 @@ export function FirstPurchasePopup() {
             <span className="text-xl font-bold tracking-widest text-accent">{DISCOUNT_CODE}</span>
             <button
               onClick={handleCopy}
+              aria-label={copied ? "Code copied" : "Copy discount code"}
               className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-white transition-all hover:bg-accent-light"
             >
               {copied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
