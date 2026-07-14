@@ -306,21 +306,20 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
             {/* Mobile add-to-cart button */}
             <button
               onClick={handleAddToCart}
-              className={`mt-2 w-full flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[13px] font-semibold transition-all active:scale-[0.98] sm:hidden touch-feedback ${
+              className={`mt-2 w-full flex items-center justify-center gap-1 rounded-lg py-2 text-[12px] font-semibold transition-all active:scale-[0.98] sm:hidden touch-feedback ${
                 addedToCart
                   ? "bg-emerald-500 text-white"
                   : "bg-primary text-white active:bg-primary-light"
               }`}
-              style={{ minHeight: 40 }}
             >
               {addedToCart ? (
                 <>
-                  <Zap className="h-3.5 w-3.5" />
+                  <Zap className="h-3 w-3" />
                   {t("product.added")}
                 </>
               ) : (
                 <>
-                  <ShoppingBag className="h-3.5 w-3.5" />
+                  <ShoppingBag className="h-3 w-3" />
                   {t("product.addToCart")}
                 </>
               )}
