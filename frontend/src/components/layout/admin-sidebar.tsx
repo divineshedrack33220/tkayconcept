@@ -23,7 +23,7 @@ import {
   Mail,
   AlertTriangle,
 } from "lucide-react";
-import { useClerk } from "@clerk/nextjs";
+import { useSafeClerk } from "@/lib/safe-clerk";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -53,7 +53,7 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ collapsed = false, onToggle, mobileOpen = false, onCloseMobile }: AdminSidebarProps) {
   const pathname = usePathname();
-  const { signOut } = useClerk();
+  const { signOut } = useSafeClerk();
 
   return (
     <aside

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useSafeUser } from "@/lib/safe-clerk";
 import { Search, Bell, Menu } from "lucide-react";
 
 interface AdminHeaderProps {
@@ -10,7 +10,7 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
-  const { user } = useUser();
+  const { user } = useSafeUser();
   const router = useRouter();
   const [query, setQuery] = useState("");
 

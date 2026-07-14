@@ -29,7 +29,7 @@ import { FrequentlyBoughtTogether } from "@/components/shop/frequently-bought-to
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
-import { useAuth } from "@clerk/nextjs";
+import { useSafeAuth } from "@/lib/safe-clerk";
 import { addRecentlyViewed } from "@/components/home/recently-viewed";
 import { toast } from "sonner";
 import api from "@/lib/api";
@@ -40,7 +40,7 @@ export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
-  const { isSignedIn } = useAuth();
+  const { isSignedIn } = useSafeAuth();
   const authApi = useAuthenticatedApi();
   const wishlistHasItem = useWishlistStore((s) => s.hasItem);
   const wishlistAddItem = useWishlistStore((s) => s.addItem);

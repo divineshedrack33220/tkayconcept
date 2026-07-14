@@ -6,7 +6,7 @@ import { Home, Search, ShoppingBag, Heart, User } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useUIStore } from "@/stores/uiStore";
-import { useAuth } from "@clerk/nextjs";
+import { useSafeAuth } from "@/lib/safe-clerk";
 
 const navItems = [
   { icon: Home, label: "Home", href: "/" },
@@ -21,7 +21,7 @@ export function MobileBottomNav() {
   const totalItems = useCartStore((s) => s.items.reduce((sum, item) => sum + item.quantity, 0));
   const wishlistCount = useWishlistStore((s) => s.items.length);
   const { toggleSearch, toggleCart } = useUIStore();
-  const { isSignedIn } = useAuth();
+  const { isSignedIn } = useSafeAuth();
 
   const handleAction = (action?: string) => {
     if (action === "search") toggleSearch();

@@ -5,7 +5,7 @@ import { Gift, CreditCard, Loader2, CheckCircle2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
-import { useAuth } from "@clerk/nextjs";
+import { useSafeAuth } from "@/lib/safe-clerk";
 import { useTranslation } from "@/i18n";
 import { toast } from "sonner";
 import api from "@/lib/api";
@@ -13,7 +13,7 @@ import api from "@/lib/api";
 const AMOUNTS = [25, 50, 75, 100, 150, 200];
 
 export default function GiftCardsPage() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn } = useSafeAuth();
   const authApi = useAuthenticatedApi();
   const { t } = useTranslation();
   const [amount, setAmount] = useState(50);

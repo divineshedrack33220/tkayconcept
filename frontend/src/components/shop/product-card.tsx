@@ -3,7 +3,7 @@
 import { memo, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ShoppingBag, Package, Heart, Eye, Zap } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { useSafeAuth } from "@/lib/safe-clerk";
 import { Rating } from "@/components/ui/rating";
 import { FlashSaleTimer } from "@/components/ui/flash-sale-timer";
 import { useCartStore } from "@/stores/cartStore";
@@ -22,7 +22,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
   const { t } = useTranslation();
   const addItem = useCartStore((s) => s.addItem);
   const [imgError, setImgError] = useState(false);
-  const { isSignedIn } = useAuth();
+  const { isSignedIn } = useSafeAuth();
   const authApi = useAuthenticatedApi();
   const wishlistHasItem = useWishlistStore((s) => s.hasItem);
   const wishlistAddItem = useWishlistStore((s) => s.addItem);

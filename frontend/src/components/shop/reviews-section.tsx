@@ -7,7 +7,7 @@ import { Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
-import { useAuth } from "@clerk/nextjs";
+import { useSafeAuth } from "@/lib/safe-clerk";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { reviewSchema, type ReviewInput } from "@/lib/validations";
@@ -24,7 +24,7 @@ interface Review {
 }
 
 export function ReviewsSection({ productId }: { productId: string }) {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn } = useSafeAuth();
   const authApi = useAuthenticatedApi();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
