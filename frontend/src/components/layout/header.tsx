@@ -67,18 +67,18 @@ function DesktopUserMenu() {
 
   return (
     <>
-      <Link href="/wishlist" className="relative hidden sm:flex rounded-lg p-2.5 text-gray-600 hover:bg-gray-100 transition-colors">
-        <Heart className="h-5 w-5" />
+      <Link href="/wishlist" className="relative hidden sm:flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 transition-colors">
+        <Heart className="h-[18px] w-[18px]" />
         {wishlistCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-fade-in">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white animate-fade-in">
             {wishlistCount}
           </span>
         )}
       </Link>
       <div className="relative group">
-        <button className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+        <button className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
           <UserAvatar className="h-7 w-7" />
-          <span className="hidden md:inline">{user?.firstName}</span>
+          <span className="hidden xl:inline max-w-[80px] truncate">{user?.firstName}</span>
         </button>
         <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 absolute right-0 top-full z-50 mt-1 w-56 rounded-xl border border-gray-100 bg-white py-2 shadow-xl shadow-gray-200/50 transition-all duration-200">
           <div className="border-b border-gray-100 px-4 py-3">
@@ -236,7 +236,7 @@ export function Header() {
               ))}
             </nav>
 
-            <div className="flex items-center gap-0.5 sm:gap-1">
+            <div className="flex items-center gap-1 sm:gap-1.5">
               <div className="hidden lg:block">
                 <CurrencySelector />
               </div>
@@ -244,8 +244,8 @@ export function Header() {
                 <LanguageSelector />
               </div>
 
-              <button onClick={toggleSearch} aria-label="Open search" className="touch-feedback hidden sm:flex rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
-                <Search className="h-[22px] w-[22px]" />
+              <button onClick={toggleSearch} aria-label="Open search" className="touch-feedback hidden sm:flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors">
+                <Search className="h-[18px] w-[18px]" />
               </button>
 
               <div className="hidden sm:block">
@@ -258,10 +258,10 @@ export function Header() {
                 </Link>
               )}
 
-              <button onClick={toggleCart} aria-label={`Open cart${totalItems > 0 ? `, ${totalItems} items` : ""}`} className="relative touch-feedback hidden sm:flex rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
-                <ShoppingBag className="h-[22px] w-[22px]" />
+              <button onClick={toggleCart} aria-label={`Open cart${totalItems > 0 ? `, ${totalItems} items` : ""}`} className="relative touch-feedback hidden sm:flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors">
+                <ShoppingBag className="h-[18px] w-[18px]" />
                 {totalItems > 0 && (
-                  <span className="absolute -right-0 -top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-white shadow-sm animate-scale-in">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-white shadow-sm animate-scale-in">
                     {totalItems > 99 ? "99+" : totalItems}
                   </span>
                 )}
