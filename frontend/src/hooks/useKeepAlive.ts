@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import api from "@/lib/api";
+import { API_URL } from "@/lib/constants";
 
 const PING_INTERVAL = 4 * 60 * 1000;
 
 export function useKeepAlive() {
   useEffect(() => {
     const ping = () => {
-      api.get("/health").catch(() => {});
+      fetch(`${API_URL}/health`, { method: "GET" }).catch(() => {});
     };
 
     ping();
