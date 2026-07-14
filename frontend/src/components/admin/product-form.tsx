@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, Save, Upload, X, ImageIcon } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Upload, X, ImageIcon, GripVertical, Star } from "lucide-react";
 import Link from "next/link";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,12 @@ import { Input } from "@/components/ui/input";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
 import type { Category } from "@/types";
+
+interface ProductImage {
+  url: string;
+  alt: string;
+  isPrimary: boolean;
+}
 
 interface ProductFormProps {
   productId?: string;
@@ -25,6 +31,7 @@ export function ProductForm({ productId }: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -46,9 +53,10 @@ export function ProductForm({ productId }: ProductFormProps) {
     isBestSeller: false,
     isActive: true,
     tags: "",
-    imageUrl: "",
-    imageAlt: "",
   });
+
+  const [images, setImages] = useState<ProductImage[]>([]);
+  const [manualUrl, setManualUrl] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -87,9 +95,14 @@ export function ProductForm({ productId }: ProductFormProps) {
           isBestSeller: p.isBestSeller || false,
           isActive: p.isActive ?? true,
           tags: p.tags?.join(", ") || "",
-          imageUrl: p.images?.[0]?.url || "",
-          imageAlt: p.images?.[0]?.alt || "",
         });
+        if (p.images?.length > 0) {
+          setImages(p.images.map((img: { url: string; alt?: string; isPrimary?: boolean }) => ({
+            url: img.url,
+            alt: img.alt || "",
+            isPrimary: img.isPrimary ?? false,
+          })));
+        }
       } catch {
         toast.error("Failed to load product");
       } finally {
@@ -127,7 +140,11 @@ export function ProductForm({ productId }: ProductFormProps) {
         isBestSeller: form.isBestSeller,
         isActive: form.isActive,
         tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
-        images: form.imageUrl ? [{ url: form.imageUrl, alt: form.imageAlt || form.name, isPrimary: true }] : [],
+        images: images.map((img) => ({
+          url: img.url,
+          alt: img.alt || form.name,
+          isPrimary: img.isPrimary,
+        })),
       };
 
       if (isEdit) {
@@ -164,8 +181,13 @@ export function ProductForm({ productId }: ProductFormProps) {
       const res = await authApi.post("/media/upload", formData);
       const uploaded = res.data.data;
       if (uploaded && uploaded.length > 0) {
-        setForm((prev) => ({ ...prev, imageUrl: uploaded[0].url, imageAlt: prev.imageAlt || prev.name || file.name }));
-        toast.success("Image uploaded");
+        const newImages = uploaded.map((img: { url: string }, i: number) => ({
+          url: img.url,
+          alt: form.name || file.name,
+          isPrimary: images.length === 0 && i === 0,
+        }));
+        setImages((prev) => [...prev, ...newImages]);
+        toast.success(`${newImages.length} image${newImages.length > 1 ? "s" : ""} uploaded`);
       }
     } catch {
       toast.error("Upload failed");
@@ -175,16 +197,63 @@ export function ProductForm({ productId }: ProductFormProps) {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) uploadImage(file);
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => uploadImage(file));
+    }
     e.target.value = "";
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) uploadImage(file);
+    const files = e.dataTransfer.files;
+    if (files) {
+      Array.from(files).forEach((file) => uploadImage(file));
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prev) => {
+      const next = prev.filter((_, i) => i !== index);
+      if (prev[index]?.isPrimary && next.length > 0) {
+        next[0] = { ...next[0], isPrimary: true };
+      }
+      return next;
+    });
+  };
+
+  const setPrimary = (index: number) => {
+    setImages((prev) => prev.map((img, i) => ({ ...img, isPrimary: i === index })));
+  };
+
+  const addManualUrl = () => {
+    if (!manualUrl.trim()) return;
+    setImages((prev) => [
+      ...prev,
+      { url: manualUrl.trim(), alt: form.name || "Product image", isPrimary: prev.length === 0 },
+    ]);
+    setManualUrl("");
+  };
+
+  const handleDragStart = (index: number) => {
+    setDragIndex(index);
+  };
+
+  const handleDragOverItem = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (dragIndex === null || dragIndex === index) return;
+    setImages((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(dragIndex, 1);
+      next.splice(index, 0, moved);
+      return next;
+    });
+    setDragIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDragIndex(null);
   };
 
   if (loading) {
@@ -264,9 +333,12 @@ export function ProductForm({ productId }: ProductFormProps) {
               </div>
             </div>
 
-            {/* Image */}
+            {/* Images */}
             <div className="rounded-xl border border-gray-100 bg-white p-6">
-              <h2 className="mb-4 text-lg font-semibold text-primary">Product Image</h2>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-primary">Product Images</h2>
+                <span className="text-xs text-gray-400">{images.length} image{images.length !== 1 ? "s" : ""}</span>
+              </div>
               <div className="space-y-4">
                 {/* Upload area */}
                 <div
@@ -283,45 +355,95 @@ export function ProductForm({ productId }: ProductFormProps) {
                       <Loader2 className="h-8 w-8 animate-spin text-accent" />
                       <p className="text-sm text-gray-500">Uploading...</p>
                     </div>
-                  ) : form.imageUrl ? (
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="relative">
-                        <img src={form.imageUrl} alt={form.imageAlt} className="h-32 w-32 rounded-lg object-cover" />
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); setForm((prev) => ({ ...prev, imageUrl: "", imageAlt: "" })); }}
-                          className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white shadow-md hover:bg-red-600"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
-                      <p className="text-xs text-gray-400">Click or drop to replace</p>
-                    </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-2 py-4">
-                      <ImageIcon className="h-10 w-10 text-gray-300" />
-                      <p className="text-sm font-medium text-gray-600">Click to upload or drag and drop</p>
-                      <p className="text-xs text-gray-400">PNG, JPG, WebP up to 10MB</p>
+                    <div className="flex flex-col items-center gap-2 py-2">
+                      <ImageIcon className="h-8 w-8 text-gray-300" />
+                      <p className="text-sm font-medium text-gray-600">Click or drag images here</p>
+                      <p className="text-xs text-gray-400">PNG, JPG, WebP up to 10MB — select multiple files</p>
                     </div>
                   )}
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
+                    multiple
                     className="hidden"
                     onChange={handleFileChange}
                   />
                 </div>
 
                 {/* Manual URL input */}
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Or enter image URL</label>
-                  <Input value={form.imageUrl} onChange={(e) => update("imageUrl", e.target.value)} placeholder="https://..." />
+                <div className="flex gap-2">
+                  <Input
+                    value={manualUrl}
+                    onChange={(e) => setManualUrl(e.target.value)}
+                    placeholder="Or paste image URL..."
+                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addManualUrl())}
+                  />
+                  <Button type="button" variant="outline" onClick={addManualUrl} className="flex-shrink-0">
+                    Add
+                  </Button>
                 </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Alt Text</label>
-                  <Input value={form.imageAlt} onChange={(e) => update("imageAlt", e.target.value)} placeholder="Describe the image" />
-                </div>
+
+                {/* Image grid */}
+                {images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                    {images.map((img, i) => (
+                      <div
+                        key={`${img.url}-${i}`}
+                        draggable
+                        onDragStart={() => handleDragStart(i)}
+                        onDragOver={(e) => handleDragOverItem(e, i)}
+                        onDragEnd={handleDragEnd}
+                        className={`group relative overflow-hidden rounded-xl border-2 transition-all ${
+                          img.isPrimary ? "border-accent shadow-md shadow-accent/10" : "border-gray-100 hover:border-gray-300"
+                        } ${dragIndex === i ? "opacity-50 scale-95" : ""}`}
+                      >
+                        <div className="aspect-square bg-gray-50">
+                          <img src={img.url} alt={img.alt} className="h-full w-full object-cover" />
+                        </div>
+
+                        {/* Drag handle */}
+                        <div className="absolute left-1 top-1 cursor-grab rounded bg-black/40 p-0.5 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                          <GripVertical className="h-3 w-3" />
+                        </div>
+
+                        {/* Primary badge */}
+                        {img.isPrimary && (
+                          <div className="absolute left-1 bottom-1 flex items-center gap-1 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold text-white">
+                            <Star className="h-2.5 w-2.5 fill-current" /> Primary
+                          </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="absolute right-1 top-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {!img.isPrimary && (
+                            <button
+                              type="button"
+                              onClick={() => setPrimary(i)}
+                              className="rounded bg-black/40 p-1 text-white hover:bg-accent transition-colors"
+                              title="Set as primary"
+                            >
+                              <Star className="h-3 w-3" />
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => removeImage(i)}
+                            className="rounded bg-black/40 p-1 text-white hover:bg-red-500 transition-colors"
+                            title="Remove image"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {images.length > 1 && (
+                  <p className="text-xs text-gray-400">Drag to reorder. First image (or starred) is the primary image shown in listings.</p>
+                )}
               </div>
             </div>
           </div>
