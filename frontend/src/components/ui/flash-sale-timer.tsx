@@ -45,11 +45,11 @@ export function FlashSaleTimer({ discountPercent, endDate }: FlashSaleTimerProps
   if (timeLeft.expired) return null;
 
   return (
-    <div className="flex items-center gap-1.5 rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
-      <Flame className="h-3 w-3 animate-pulse" />
+    <div className="flex items-center gap-1 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm sm:gap-1.5 sm:px-2.5 sm:py-1 sm:text-xs">
+      <Flame className="h-2.5 w-2.5 animate-pulse sm:h-3 sm:w-3" />
       <span>-{discountPercent}%</span>
-      <span className="mx-0.5 text-white/60">|</span>
-      <Clock className="h-3 w-3" />
+      <span className="hidden text-white/60 sm:inline">|</span>
+      <Clock className="hidden sm:block sm:h-3 sm:w-3" />
       <span className="tabular-nums">
         {String(timeLeft.hours).padStart(2, "0")}:{String(timeLeft.minutes).padStart(2, "0")}:
         {String(timeLeft.seconds).padStart(2, "0")}

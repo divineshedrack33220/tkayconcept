@@ -219,7 +219,7 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
           )}
 
           {/* Badges */}
-          <div className="absolute left-3 top-3 flex flex-col gap-1.5 z-10">
+          <div className="absolute left-2 top-2 z-10 flex max-w-[calc(100%-16px)] flex-col gap-1 sm:left-3 sm:top-3 sm:max-w-[calc(100%-24px)]">
             {hasDiscount && (
               <FlashSaleTimer discountPercent={discountPercent} endDate={product.saleEndDate} />
             )}
