@@ -134,14 +134,14 @@ export default function AdminTestimonialsPage() {
                   </button>
                 </td>
                 <td className="px-4 py-3">
-                  <button onClick={() => toggleApproval(t)} className="rounded p-1 hover:bg-gray-100">
+                  <button onClick={() => toggleApproval(t)} aria-label={t.isApproved ? "Unapprove testimonial" : "Approve testimonial"} className="rounded p-1 hover:bg-gray-100">
                     {t.isApproved ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-gray-300" />}
                   </button>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-1">
-                    <button onClick={() => openEdit(t)} className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-accent"><Edit className="h-4 w-4" /></button>
-                    <button onClick={() => handleDelete(t._id)} className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
+                    <button onClick={() => openEdit(t)} aria-label="Edit testimonial" className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-accent"><Edit className="h-4 w-4" /></button>
+                    <button onClick={() => handleDelete(t._id)} aria-label="Delete testimonial" className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
                   </div>
                 </td>
               </tr>

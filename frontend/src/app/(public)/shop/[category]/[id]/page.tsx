@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Script from "next/script";
 import {
   ShoppingBag,
   Minus,
@@ -175,6 +176,35 @@ export default function ProductDetailPage() {
 
   return (
     <div className="section-padding container-custom">
+      {/* JSON-LD Structured Data */}
+      <Script
+        id="product-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.name,
+            description: product.description,
+            image: product.images.map((img) => img.url),
+            brand: { "@type": "Brand", name: product.brand },
+            sku: product._id,
+            offers: {
+              "@type": "Offer",
+              price: product.price,
+              priceCurrency: "USD",
+              availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              url: typeof window !== "undefined" ? window.location.href : "",
+            },
+            aggregateRating: product.totalReviews > 0 ? {
+              "@type": "AggregateRating",
+              ratingValue: product.averageRating,
+              reviewCount: product.totalReviews,
+            } : undefined,
+          }),
+        }}
+      />
+
       <Breadcrumbs items={[
         { label: "Shop", href: "/shop" },
         { label: product.category?.name || "Category", href: `/shop/${product.category?.slug}` },
@@ -429,30 +459,28 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Sticky Add to Cart bar */}
-      <div className={`fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 bg-white/95 backdrop-blur-sm shadow-2xl transition-all duration-300 ${
+      <div className={`fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 bg-white/95 backdrop-blur-sm shadow-2xl transition-all duration-300 sm:bottom-0 bottom-[64px] ${
         showSticky ? "translate-y-0" : "translate-y-full"
       }`}>
-        <div className="container-custom flex items-center justify-between gap-4 py-3">
-          <div className="hidden items-center gap-4 sm:flex">
+        <div className="container-custom flex items-center justify-between gap-3 sm:gap-4 py-2.5 sm:py-3">
+          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
             <img
               src={primaryImage}
               alt={product.name}
-              className="h-12 w-12 rounded-lg object-cover"
+              className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 rounded-lg object-cover"
             />
-            <div>
-              <p className="text-sm font-semibold text-gray-900 line-clamp-1">{product.name}</p>
-              <p className="text-lg font-bold text-primary">{formatPrice(product.price)}</p>
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-1">{product.name}</p>
+              <p className="text-sm sm:text-lg font-bold text-primary">{formatPrice(product.price)}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="accent" onClick={handleAddToCart} disabled={product.stock === 0} className="px-6">
-              {addedToCart ? (
-                <><Check className="h-4 w-4 mr-2" /> Added!</>
-              ) : (
-                <><ShoppingBag className="h-4 w-4 mr-2" /> Add to Cart</>
-              )}
+          <Button variant="accent" onClick={handleAddToCart} disabled={product.stock === 0} className="flex-shrink-0 px-4 sm:px-6 min-h-[44px]">
+            {addedToCart ? (
+              <><Check className="h-4 w-4 mr-1.5 sm:mr-2" /> <span className="hidden sm:inline">Added!</span><span className="sm:hidden">✓</span></>
+            ) : (
+              <><ShoppingBag className="h-4 w-4 mr-1.5 sm:mr-2" /> <span className="hidden sm:inline">Add to Cart</span><span className="sm:hidden">Add</span></>
+            )}
             </Button>
-          </div>
         </div>
       </div>
 

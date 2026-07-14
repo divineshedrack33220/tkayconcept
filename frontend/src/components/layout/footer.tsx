@@ -31,11 +31,11 @@ export function Footer() {
     setLoading(true);
     try {
       const res = await api.post("/newsletter/subscribe", { email });
-      toast.success(res.data.message || t("footer.subscribeSuccess", "Thanks for subscribing!"));
+      toast.success(res.data.message || t("footer.subscribeSuccess"));
       setEmail("");
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg || t("footer.subscribeError", "Something went wrong. Please try again."));
+      toast.error(msg || t("footer.subscribeError"));
     } finally {
       setLoading(false);
     }
@@ -51,20 +51,20 @@ export function Footer() {
   ];
 
   const companyLinks = [
-    { label: t("nav.about", "About"), href: "/about" },
+    { label: t("nav.about"), href: "/about" },
     { label: t("nav.rootedIdentity"), href: "/rooted-identity" },
     { label: t("nav.customPrinting"), href: "/custom-printing" },
-    { label: t("footer.community", "Community"), href: "/community" },
+    { label: t("footer.community"), href: "/community" },
     { label: t("nav.contact"), href: "/contact" },
   ];
 
   const supportLinks = [
-    { label: t("footer.faq", "FAQ"), href: "/faq" },
+    { label: t("footer.faq"), href: "/faq" },
     { label: t("nav.trackOrder"), href: "/track" },
     { label: t("footer.shippingPolicy"), href: "/shipping" },
     { label: t("footer.returnPolicy"), href: "/returns" },
     { label: t("footer.privacyPolicy"), href: "/privacy" },
-    { label: t("footer.terms", "Terms of Service"), href: "/terms" },
+    { label: t("footer.terms"), href: "/terms" },
   ];
 
   return (
@@ -74,10 +74,10 @@ export function Footer() {
         <div className="container-custom py-6 sm:py-8">
           <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
             {[
-              { icon: Truck, title: t("footer.freeShipping", "Free Shipping"), desc: t("footer.freeShippingSub", "On orders over $75") },
-              { icon: Shield, title: t("footer.secureCheckout", "Secure Checkout"), desc: t("footer.secureCheckoutSub", "SSL encrypted") },
-              { icon: RotateCcw, title: t("footer.returns30", "30-Day Returns"), desc: t("footer.returnsSub", "Hassle free") },
-              { icon: CreditCard, title: t("footer.flexiblePayment", "Flexible Payment"), desc: t("footer.flexiblePaymentSub", "Multiple options") },
+              { icon: Truck, title: t("footer.freeShipping"), desc: t("footer.freeShippingSub") },
+              { icon: Shield, title: t("footer.secureCheckout"), desc: t("footer.secureCheckoutSub") },
+              { icon: RotateCcw, title: t("footer.returns30"), desc: t("footer.returnsSub") },
+              { icon: CreditCard, title: t("footer.flexiblePayment"), desc: t("footer.flexiblePaymentSub") },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-center gap-2.5 sm:gap-3">
                 <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10">
@@ -103,7 +103,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-3 sm:mt-4 max-w-sm text-xs sm:text-sm leading-relaxed text-gray-400">
-              {t("footer.description", "Creating products that inspire people to live boldly and purposefully. Faith. Purpose. Identity.")}
+              {t("footer.description")}
             </p>
             <div className="mt-4 sm:mt-6 flex gap-2.5">
               {socialIcons.map(({ href, label, path }) => (
@@ -162,7 +162,7 @@ export function Footer() {
           {/* Company */}
           <div>
             <h3 className="mb-4 sm:mb-5 text-xs sm:text-sm font-bold uppercase tracking-wider text-accent">
-              {t("footer.company", "Company")}
+              {t("footer.company")}
             </h3>
             <ul className="space-y-2 sm:space-y-3">
               {companyLinks.map((link) => (
