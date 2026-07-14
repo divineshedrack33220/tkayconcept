@@ -49,10 +49,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [selectedVariant, setSelectedVariant] = useState<{
-    name: string;
-    value: string;
-  } | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<Record<string, string>>({});
   const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
@@ -133,7 +130,7 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (!product) return;
-    addItem(product, quantity, selectedVariant || undefined);
+    addItem(product, quantity, Object.keys(selectedVariant).length > 0 ? selectedVariant : undefined);
     setAddedToCart(true);
     toast.success(`${product.name} added to cart!`);
     setTimeout(() => setAddedToCart(false), 2000);
@@ -313,16 +310,16 @@ export default function ProductDetailPage() {
               {product.variants.map((variant) => (
                 <div key={variant.name} className="mb-4">
                   <label className="mb-2 block text-sm font-semibold text-gray-700">
-                    {variant.name}: <span className="text-accent">{selectedVariant?.value || "Select"}</span>
+                    {variant.name}: <span className="text-accent">{selectedVariant[variant.name] || "Select"}</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {variant.options.map((opt) => (
                       <button
                         key={opt.value}
-                        onClick={() => setSelectedVariant({ name: variant.name, value: opt.value })}
+                        onClick={() => setSelectedVariant((prev) => ({ ...prev, [variant.name]: opt.value }))}
                         disabled={opt.stock === 0}
                         className={`rounded-xl border-2 px-5 py-2.5 text-sm font-semibold transition-all ${
-                          selectedVariant?.value === opt.value
+                          selectedVariant[variant.name] === opt.value
                             ? "border-accent bg-accent text-white shadow-md shadow-accent/20"
                             : opt.stock === 0
                             ? "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300 line-through"

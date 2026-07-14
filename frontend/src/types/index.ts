@@ -94,7 +94,7 @@ export interface OrderItem {
   name: string;
   price: number;
   quantity: number;
-  variant?: { name: string; value: string };
+  variant?: Record<string, string>;
   image: string;
 }
 
@@ -170,7 +170,7 @@ export interface Coupon {
 export interface CartItem {
   product: Product;
   quantity: number;
-  variant?: { name: string; value: string };
+  variant?: Record<string, string>;
 }
 
 export interface CustomOrder {
