@@ -104,14 +104,27 @@ export default function ShopContent() {
   const hasActiveFilters = category || brand || priceRange !== "0-0" || search;
 
   return (
-    <div className="section-padding container-custom">
-      {/* Header */}
-      <div className="mb-5 sm:mb-8">
-        <h1 className="heading-primary mb-1 sm:mb-2">Shop</h1>
-        <p className="text-xs sm:text-sm text-gray-600">
-          {total} {total === 1 ? "product" : "products"} found
-        </p>
-      </div>
+    <div>
+      {/* Shop Hero Banner */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-dark via-primary to-primary-light py-10 sm:py-16">
+        <div className="absolute inset-0">
+          <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent/10 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-white/5 blur-2xl" />
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+        <div className="container-custom relative z-10">
+          <h1 className="text-2xl sm:text-4xl font-bold text-white">Shop</h1>
+          <p className="mt-1.5 sm:mt-2 max-w-lg text-xs sm:text-sm text-white/70">Explore our full collection of faith-driven apparel, books, games, and more.</p>
+          <p className="mt-2 text-xs text-white/50">
+            {total} {total === 1 ? "product" : "products"} found
+          </p>
+        </div>
+      </section>
+
+      <div className="section-padding container-custom">
 
       {/* Search + Filters Bar */}
       <div className="mb-4 sm:mb-6 flex flex-col gap-3 sm:gap-4">
@@ -348,6 +361,7 @@ export default function ShopContent() {
 
       {/* Bottom padding for mobile fixed nav */}
       <div className="h-20 lg:hidden" />
+    </div>
     </div>
   );
 }
