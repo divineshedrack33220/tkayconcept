@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useSafeUser } from "@/lib/safe-clerk";
 import Link from "next/link";
 import { User, MapPin, Package, Heart, Trash2, ShoppingBag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import type { Product } from "@/types";
 
 export default function WishlistPage() {
-  const { isSignedIn } = useUser();
+  const { isSignedIn } = useSafeUser();
   const authApi = useAuthenticatedApi();
   const items = useWishlistStore((s) => s.items);
   const setItems = useWishlistStore((s) => s.setItems);

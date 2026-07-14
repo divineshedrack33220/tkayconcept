@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser, useAuth } from "@clerk/nextjs";
+import { useSafeUser, useSafeAuth } from "@/lib/safe-clerk";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -25,8 +25,8 @@ interface UserProfile {
 }
 
 export default function AccountPage() {
-  const { isSignedIn, user } = useUser();
-  const { getToken } = useAuth();
+  const { isSignedIn, user } = useSafeUser();
+  const { getToken } = useSafeAuth();
   const authApi = useAuthenticatedApi();
   const [profile, setProfile] = useState<UserProfile>({
     firstName: "",

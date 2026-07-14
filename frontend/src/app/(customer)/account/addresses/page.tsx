@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { useSafeUser } from "@/lib/safe-clerk";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -29,7 +29,7 @@ const US_STATES = [
 ];
 
 export default function AddressesPage() {
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn, user } = useSafeUser();
   const authApi = useAuthenticatedApi();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);

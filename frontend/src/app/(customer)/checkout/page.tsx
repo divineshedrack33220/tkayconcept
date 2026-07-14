@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useSafeUser } from "@/lib/safe-clerk";
 import Link from "next/link";
 import {
   CreditCard,
@@ -31,7 +31,7 @@ const US_STATES = [
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn, user } = useSafeUser();
   const authApi = useAuthenticatedApi();
   const items = useCartStore((s) => s.items);
   const subtotal = useCartStore((s) => s.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0));

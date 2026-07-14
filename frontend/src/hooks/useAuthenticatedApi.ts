@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useSafeAuth } from "@/lib/safe-clerk";
 import api from "@/lib/api";
 
 interface RequestOptions {
@@ -8,7 +8,7 @@ interface RequestOptions {
 }
 
 export function useAuthenticatedApi() {
-  const { getToken } = useAuth();
+  const { getToken } = useSafeAuth();
 
   const authApi = {
     async get(url: string, options?: RequestOptions) {

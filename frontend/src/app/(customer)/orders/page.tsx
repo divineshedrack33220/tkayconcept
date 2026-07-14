@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useSafeUser } from "@/lib/safe-clerk";
 import Link from "next/link";
 import { User, MapPin, Package, Heart, Loader2, Eye, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function OrdersPage() {
-  const { isSignedIn } = useUser();
+  const { isSignedIn } = useSafeUser();
   const authApi = useAuthenticatedApi();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
