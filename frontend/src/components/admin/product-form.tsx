@@ -7,6 +7,7 @@ import Link from "next/link";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
 import type { Category } from "@/types";
@@ -292,11 +293,9 @@ export function ProductForm({ productId }: ProductFormProps) {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">Full Description</label>
-                  <textarea
+                  <RichTextEditor
                     value={form.description}
-                    onChange={(e) => update("description", e.target.value)}
-                    rows={6}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+                    onChange={(val) => update("description", val)}
                   />
                 </div>
               </div>
