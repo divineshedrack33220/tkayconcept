@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "sonner";
 import { useKeepAlive } from "@/hooks/useKeepAlive";
+import { OfflineBanner } from "@/components/ui/offline-banner";
 
 export const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -31,6 +32,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   const content = (
     <QueryClientProvider client={queryClient}>
+      <OfflineBanner />
       <KeepAlive />
       {children}
       <Toaster position="bottom-right" richColors closeButton />
