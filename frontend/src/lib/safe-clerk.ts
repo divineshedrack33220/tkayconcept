@@ -1,5 +1,6 @@
-const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
+import { useAuth as clerkUseAuth, useUser as clerkUseUser, useClerk as clerkUseClerk } from "@clerk/nextjs";
 
+const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
 export const CLERK_ENABLED = !!CLERK_KEY;
 
 const fallbackAuth = { isSignedIn: false, userId: null, getToken: async () => null } as const;
@@ -21,44 +22,28 @@ type SafeUser = {
 };
 type SafeClerk = { signOut: () => Promise<void> };
 
-let clerkHooks: { useAuth: () => SafeAuth; useUser: () => SafeUser; useClerk: () => SafeClerk } | null = null;
-
-function getClerkHooks() {
-  if (clerkHooks) return clerkHooks;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    clerkHooks = require("@clerk/nextjs");
-    return clerkHooks;
-  } catch {
-    return null;
-  }
-}
-
 export function useSafeAuth(): SafeAuth {
-  const hooks = getClerkHooks();
-  if (!hooks) return fallbackAuth;
+  if (!CLERK_ENABLED) return fallbackAuth;
   try {
-    return hooks.useAuth();
+    return clerkUseAuth() as SafeAuth;
   } catch {
     return fallbackAuth;
   }
 }
 
 export function useSafeUser(): SafeUser {
-  const hooks = getClerkHooks();
-  if (!hooks) return fallbackUser;
+  if (!CLERK_ENABLED) return fallbackUser;
   try {
-    return hooks.useUser();
+    return clerkUseUser() as unknown as SafeUser;
   } catch {
     return fallbackUser;
   }
 }
 
 export function useSafeClerk(): SafeClerk {
-  const hooks = getClerkHooks();
-  if (!hooks) return fallbackClerk;
+  if (!CLERK_ENABLED) return fallbackClerk;
   try {
-    return hooks.useClerk();
+    return clerkUseClerk() as SafeClerk;
   } catch {
     return fallbackClerk;
   }
