@@ -21,13 +21,33 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== "undefined") {
-        window.location.href = "/sign-in";
+  async (error) => {
+    const config = error.config;
+
+    if (!config || config._retry) {
+      if (error.response?.status === 401) {
+        if (typeof window !== "undefined") {
+          window.location.href = "/sign-in";
+        }
       }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+
+    const isNetworkError =
+      !error.response &&
+      (error.code === "ERR_NETWORK" ||
+        error.code === "ERR_CONNECTION_CLOSED" ||
+        error.code === "ERR_CONNECTION_RESET" ||
+        error.message?.includes("Network Error") ||
+        error.code === "ECONNABORTED");
+
+    if (!isNetworkError) return Promise.reject(error);
+
+    config._retry = true;
+    config.timeout = 30000;
+
+    await new Promise((r) => setTimeout(r, 5000));
+    return api(config);
   }
 );
 

@@ -8,7 +8,10 @@ const PING_INTERVAL = 4 * 60 * 1000;
 export function useKeepAlive() {
   useEffect(() => {
     const ping = () => {
-      fetch(`${API_URL}/health`, { method: "GET" }).catch(() => {});
+      fetch(`${API_URL}/health`, {
+        method: "GET",
+        cache: "no-store",
+      }).catch(() => {});
     };
 
     ping();

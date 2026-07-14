@@ -1,20 +1,20 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { API_URL } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 
 interface BackendStatusCtx {
   isOnline: boolean;
   isWakingUp: boolean;
-  waitForBackend: () => Promise<boolean>;
+  retryCount: number;
 }
 
 const Ctx = createContext<BackendStatusCtx>({
   isOnline: true,
   isWakingUp: false,
-  waitForBackend: async () => true,
+  retryCount: 0,
 });
 
 export function useBackendStatus() {
@@ -22,59 +22,73 @@ export function useBackendStatus() {
 }
 
 export function BackendStatusProvider({ children }: { children: ReactNode }) {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(false);
   const [isWakingUp, setIsWakingUp] = useState(false);
-  const [wakeRetries, setWakeRetries] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
+  const mountedRef = useRef(true);
 
   const checkBackend = useCallback(async (): Promise<boolean> => {
     try {
       const res = await fetch(`${API_URL}/health`, {
         method: "GET",
-        signal: AbortSignal.timeout(5000),
+        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
       });
       if (res.ok) {
-        setIsOnline(true);
-        setIsWakingUp(false);
-        setWakeRetries(0);
+        if (mountedRef.current) {
+          setIsOnline(true);
+          setIsWakingUp(false);
+          setRetryCount(0);
+        }
         return true;
       }
     } catch {
       // offline
     }
-    setIsOnline(false);
+    if (mountedRef.current) setIsOnline(false);
     return false;
   }, []);
 
-  const waitForBackend = useCallback(async (): Promise<boolean> => {
-    const online = await checkBackend();
-    if (online) return true;
-
+  const wakeUp = useCallback(async () => {
     setIsWakingUp(true);
-    for (let i = 0; i < 30; i++) {
-      await new Promise((r) => setTimeout(r, 3000));
-      setWakeRetries(i + 1);
+    for (let i = 1; i <= 40; i++) {
+      if (!mountedRef.current) return;
+      setRetryCount(i);
       const ok = await checkBackend();
-      if (ok) return true;
+      if (ok) return;
+      await new Promise((r) => setTimeout(r, i < 5 ? 2000 : 3000));
     }
-    setIsWakingUp(false);
-    return false;
+    if (mountedRef.current) setIsWakingUp(false);
   }, [checkBackend]);
 
   useEffect(() => {
-    checkBackend();
-    const id = setInterval(checkBackend, 60_000);
-    return () => clearInterval(id);
-  }, [checkBackend]);
+    mountedRef.current = true;
+    let idleTimer: ReturnType<typeof setInterval>;
+
+    const init = async () => {
+      const ok = await checkBackend();
+      if (!ok) wakeUp();
+
+      idleTimer = setInterval(checkBackend, 4 * 60 * 1000);
+    };
+
+    init();
+
+    return () => {
+      mountedRef.current = false;
+      clearInterval(idleTimer);
+    };
+  }, [checkBackend, wakeUp]);
 
   return (
-    <Ctx.Provider value={{ isOnline, isWakingUp, waitForBackend }}>
+    <Ctx.Provider value={{ isOnline, isWakingUp, retryCount }}>
       <AnimatePresence>
         {isWakingUp && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9998] flex items-center justify-center bg-white/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[9998] flex items-center justify-center bg-white/90 backdrop-blur-md"
           >
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
@@ -86,18 +100,18 @@ export function BackendStatusProvider({ children }: { children: ReactNode }) {
               </div>
               <h2 className="mb-2 text-lg font-bold text-gray-900">Waking up our server</h2>
               <p className="mb-4 text-sm text-gray-500">
-                Our server sleeps when nobody&apos;s around. It usually takes 30–60 seconds to wake up.
+                Our server sleeps when nobody&apos;s around. It takes 30–60 seconds to wake up.
               </p>
-              <div className="mx-auto h-1.5 w-48 overflow-hidden rounded-full bg-gray-100">
+              <div className="mx-auto mb-3 h-1.5 w-48 overflow-hidden rounded-full bg-gray-100">
                 <motion.div
                   className="h-full rounded-full bg-primary"
                   initial={{ width: "0%" }}
-                  animate={{ width: `${Math.min((wakeRetries / 20) * 100, 95)}%` }}
+                  animate={{ width: `${Math.min((retryCount / 20) * 100, 95)}%` }}
                   transition={{ duration: 0.5 }}
                 />
               </div>
-              <p className="mt-3 text-xs text-gray-400">
-                {wakeRetries > 0 ? `Attempt ${wakeRetries}...` : "Connecting..."}
+              <p className="text-xs text-gray-400">
+                {retryCount > 0 ? `Attempt ${retryCount}...` : "Connecting..."}
               </p>
             </motion.div>
           </motion.div>
