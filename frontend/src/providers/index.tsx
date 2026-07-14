@@ -2,7 +2,8 @@
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { Component, useState } from "react";
+import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { useKeepAlive } from "@/hooks/useKeepAlive";
 import { OfflineBanner } from "@/components/ui/offline-banner";
@@ -12,6 +13,19 @@ export const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 function KeepAlive() {
   useKeepAlive();
   return null;
+}
+
+class ClerkErrorBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children;
+  }
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -28,18 +42,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
       })
   );
 
-  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
-
-  const content = (
-    <QueryClientProvider client={queryClient}>
+  const inner = (
+    <>
       <OfflineBanner />
       <KeepAlive />
       {children}
       <Toaster position="bottom-right" richColors closeButton />
-    </QueryClientProvider>
+    </>
   );
 
-  if (!clerkKey) return content;
+  const content = (
+    <QueryClientProvider client={queryClient}>{inner}</QueryClientProvider>
+  );
 
-  return <ClerkProvider publishableKey={clerkKey}>{content}</ClerkProvider>;
+  if (!CLERK_ENABLED) return content;
+
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
+  return (
+    <ClerkErrorBoundary fallback={content}>
+      <ClerkProvider publishableKey={clerkKey}>{content}</ClerkProvider>
+    </ClerkErrorBoundary>
+  );
 }
