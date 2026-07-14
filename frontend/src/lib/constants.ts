@@ -1,4 +1,4 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://tkayconcept.onrender.com/api";
 
 export const SITE_NAME = "TKAYKONCEPTS INT'L";
 export const SITE_DESCRIPTION = "Creating products that inspire people to live boldly and purposefully.";

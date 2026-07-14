@@ -21,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       })
   );
 
-  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
 
   const content = (
     <QueryClientProvider client={queryClient}>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const CLERK_ENABLED = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk");
 
 export async function proxy(req: NextRequest) {
   if (!CLERK_ENABLED) return NextResponse.next();
