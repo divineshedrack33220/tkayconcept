@@ -11,6 +11,7 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import type { Product } from "@/types";
+import { optImg } from "@/lib/opt-img";
 
 export default function WishlistPage() {
   const { isSignedIn } = useSafeUser();
@@ -116,7 +117,7 @@ export default function WishlistPage() {
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
                 {items.map((product) => {
-                  const image = product.images?.find((img) => img.isPrimary)?.url || product.images?.[0]?.url || "";
+                  const image = optImg(product.images?.find((img) => img.isPrimary)?.url || product.images?.[0]?.url || "", 400, 400);
                   return (
                     <div key={product._id} className="group rounded-xl border border-gray-100 bg-white p-4">
                       <Link href={`/shop/${product.category?.slug || "shop"}/${product._id}`}>

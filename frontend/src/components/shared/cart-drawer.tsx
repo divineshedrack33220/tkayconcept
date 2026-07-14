@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { useTranslation } from "@/i18n";
 import api from "@/lib/api";
+import { optImg } from "@/lib/opt-img";
 import type { Product } from "@/types";
 
 const FREE_SHIPPING_THRESHOLD = 75;
@@ -146,10 +147,12 @@ export function CartDrawer() {
           ) : (
             <div className="space-y-3">
               {items.map((item) => {
-                const image =
+                const image = optImg(
                   item.product.images?.find((i) => i.isPrimary)?.url ||
                   item.product.images?.[0]?.url ||
-                  "/placeholder-book.svg";
+                  "/placeholder-book.svg",
+                  150, 150
+                );
                 return (
                   <div
                     key={`${item.product._id}-${JSON.stringify(item.variant)}`}

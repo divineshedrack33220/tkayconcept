@@ -11,6 +11,7 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n";
+import { optImg } from "@/lib/opt-img";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -68,11 +69,13 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
   };
 
   const images = product.images || [];
-  const primaryImage =
+  const primaryImage = optImg(
     images.find((img) => img.isPrimary)?.url ||
     images[0]?.url ||
-    "/placeholder-book.svg";
-  const secondImage = images.length > 1 ? images[1]?.url : null;
+    "/placeholder-book.svg",
+    400, 400
+  );
+  const secondImage = images.length > 1 ? optImg(images[1]?.url, 400, 400) : null;
 
   const hasDiscount =
     product.compareAtPrice && product.compareAtPrice > product.price;

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, X, Loader2, ArrowLeft } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import api from "@/lib/api";
+import { optImg } from "@/lib/opt-img";
 import type { Product } from "@/types";
 
 export function SearchPanel() {
@@ -107,7 +108,7 @@ export function SearchPanel() {
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-3 active:bg-gray-50 touch-feedback text-left"
                   >
                     <img
-                      src={product.images.find((i) => i.isPrimary)?.url || product.images[0]?.url || "/placeholder-book.svg"}
+                      src={optImg(product.images.find((i) => i.isPrimary)?.url || product.images[0]?.url || "/placeholder-book.svg", 100, 100)}
                       alt={product.name}
                       className="h-12 w-12 rounded-lg object-cover bg-gray-50"
                     />

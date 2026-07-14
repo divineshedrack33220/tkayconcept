@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
+import { optImg } from "@/lib/opt-img";
 
 export default function CartPage() {
   const items = useCartStore((s) => s.items);
@@ -54,10 +55,12 @@ export default function CartPage() {
         {/* Cart Items */}
         <div className="space-y-4">
           {items.map((item) => {
-            const image =
+            const image = optImg(
               item.product.images.find((img) => img.isPrimary)?.url ||
               item.product.images[0]?.url ||
-              "/placeholder-product.jpg";
+              "/placeholder-product.jpg",
+              200, 200
+            );
 
             return (
               <div

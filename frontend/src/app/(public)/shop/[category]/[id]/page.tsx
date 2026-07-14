@@ -36,6 +36,7 @@ import { toast } from "sonner";
 import api from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
+import { optImg } from "@/lib/opt-img";
 
 function getColorHex(color: string): string {
   const map: Record<string, string> = {
@@ -162,10 +163,12 @@ export default function ProductDetailPage() {
 
   if (!product) return null;
 
-  const primaryImage =
+  const primaryImage = optImg(
     product.images.find((img) => img.isPrimary)?.url ||
     product.images[0]?.url ||
-    "/placeholder-book.svg";
+    "/placeholder-book.svg",
+    800, 800
+  );
 
   const hasDiscount =
     product.compareAtPrice && product.compareAtPrice > product.price;
@@ -229,7 +232,7 @@ export default function ProductDetailPage() {
           >
             <div className="relative aspect-square overflow-hidden">
               <img
-                src={product.images[selectedImage]?.url || primaryImage}
+                src={optImg(product.images[selectedImage]?.url || primaryImage, 800, 800)}
                 alt={product.name}
                 className={`h-full w-full object-cover transition-transform duration-200 ${
                   isZooming ? "scale-150" : ""
@@ -259,7 +262,7 @@ export default function ProductDetailPage() {
                       : "border-gray-100 hover:border-gray-300 opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <img src={img.url} alt={img.alt} className="h-full w-full object-cover" />
+                  <img src={optImg(img.url, 100, 100)} alt={img.alt} className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>

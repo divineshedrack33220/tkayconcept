@@ -21,6 +21,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
 import type { Address } from "@/types";
+import { optImg } from "@/lib/opt-img";
 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA",
@@ -513,10 +514,12 @@ export default function CheckoutPage() {
 
           <div className="mb-4 max-h-48 space-y-3 overflow-y-auto">
             {items.map((item) => {
-              const image =
+              const image = optImg(
                 item.product.images.find((img) => img.isPrimary)?.url ||
                 item.product.images[0]?.url ||
-                "/placeholder-product.jpg";
+                "/placeholder-product.jpg",
+                120, 120
+              );
               return (
                 <div
                   key={`${item.product._id}-${JSON.stringify(item.variant)}`}

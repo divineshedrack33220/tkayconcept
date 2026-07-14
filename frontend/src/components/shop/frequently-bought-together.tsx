@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { toast } from "sonner";
 import api from "@/lib/api";
+import { optImg } from "@/lib/opt-img";
 import type { Product } from "@/types";
 
 interface FrequentlyBoughtTogetherProps {
@@ -67,7 +68,7 @@ export function FrequentlyBoughtTogether({ currentProduct }: FrequentlyBoughtTog
         <div className="flex items-center gap-2 rounded-xl border border-accent/20 bg-white p-2 pr-3 shadow-sm">
           <div className="h-14 w-14 overflow-hidden rounded-lg bg-gray-50">
             <img
-              src={currentProduct.images?.find((i) => i.isPrimary)?.url || currentProduct.images?.[0]?.url || "/placeholder-book.svg"}
+              src={optImg(currentProduct.images?.find((i) => i.isPrimary)?.url || currentProduct.images?.[0]?.url || "/placeholder-book.svg", 120, 120)}
               alt={currentProduct.name}
               className="h-full w-full object-cover"
             />
@@ -95,7 +96,7 @@ export function FrequentlyBoughtTogether({ currentProduct }: FrequentlyBoughtTog
             >
               <div className="h-14 w-14 overflow-hidden rounded-lg bg-gray-50">
                 <img
-                  src={s.images?.find((i) => i.isPrimary)?.url || s.images?.[0]?.url || "/placeholder-book.svg"}
+                  src={optImg(s.images?.find((i) => i.isPrimary)?.url || s.images?.[0]?.url || "/placeholder-book.svg", 120, 120)}
                   alt={s.name}
                   className="h-full w-full object-cover"
                 />
