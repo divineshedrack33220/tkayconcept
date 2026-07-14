@@ -271,76 +271,76 @@ export function Header() {
             </div>
           </div>
         </div>
+      </header>
 
-        {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden animate-fade-in" onClick={toggleMobileMenu} />
-        )}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden animate-fade-in" onClick={toggleMobileMenu} />
+      )}
 
-        <div
-          className={`fixed inset-y-0 left-0 z-50 w-[min(320px,85vw)] bg-white shadow-2xl transition-transform duration-300 ease-out lg:hidden ${
-            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 safe-area-top">
-              <Link href="/" onClick={toggleMobileMenu} className="text-lg font-bold text-primary">
-                TKAY<span className="text-accent">KONCEPTS</span>
-              </Link>
-              <button onClick={toggleMobileMenu} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 active:bg-gray-200 touch-feedback">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-[min(320px,85vw)] bg-white shadow-2xl transition-transform duration-300 ease-out lg:hidden ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 safe-area-top">
+            <Link href="/" onClick={toggleMobileMenu} className="text-lg font-bold text-primary">
+              TKAY<span className="text-accent">KONCEPTS</span>
+            </Link>
+            <button onClick={toggleMobileMenu} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 active:bg-gray-300 touch-feedback transition-colors">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
 
-            <nav className="flex-1 overflow-y-auto px-3 py-3 scroll-y-momentum">
-              {navLinks.map((link) => (
-                <div key={link.label}>
-                  {link.hasMega ? (
-                    <>
-                      <button
-                        onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
-                        className="flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
-                      >
-                        {link.label}
-                        <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${mobileExpanded === link.label ? "rotate-90" : ""}`} />
-                      </button>
-                      {mobileExpanded === link.label && (
-                        <div className="ml-4 border-l-2 border-accent/20 pl-4 pb-2 animate-slide-in-up">
-                          <Link href={link.href} onClick={toggleMobileMenu} className="block rounded-lg px-3 py-2.5 text-[15px] font-semibold text-accent hover:bg-accent/5 active:bg-accent/10">
-                            View All Products
-                          </Link>
-                          {megaMenuData.categories.map((cat) => (
-                            <Link key={cat.name} href={cat.href} onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] text-gray-600 hover:bg-gray-50 hover:text-accent active:bg-gray-100 touch-feedback">
-                              <img src={cat.image} alt={cat.name} className="h-8 w-8 rounded-lg object-cover" />
-                              {cat.name}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <Link
-                      href={link.href}
-                      onClick={toggleMobileMenu}
-                      className="block rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
+          <nav className="flex-1 overflow-y-auto px-3 py-3 scroll-y-momentum">
+            {navLinks.map((link) => (
+              <div key={link.label}>
+                {link.hasMega ? (
+                  <>
+                    <button
+                      onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
+                      className="flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
                     >
                       {link.label}
-                    </Link>
-                  )}
-                </div>
-              ))}
-            </nav>
+                      <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${mobileExpanded === link.label ? "rotate-90" : ""}`} />
+                    </button>
+                    {mobileExpanded === link.label && (
+                      <div className="ml-4 border-l-2 border-accent/20 pl-4 pb-2 animate-slide-in-up">
+                        <Link href={link.href} onClick={toggleMobileMenu} className="block rounded-lg px-3 py-2.5 text-[15px] font-semibold text-accent hover:bg-accent/5 active:bg-accent/10">
+                          View All Products
+                        </Link>
+                        {megaMenuData.categories.map((cat) => (
+                          <Link key={cat.name} href={cat.href} onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] text-gray-600 hover:bg-gray-50 hover:text-accent active:bg-gray-100 touch-feedback">
+                            <img src={cat.image} alt={cat.name} className="h-8 w-8 rounded-lg object-cover" />
+                            {cat.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href={link.href}
+                    onClick={toggleMobileMenu}
+                    className="block rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
+                  >
+                    {link.label}
+                  </Link>
+                )}
+              </div>
+            ))}
+          </nav>
 
-            <div className="border-t border-gray-100 px-5 py-4 safe-area-bottom">
-              {CLERK_ENABLED_EXPORT && <MobileUserDrawer />}
-              {!CLERK_ENABLED_EXPORT && (
-                <Link href="/sign-in" onClick={toggleMobileMenu}>
-                  <Button variant="accent" className="w-full">{t("auth.signIn")}</Button>
-                </Link>
-              )}
-            </div>
+          <div className="border-t border-gray-100 px-5 py-4 safe-area-bottom">
+            {CLERK_ENABLED_EXPORT && <MobileUserDrawer />}
+            {!CLERK_ENABLED_EXPORT && (
+              <Link href="/sign-in" onClick={toggleMobileMenu}>
+                <Button variant="accent" className="w-full">{t("auth.signIn")}</Button>
+              </Link>
+            )}
           </div>
         </div>
-      </header>
+      </div>
 
       <SearchPanel />
       <CartDrawer />
