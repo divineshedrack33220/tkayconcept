@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Gamepad2, Palette, Printer, Shirt, ShoppingBag, Heart, Watch, ChevronLeft, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { useTranslation } from "@/i18n";
 import api from "@/lib/api";
 import type { Category } from "@/types";
 
@@ -32,6 +34,7 @@ export function FeaturedCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -82,21 +85,25 @@ export function FeaturedCategories() {
   return (
     <section className="section-padding bg-gray-50">
       <div className="container-custom">
-        <div className="mb-12 text-center">
-          <h2 className="heading-secondary">Explore Our Collections</h2>
-          <p className="mt-3 text-gray-600">Discover products designed to inspire</p>
-        </div>
+        <ScrollReveal>
+          <div className="mb-8 sm:mb-12 text-center">
+            <h2 className="heading-secondary">{t("shop.exploreCollections")}</h2>
+            <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600">{t("shop.exploreCollectionsSub")}</p>
+          </div>
+        </ScrollReveal>
 
         <div className="relative group/carousel">
           {/* Arrows */}
           <button
             onClick={() => scroll("left")}
+            aria-label="Scroll left"
             className="absolute -left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-gray-50"
           >
             <ChevronLeft className="h-5 w-5 text-gray-600" />
           </button>
           <button
             onClick={() => scroll("right")}
+            aria-label="Scroll right"
             className="absolute -right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-gray-50"
           >
             <ChevronRight className="h-5 w-5 text-gray-600" />
@@ -105,18 +112,18 @@ export function FeaturedCategories() {
           {/* Track */}
           <div
             ref={scrollRef}
-            className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 scrollbar-hide"
+            className="flex gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 scrollbar-hide"
           >
-            {displayCategories.map((cat) => {
+            {displayCategories.map((cat, i) => {
               const Icon = iconMap[cat.slug] || BookOpen;
               return (
                 <Link key={cat.slug} href={cat.href} className="snap-start">
-                  <div className="group min-w-[240px] max-w-[240px] rounded-xl border border-gray-200 bg-white p-8 text-center transition-all hover:border-accent hover:shadow-lg">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
-                      <Icon className="h-7 w-7" />
+                  <div className="group min-w-[200px] sm:min-w-[240px] max-w-[240px] rounded-xl border border-gray-200 bg-white p-5 sm:p-8 text-center transition-all hover:border-accent hover:shadow-lg active:scale-[0.98]">
+                    <div className="mx-auto mb-3 sm:mb-4 flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
+                      <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
                     </div>
-                    <h3 className="text-lg font-semibold text-primary">{cat.name}</h3>
-                    <p className="mt-2 text-sm text-gray-500">{cat.description}</p>
+                    <h3 className="text-sm sm:text-lg font-semibold text-primary">{cat.name}</h3>
+                    <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500 line-clamp-2">{cat.description}</p>
                   </div>
                 </Link>
               );

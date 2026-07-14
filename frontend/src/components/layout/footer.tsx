@@ -1,101 +1,91 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { SITE_NAME, SOCIAL_LINKS } from "@/lib/constants";
-import { Camera, Globe, Video, AtSign, MessageCircle, Shield, Truck, RotateCcw, CreditCard } from "lucide-react";
+import { Shield, Truck, RotateCcw, CreditCard } from "lucide-react";
 import { useTranslation } from "@/i18n";
-
-const footerLinks = {
-  shop: [
-    { label: "Books", href: "/shop/books" },
-    { label: "Games", href: "/shop/games" },
-    { label: "Apparel", href: "/shop/apparel" },
-    { label: "Merchandise", href: "/shop/merchandise" },
-    { label: "Devotionals", href: "/shop/devotionals" },
-    { label: "Accessories", href: "/shop/accessories" },
-  ],
-  company: [
-    { label: "About Us", href: "/about" },
-    { label: "Rooted Identity", href: "/rooted-identity" },
-    { label: "Custom Printing", href: "/custom-printing" },
-    { label: "Community", href: "/community" },
-    { label: "Contact", href: "/contact" },
-  ],
-  support: [
-    { label: "FAQ", href: "/faq" },
-    { label: "Track Order", href: "/track" },
-    { label: "Shipping Policy", href: "/shipping" },
-    { label: "Return Policy", href: "/returns" },
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-  ],
-};
+import { toast } from "sonner";
+import api from "@/lib/api";
 
 const socialIcons = [
-  { icon: Camera, href: SOCIAL_LINKS.instagram, label: "Instagram" },
-  { icon: Globe, href: SOCIAL_LINKS.facebook, label: "Facebook" },
-  { icon: AtSign, href: SOCIAL_LINKS.twitter, label: "Twitter" },
-  { icon: Video, href: SOCIAL_LINKS.youtube, label: "YouTube" },
-  { icon: MessageCircle, href: SOCIAL_LINKS.whatsapp, label: "WhatsApp" },
+  { href: SOCIAL_LINKS.instagram, label: "Instagram", path: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" },
+  { href: SOCIAL_LINKS.facebook, label: "Facebook", path: "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" },
+  { href: SOCIAL_LINKS.twitter, label: "Twitter / X", path: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" },
+  { href: SOCIAL_LINKS.youtube, label: "YouTube", path: "M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" },
+  { href: SOCIAL_LINKS.whatsapp, label: "WhatsApp", path: "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" },
 ];
 
 const paymentMethods = [
-  { name: "Visa", icon: "💳" },
-  { name: "Mastercard", icon: "💳" },
-  { name: "Apple Pay", icon: "🍎" },
-  { name: "Google Pay", icon: "📱" },
-  { name: "PayPal", icon: "🅿️" },
-  { name: "Stripe", icon: "🔒" },
+  { name: "Visa", svg: "M24 12.073c0-6.627-5.373-12-12-12S0 5.446 0 12.073c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" },
 ];
 
 export function Footer() {
   const { t } = useTranslation();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const footerLinks = {
-    shop: [
-      { label: "Books", href: "/shop/books" },
-      { label: "Games", href: "/shop/games" },
-      { label: "Apparel", href: "/shop/apparel" },
-      { label: "Merchandise", href: "/shop/merchandise" },
-      { label: "Devotionals", href: "/shop/devotionals" },
-      { label: "Accessories", href: "/shop/accessories" },
-    ],
-    company: [
-      { label: "About Us", href: "/about" },
-      { label: t("nav.rootedIdentity"), href: "/rooted-identity" },
-      { label: t("nav.customPrinting"), href: "/custom-printing" },
-      { label: "Community", href: "/community" },
-      { label: t("nav.contact"), href: "/contact" },
-    ],
-    support: [
-      { label: "FAQ", href: "/faq" },
-      { label: "Track Order", href: "/track" },
-      { label: t("footer.shippingPolicy"), href: "/shipping" },
-      { label: t("footer.returnPolicy"), href: "/returns" },
-      { label: t("footer.privacyPolicy"), href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
-    ],
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setLoading(true);
+    try {
+      const res = await api.post("/newsletter/subscribe", { email });
+      toast.success(res.data.message || t("footer.subscribeSuccess", "Thanks for subscribing!"));
+      setEmail("");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      toast.error(msg || t("footer.subscribeError", "Something went wrong. Please try again."));
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const shopLinks = [
+    { label: t("nav.shop") + " — Books", href: "/shop/books" },
+    { label: t("nav.shop") + " — Games", href: "/shop/games" },
+    { label: t("nav.shop") + " — Apparel", href: "/shop/apparel" },
+    { label: t("nav.shop") + " — Merchandise", href: "/shop/merchandise" },
+    { label: t("nav.shop") + " — Devotionals", href: "/shop/devotionals" },
+    { label: t("nav.shop") + " — Accessories", href: "/shop/accessories" },
+  ];
+
+  const companyLinks = [
+    { label: t("nav.about", "About"), href: "/about" },
+    { label: t("nav.rootedIdentity"), href: "/rooted-identity" },
+    { label: t("nav.customPrinting"), href: "/custom-printing" },
+    { label: t("footer.community", "Community"), href: "/community" },
+    { label: t("nav.contact"), href: "/contact" },
+  ];
+
+  const supportLinks = [
+    { label: t("footer.faq", "FAQ"), href: "/faq" },
+    { label: t("nav.trackOrder"), href: "/track" },
+    { label: t("footer.shippingPolicy"), href: "/shipping" },
+    { label: t("footer.returnPolicy"), href: "/returns" },
+    { label: t("footer.privacyPolicy"), href: "/privacy" },
+    { label: t("footer.terms", "Terms of Service"), href: "/terms" },
+  ];
 
   return (
     <footer className="bg-primary-dark text-white">
       {/* Trust bar */}
       <div className="border-b border-white/10">
-        <div className="container-custom py-8">
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+        <div className="container-custom py-6 sm:py-8">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
             {[
-              { icon: Truck, title: "Free Shipping", desc: "On orders over $75" },
-              { icon: Shield, title: "Secure Checkout", desc: "SSL encrypted" },
-              { icon: RotateCcw, title: "30-Day Returns", desc: "Hassle free" },
-              { icon: CreditCard, title: "Flexible Payment", desc: "Multiple options" },
+              { icon: Truck, title: t("footer.freeShipping", "Free Shipping"), desc: t("footer.freeShippingSub", "On orders over $75") },
+              { icon: Shield, title: t("footer.secureCheckout", "Secure Checkout"), desc: t("footer.secureCheckoutSub", "SSL encrypted") },
+              { icon: RotateCcw, title: t("footer.returns30", "30-Day Returns"), desc: t("footer.returnsSub", "Hassle free") },
+              { icon: CreditCard, title: t("footer.flexiblePayment", "Flexible Payment"), desc: t("footer.flexiblePaymentSub", "Multiple options") },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-center gap-3">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10">
-                  <Icon className="h-5 w-5 text-accent" />
+              <div key={title} className="flex items-center gap-2.5 sm:gap-3">
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10">
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">{title}</p>
-                  <p className="text-xs text-gray-400">{desc}</p>
+                  <p className="text-xs sm:text-sm font-semibold">{title}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400">{desc}</p>
                 </div>
               </div>
             ))}
@@ -103,59 +93,65 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container-custom py-16">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
+      <div className="container-custom py-10 sm:py-16">
+        <div className="grid grid-cols-1 gap-8 sm:gap-12 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand + Newsletter */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
-              <span className="text-2xl font-bold">
+              <span className="text-xl sm:text-2xl font-bold">
                 TKAY<span className="text-accent">KONCEPTS</span>
               </span>
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-400">
-              Creating products that inspire people to live boldly and purposefully.
-              Faith. Purpose. Identity.
+            <p className="mt-3 sm:mt-4 max-w-sm text-xs sm:text-sm leading-relaxed text-gray-400">
+              {t("footer.description", "Creating products that inspire people to live boldly and purposefully. Faith. Purpose. Identity.")}
             </p>
-            <div className="mt-6 flex gap-3">
-              {socialIcons.map(({ icon: Icon, href, label }) => (
+            <div className="mt-4 sm:mt-6 flex gap-2.5">
+              {socialIcons.map(({ href, label, path }) => (
                 <a
                   key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-gray-400 transition-all hover:bg-accent hover:text-white hover:scale-110"
+                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-white/5 text-gray-400 transition-all hover:bg-accent hover:text-white hover:scale-110"
                 >
-                  <Icon className="h-4 w-4" />
+                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d={path} /></svg>
                 </a>
               ))}
             </div>
 
-            {/* Mini newsletter */}
-            <div className="mt-6">
-              <p className="mb-2 text-sm font-semibold">{t("footer.subscribe")}</p>
-              <div className="flex gap-2">
+            {/* Newsletter - WORKING */}
+            <div className="mt-5 sm:mt-6">
+              <p className="mb-2 text-xs sm:text-sm font-semibold">{t("footer.subscribe")}</p>
+              <form onSubmit={handleSubscribe} className="flex gap-2">
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("footer.emailPlaceholder")}
-                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                  required
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 sm:px-4 py-2.5 text-xs sm:text-sm text-white placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent min-h-[44px]"
                 />
-                <button className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-light">
-                  {t("footer.subscribeBtn")}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-xl bg-accent px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-accent-light disabled:opacity-50 min-h-[44px] touch-feedback"
+                >
+                  {loading ? "..." : t("footer.subscribeBtn")}
                 </button>
-              </div>
+              </form>
             </div>
           </div>
 
           {/* Shop */}
           <div>
-            <h3 className="mb-5 text-sm font-bold uppercase tracking-wider text-accent">
-              Shop
+            <h3 className="mb-4 sm:mb-5 text-xs sm:text-sm font-bold uppercase tracking-wider text-accent">
+              {t("nav.shop")}
             </h3>
-            <ul className="space-y-3">
-              {footerLinks.shop.map((link) => (
+            <ul className="space-y-2 sm:space-y-3">
+              {shopLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white hover:pl-1">
+                  <Link href={link.href} className="text-xs sm:text-sm text-gray-400 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -165,13 +161,13 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="mb-5 text-sm font-bold uppercase tracking-wider text-accent">
-              Company
+            <h3 className="mb-4 sm:mb-5 text-xs sm:text-sm font-bold uppercase tracking-wider text-accent">
+              {t("footer.company", "Company")}
             </h3>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
+            <ul className="space-y-2 sm:space-y-3">
+              {companyLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white hover:pl-1">
+                  <Link href={link.href} className="text-xs sm:text-sm text-gray-400 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -181,13 +177,13 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="mb-5 text-sm font-bold uppercase tracking-wider text-accent">
-              Support
+            <h3 className="mb-4 sm:mb-5 text-xs sm:text-sm font-bold uppercase tracking-wider text-accent">
+              {t("footer.customerService")}
             </h3>
-            <ul className="space-y-3">
-              {footerLinks.support.map((link) => (
+            <ul className="space-y-2 sm:space-y-3">
+              {supportLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white hover:pl-1">
+                  <Link href={link.href} className="text-xs sm:text-sm text-gray-400 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -199,18 +195,17 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
-        <div className="container-custom flex flex-col items-center justify-between gap-4 py-6 md:flex-row">
-          <p className="text-xs text-gray-500">
+        <div className="container-custom flex flex-col items-center justify-between gap-4 py-5 sm:py-6 md:flex-row">
+          <p className="text-[10px] sm:text-xs text-gray-500">
             &copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
           </p>
-          <div className="flex items-center gap-3">
-            {paymentMethods.map((pm) => (
+          <div className="flex items-center gap-2">
+            {["Visa", "Mastercard", "Apple Pay", "Google Pay", "PayPal", "Stripe"].map((name) => (
               <div
-                key={pm.name}
-                className="flex h-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 px-3 text-xs text-gray-400"
-                title={pm.name}
+                key={name}
+                className="flex h-7 sm:h-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 px-2 sm:px-3 text-[10px] sm:text-xs font-medium text-gray-400"
               >
-                {pm.icon}
+                {name}
               </div>
             ))}
           </div>

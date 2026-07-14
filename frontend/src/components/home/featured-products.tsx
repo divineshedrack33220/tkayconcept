@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/shop/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollReveal, ScrollRevealStagger, StaggerItem } from "@/components/ui/scroll-reveal";
+import { useTranslation } from "@/i18n";
 import api from "@/lib/api";
 import type { Product } from "@/types";
 
 export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -37,7 +39,7 @@ export function FeaturedProducts() {
             <Skeleton className="mx-auto mb-3 h-8 w-48" />
             <Skeleton className="mx-auto h-4 w-64" />
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="rounded-xl border border-gray-100 bg-white p-3">
                 <Skeleton className="mb-3 aspect-square w-full rounded-lg" />
@@ -57,25 +59,29 @@ export function FeaturedProducts() {
   return (
     <section className="section-padding">
       <div className="container-custom">
-        <div className="mb-12 text-center">
-          <h2 className="heading-secondary">Featured Products</h2>
-          <p className="mt-3 text-gray-600">Our most loved items</p>
-        </div>
+        <ScrollReveal>
+          <div className="mb-8 sm:mb-12 text-center">
+            <h2 className="heading-secondary">{t("shop.featuredProducts")}</h2>
+            <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600">{t("shop.featuredProductsSub")}</p>
+          </div>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <ScrollRevealStagger className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {products.slice(0, 8).map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <StaggerItem key={product._id}>
+              <ProductCard product={product} />
+            </StaggerItem>
           ))}
-        </div>
+        </ScrollRevealStagger>
 
-        <div className="mt-10 text-center">
-          <Link href="/shop">
-            <Button variant="secondary" size="lg">
-              View All Products
+        <ScrollReveal>
+          <div className="mt-8 sm:mt-10 text-center">
+            <Link href="/shop" className="inline-flex items-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold text-primary transition-all hover:bg-primary hover:text-white active:scale-[0.98] touch-feedback">
+              {t("shop.viewAllProducts")}
               <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+            </Link>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
