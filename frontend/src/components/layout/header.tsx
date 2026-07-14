@@ -244,11 +244,13 @@ export function Header() {
                 <LanguageSelector />
               </div>
 
-              <button onClick={toggleSearch} aria-label="Open search" className="touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
+              <button onClick={toggleSearch} aria-label="Open search" className="touch-feedback hidden sm:flex rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
                 <Search className="h-[22px] w-[22px]" />
               </button>
 
-              {CLERK_ENABLED_EXPORT && <DesktopUserMenu />}
+              <div className="hidden sm:block">
+                {CLERK_ENABLED_EXPORT && <DesktopUserMenu />}
+              </div>
 
               {!CLERK_ENABLED_EXPORT && (
                 <Link href="/sign-in">
@@ -256,7 +258,7 @@ export function Header() {
                 </Link>
               )}
 
-              <button onClick={toggleCart} aria-label={`Open cart${totalItems > 0 ? `, ${totalItems} items` : ""}`} className="relative touch-feedback rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
+              <button onClick={toggleCart} aria-label={`Open cart${totalItems > 0 ? `, ${totalItems} items` : ""}`} className="relative touch-feedback hidden sm:flex rounded-xl p-2.5 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors" style={{ minWidth: 44, minHeight: 44 }}>
                 <ShoppingBag className="h-[22px] w-[22px]" />
                 {totalItems > 0 && (
                   <span className="absolute -right-0 -top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-white shadow-sm animate-scale-in">
