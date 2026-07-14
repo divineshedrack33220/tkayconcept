@@ -15,7 +15,6 @@ import { ProductCard } from "@/components/shop/product-card";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/api";
-import { PRODUCT_CATEGORIES } from "@/lib/constants";
 import type { Product, PaginatedResponse } from "@/types";
 
 const SORT_OPTIONS = [
@@ -48,6 +47,7 @@ export default function ShopContent() {
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [category, setCategory] = useState(searchParams.get("category") || "");
   const [brand, setBrand] = useState(searchParams.get("brand") || "");
+  const [categories, setCategories] = useState<{ slug: string; name: string }[]>([]);
   const [priceRange, setPriceRange] = useState(
     searchParams.get("minPrice") && searchParams.get("maxPrice")
       ? `${searchParams.get("minPrice")}-${searchParams.get("maxPrice")}`
@@ -86,6 +86,12 @@ export default function ShopContent() {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  useEffect(() => {
+    api.get("/categories")
+      .then((res) => setCategories((res.data.data || []).map((c: { slug: string; name: string }) => ({ slug: c.slug, name: c.name }))))
+      .catch(() => {});
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -266,15 +272,15 @@ export default function ShopContent() {
                 >
                   All Categories
                 </button>
-                {PRODUCT_CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                   <button
-                    key={cat}
-                    onClick={() => { setCategory(cat); setPage(1); }}
+                    key={cat.slug}
+                    onClick={() => { setCategory(cat.slug); setPage(1); }}
                     className={`touch-feedback rounded-lg px-3 py-2 text-left text-[13px] sm:text-sm capitalize transition-all ${
-                      category === cat ? "bg-accent/10 text-accent font-medium" : "text-gray-600 active:bg-gray-50 hover:bg-gray-50"
+                      category === cat.slug ? "bg-accent/10 text-accent font-medium" : "text-gray-600 active:bg-gray-50 hover:bg-gray-50"
                     }`}
                   >
-                    {cat}
+                    {cat.name}
                   </button>
                 ))}
               </div>

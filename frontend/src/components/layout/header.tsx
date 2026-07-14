@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useUIStore } from "@/stores/uiStore";
-import { PRODUCT_CATEGORIES } from "@/lib/constants";
+import api from "@/lib/api";
 import { SearchPanel } from "@/components/shared/search-panel";
 import { CartDrawer } from "@/components/shared/cart-drawer";
 import { CurrencySelector } from "@/components/shared/currency-selector";
@@ -30,14 +30,6 @@ import { LanguageSelector } from "@/components/shared/language-selector";
 import { useTranslation } from "@/i18n";
 
 const CLERK_ENABLED_EXPORT = CLERK_ENABLED;
-
-const megaMenuData = {
-  categories: PRODUCT_CATEGORIES.map((cat) => ({
-    name: cat.charAt(0).toUpperCase() + cat.slice(1),
-    href: `/shop/${cat}`,
-    image: `https://picsum.photos/seed/tkay-${cat}/200/200`,
-  })),
-};
 
 function UserAvatar({ className = "" }: { className?: string }) {
   const { user } = useSafeUser();
@@ -159,7 +151,21 @@ export function Header() {
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [megaCategories, setMegaCategories] = useState<{ name: string; slug: string; image: string }[]>([]);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    api.get("/categories")
+      .then((res) => {
+        const cats = (res.data.data || []).map((c: { name: string; slug: string; image?: string }) => ({
+          name: c.name,
+          slug: c.slug,
+          image: c.image || `https://picsum.photos/seed/tkay-${c.slug}/200/200`,
+        }));
+        setMegaCategories(cats);
+      })
+      .catch(() => {});
+  }, []);
 
   const navLinks = [
     { label: t("nav.home"), href: "/" },
@@ -213,10 +219,10 @@ export function Header() {
                       <div className="w-[min(600px,calc(100vw-3rem))] rounded-2xl border border-gray-100 bg-white p-6 shadow-2xl shadow-gray-200/50">
                         <p className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">Categories</p>
                         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                          {megaMenuData.categories.map((cat) => (
+                          {megaCategories.map((cat) => (
                             <Link
-                              key={cat.name}
-                              href={cat.href}
+                              key={cat.slug}
+                              href={`/shop/${cat.slug}`}
                               className="group flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-accent/5"
                             >
                               <img
@@ -306,16 +312,16 @@ export function Header() {
                       <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${mobileExpanded === link.label ? "rotate-90" : ""}`} />
                     </button>
                     {mobileExpanded === link.label && (
-                      <div className="ml-4 border-l-2 border-accent/20 pl-4 pb-2 animate-slide-in-up">
-                        <Link href={link.href} onClick={toggleMobileMenu} className="block rounded-lg px-3 py-2.5 text-[15px] font-semibold text-accent hover:bg-accent/5 active:bg-accent/10">
-                          View All Products
-                        </Link>
-                        {megaMenuData.categories.map((cat) => (
-                          <Link key={cat.name} href={cat.href} onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] text-gray-600 hover:bg-gray-50 hover:text-accent active:bg-gray-100 touch-feedback">
-                            <img src={cat.image} alt={cat.name} className="h-8 w-8 rounded-lg object-cover" />
-                            {cat.name}
+                        <div className="ml-4 border-l-2 border-accent/20 pl-4 pb-2 animate-slide-in-up">
+                          <Link href={`/shop`} onClick={toggleMobileMenu} className="block rounded-lg px-3 py-2.5 text-[15px] font-semibold text-accent hover:bg-accent/5 active:bg-accent/10">
+                            View All Products
                           </Link>
-                        ))}
+                          {megaCategories.map((cat) => (
+                            <Link key={cat.slug} href={`/shop/${cat.slug}`} onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] text-gray-600 hover:bg-gray-50 hover:text-accent active:bg-gray-100 touch-feedback">
+                              <img src={cat.image} alt={cat.name} className="h-8 w-8 rounded-lg object-cover" />
+                              {cat.name}
+                            </Link>
+                          ))}
                       </div>
                     )}
                   </>
