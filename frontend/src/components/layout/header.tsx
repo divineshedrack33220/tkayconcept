@@ -76,9 +76,8 @@ function DesktopUserMenu() {
         )}
       </Link>
       <div className="relative group">
-        <button className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-          <UserAvatar className="h-7 w-7" />
-          <span className="hidden xl:inline max-w-[80px] truncate">{user?.firstName}</span>
+        <button className="flex items-center justify-center rounded-lg p-1 text-gray-700 hover:bg-gray-100 transition-colors">
+          <UserAvatar className="h-8 w-8" />
         </button>
         <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 absolute right-0 top-full z-50 mt-1 w-56 rounded-xl border border-gray-100 bg-white py-2 shadow-xl shadow-gray-200/50 transition-all duration-200">
           <div className="border-b border-gray-100 px-4 py-3">
