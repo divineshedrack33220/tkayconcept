@@ -18,12 +18,24 @@ export const metadata: Metadata = {
   description:
     "Creating products that inspire people to live boldly and purposefully. Shop games, puzzles, devotionals, and books.",
   keywords: ["faith", "purpose", "identity", "christian", "games", "puzzles", "devotionals", "books"],
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+    other: [
+      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
   openGraph: {
     type: "website",
     locale: "en_GB",
     siteName: "TK Concepts",
     title: "TK Concepts | Faith. Purpose. Identity.",
     description: "Creating products that inspire people to live boldly and purposefully.",
+    images: ["/og-image.png"],
   },
   appleWebApp: {
     capable: true,
