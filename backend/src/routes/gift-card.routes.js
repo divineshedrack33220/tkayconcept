@@ -54,7 +54,7 @@ router.post('/', requireAuth, async (req, res) => {
               <p style="margin:0;font-size:24px;font-weight:bold;letter-spacing:2px;color:#1a1a2e;">${code}</p>
             </div>
             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/shop" style="display:inline-block;background:#F59E0B;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;">Shop Now</a>
-            <p style="color:#666;font-size:12px;margin-top:30px;">TK Concepts INT'L - Faith. Purpose. Identity.</p>
+            <p style="color:#666;font-size:12px;margin-top:30px;">TK Concepts - Faith. Purpose. Identity.</p>
           </div>
         `,
       }).catch(() => {});

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Gift, CreditCard, Loader2, CheckCircle2, Copy } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Gift, CreditCard, Loader2, CheckCircle2, Copy, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
@@ -10,6 +10,16 @@ import { useTranslation } from "@/i18n";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
+
+interface GiftCardData {
+  _id: string;
+  code: string;
+  balance: number;
+  initialBalance: number;
+  status: string;
+  expiresAt?: string;
+  createdAt: string;
+}
 
 const AMOUNTS = [25, 50, 75, 100, 150, 200];
 
@@ -28,7 +38,26 @@ export default function GiftCardsPage() {
   const [redeemCode, setRedeemCode] = useState("");
   const [redeeming, setRedeeming] = useState(false);
   const [redeemedBalance, setRedeemedBalance] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"buy" | "redeem">("buy");
+  const [activeTab, setActiveTab] = useState<"buy" | "redeem" | "mycards">("buy");
+  const [myCards, setMyCards] = useState<GiftCardData[]>([]);
+  const [loadingMyCards, setLoadingMyCards] = useState(false);
+
+  const fetchMyCards = useCallback(async () => {
+    if (!isSignedIn) return;
+    setLoadingMyCards(true);
+    try {
+      const res = await authApi.get("/gift-cards/my");
+      setMyCards(res.data.data);
+    } catch {
+      // silent
+    } finally {
+      setLoadingMyCards(false);
+    }
+  }, [isSignedIn]);
+
+  useEffect(() => {
+    if (activeTab === "mycards") fetchMyCards();
+  }, [activeTab, fetchMyCards]);
 
   const finalAmount = customAmount ? parseInt(customAmount) || 0 : amount;
 
@@ -72,7 +101,7 @@ export default function GiftCardsPage() {
     try {
       const res = await authApi.post("/gift-cards/validate", { code: redeemCode });
       setRedeemedBalance(res.data.data.balance);
-      toast.success(`Gift card valid! Balance: $${res.data.data.balance}`);
+      toast.success(`Gift card valid! Balance: £${res.data.data.balance}`);
     } catch {
       toast.error(t("giftCard.invalidCard"));
     } finally {
@@ -119,6 +148,17 @@ export default function GiftCardsPage() {
               <Gift className="mr-2 inline h-4 w-4" />
               {t("giftCard.redeemCode")}
             </button>
+            {isSignedIn && (
+              <button
+                onClick={() => setActiveTab("mycards")}
+                className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all ${
+                  activeTab === "mycards" ? "bg-primary text-white shadow-lg" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                <Wallet className="mr-2 inline h-4 w-4" />
+                My Cards
+              </button>
+            )}
           </div>
 
           {activeTab === "buy" ? (
@@ -154,7 +194,7 @@ export default function GiftCardsPage() {
                           : "border-gray-200 text-gray-700 hover:border-accent/30"
                       }`}
                     >
-                      ${a}
+                      {formatPrice(a)}
                     </button>
                   ))}
                 </div>
@@ -205,11 +245,11 @@ export default function GiftCardsPage() {
 
                 <Button variant="accent" size="lg" className="w-full" onClick={handlePurchase} disabled={purchasing || finalAmount < 5}>
                   {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gift className="h-4 w-4" />}
-                  Purchase ${finalAmount} Gift Card
+                  Purchase {formatPrice(finalAmount)} Gift Card
                 </Button>
               </div>
             )
-          ) : (
+          ) : activeTab === "redeem" ? (
             <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
               <h2 className="mb-6 text-xl font-bold text-gray-900">{t("giftCard.redeem")}</h2>
               <div className="mb-6">
@@ -230,6 +270,41 @@ export default function GiftCardsPage() {
                   <p className="mb-1 text-sm text-emerald-600">{t("giftCard.availableBalance")}</p>
                   <p className="text-3xl font-bold text-emerald-700">{formatPrice(redeemedBalance)}</p>
                   <p className="mt-2 text-xs text-emerald-500">{t("giftCard.applyAtCheckout")}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+              <h2 className="mb-6 text-xl font-bold text-gray-900">My Gift Cards</h2>
+              {loadingMyCards ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-accent" />
+                </div>
+              ) : myCards.length === 0 ? (
+                <div className="py-8 text-center text-gray-500">
+                  <Gift className="mx-auto mb-3 h-10 w-10 text-gray-300" />
+                  <p>You don&apos;t have any gift cards yet.</p>
+                  <Button variant="accent" size="sm" className="mt-4" onClick={() => setActiveTab("buy")}>Buy a Gift Card</Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {myCards.map((card) => (
+                    <div key={card._id} className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 p-4">
+                      <div>
+                        <p className="font-mono text-sm font-bold text-primary">{card.code}</p>
+                        <p className="text-xs text-gray-500">
+                          Purchased {new Date(card.createdAt).toLocaleDateString("en-GB")}
+                          {card.expiresAt && ` · Expires ${new Date(card.expiresAt).toLocaleDateString("en-GB")}`}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-lg font-bold ${card.balance > 0 ? "text-emerald-600" : "text-gray-400"}`}>
+                          {formatPrice(card.balance)}
+                        </p>
+                        <p className="text-[10px] text-gray-400">of {formatPrice(card.initialBalance)}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

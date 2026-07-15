@@ -49,6 +49,9 @@ export default function CheckoutPage() {
   const [giftCardCode, setGiftCardCode] = useState("");
   const [giftCardDiscount, setGiftCardDiscount] = useState(0);
   const [applyingGiftCard, setApplyingGiftCard] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
 
   const [shippingForm, setShippingForm] = useState({
     label: "Home",
@@ -61,8 +64,8 @@ export default function CheckoutPage() {
 
   const shipping = subtotal >= 75 ? 0 : 9.99;
   const tax = subtotal * 0.08;
-  const afterGiftCard = Math.max(0, subtotal + shipping + tax - giftCardDiscount);
-  const total = afterGiftCard;
+  const afterDiscounts = Math.max(0, subtotal + shipping + tax - giftCardDiscount - couponDiscount);
+  const total = afterDiscounts;
 
   const handleApplyGiftCard = async () => {
     if (!giftCardCode) return;
@@ -77,6 +80,30 @@ export default function CheckoutPage() {
       toast.error("Invalid or expired gift card");
     } finally {
       setApplyingGiftCard(false);
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode) return;
+    setApplyingCoupon(true);
+    try {
+      const res = await authApi.get(`/coupons/validate?code=${couponCode}`);
+      const coupon = res.data.data;
+      let discount = 0;
+      if (coupon.type === "percentage") {
+        discount = (subtotal * coupon.value) / 100;
+        if (coupon.maximumDiscount) discount = Math.min(discount, coupon.maximumDiscount);
+      } else {
+        discount = coupon.value;
+      }
+      const maxDiscount = subtotal + shipping + tax - giftCardDiscount;
+      discount = Math.min(discount, maxDiscount);
+      setCouponDiscount(discount);
+      toast.success(`Coupon applied! -${formatPrice(discount)}`);
+    } catch {
+      toast.error("Invalid or expired coupon");
+    } finally {
+      setApplyingCoupon(false);
     }
   };
 
@@ -173,6 +200,19 @@ export default function CheckoutPage() {
       }
 
       clearCart();
+
+      // Mark abandoned cart as recovered
+      authApi.post("/abandoned-carts/mark-recovered", { orderId: newOrder._id }).catch(() => {});
+
+      // Redeem gift card if used
+      if (giftCardDiscount > 0 && giftCardCode) {
+        authApi.post("/gift-cards/redeem", {
+          code: giftCardCode,
+          orderId: newOrder._id,
+          amount: giftCardDiscount,
+        }).catch(() => {});
+      }
+
       setOrderId(newOrder.orderNumber);
       setOrderComplete(true);
     } catch (error: unknown) {
@@ -564,6 +604,12 @@ export default function CheckoutPage() {
                 <span className="font-semibold">-{formatPrice(giftCardDiscount)}</span>
               </div>
             )}
+            {couponDiscount > 0 && (
+              <div className="flex justify-between text-emerald-600">
+                <span>Coupon</span>
+                <span className="font-semibold">-{formatPrice(couponDiscount)}</span>
+              </div>
+            )}
             <hr />
             <div className="flex justify-between text-base font-bold">
               <span>Total</span>
@@ -583,6 +629,22 @@ export default function CheckoutPage() {
               />
               <Button variant="outline" size="sm" onClick={handleApplyGiftCard} disabled={applyingGiftCard}>
                 {applyingGiftCard ? <Loader2 className="h-3 w-3 animate-spin" /> : "Apply"}
+              </Button>
+            </div>
+          </div>
+
+          {/* Coupon Input */}
+          <div className="mt-3 border-t pt-4">
+            <p className="mb-2 text-xs font-medium text-gray-500">HAVE A COUPON?</p>
+            <div className="flex gap-2">
+              <Input
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                placeholder="e.g. SAVE10"
+                className="flex-1 font-mono text-xs"
+              />
+              <Button variant="outline" size="sm" onClick={handleApplyCoupon} disabled={applyingCoupon}>
+                {applyingCoupon ? <Loader2 className="h-3 w-3 animate-spin" /> : "Apply"}
               </Button>
             </div>
           </div>

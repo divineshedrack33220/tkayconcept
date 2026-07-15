@@ -123,8 +123,8 @@ export default function AdminCouponsPage() {
               <tr key={c._id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-mono font-semibold text-primary">{c.code}</td>
                 <td className="px-4 py-3 capitalize">{c.type}</td>
-                <td className="px-4 py-3">{c.type === "percentage" ? `${c.value}%` : `$${c.value}`}</td>
-                <td className="px-4 py-3">{c.minimumOrder > 0 ? `$${c.minimumOrder}` : "—"}</td>
+                <td className="px-4 py-3">{c.type === "percentage" ? `${c.value}%` : `£${c.value}`}</td>
+                <td className="px-4 py-3">{c.minimumOrder > 0 ? `£${c.minimumOrder}` : "—"}</td>
                 <td className="px-4 py-3">{c.usageLimit > 0 ? `${c.usedCount}/${c.usageLimit}` : c.usedCount}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${c.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>

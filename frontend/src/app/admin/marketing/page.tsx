@@ -21,6 +21,13 @@ interface Campaign {
   createdAt: string;
 }
 
+interface Subscriber {
+  _id: string;
+  email: string;
+  subscribedAt: string;
+  active: boolean;
+}
+
 interface Stats {
   subscriberCount: number;
   campaigns: { _id: string; count: number; totalSent: number }[];
@@ -33,6 +40,9 @@ export default function MarketingPage() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+  const [loadingSubscribers, setLoadingSubscribers] = useState(false);
+  const [activeTab, setActiveTab] = useState<"campaigns" | "subscribers">("campaigns");
 
   const [form, setForm] = useState({ name: "", subject: "", content: "", type: "email" });
 
@@ -53,6 +63,18 @@ export default function MarketingPage() {
   };
 
   useEffect(() => { fetchAll(); }, []);
+
+  const fetchSubscribers = async () => {
+    setLoadingSubscribers(true);
+    try {
+      const res = await authApi.get("/newsletter");
+      setSubscribers(res.data.data);
+    } catch {
+      toast.error("Failed to load subscribers");
+    } finally {
+      setLoadingSubscribers(false);
+    }
+  };
 
   const handleCreate = async () => {
     if (!form.name || !form.content) {
@@ -145,6 +167,28 @@ export default function MarketingPage() {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setActiveTab("campaigns")}
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === "campaigns" ? "bg-primary text-white" : "bg-white text-gray-600 hover:bg-gray-50"
+          }`}
+        >
+          Campaigns
+        </button>
+        <button
+          onClick={() => { setActiveTab("subscribers"); fetchSubscribers(); }}
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === "subscribers" ? "bg-primary text-white" : "bg-white text-gray-600 hover:bg-gray-50"
+          }`}
+        >
+          Subscribers
+        </button>
+      </div>
+
+      {activeTab === "campaigns" && (
+      <>
       {/* Create Campaign Form */}
       {showCreate && (
         <div className="rounded-xl border border-gray-100 bg-white p-6">
@@ -222,6 +266,40 @@ export default function MarketingPage() {
           </div>
         )}
       </div>
+      </>
+      )}
+
+      {/* Subscribers Tab */}
+      {activeTab === "subscribers" && (
+        <div className="rounded-xl border border-gray-100 bg-white">
+          <div className="border-b border-gray-100 px-6 py-4">
+            <h2 className="text-lg font-semibold text-gray-900">Newsletter Subscribers</h2>
+          </div>
+          {loadingSubscribers ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin text-accent" />
+            </div>
+          ) : subscribers.length === 0 ? (
+            <div className="py-12 text-center text-gray-500">No subscribers yet</div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {subscribers.map((sub) => (
+                <div key={sub._id} className="flex items-center justify-between px-6 py-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{sub.email}</p>
+                    <p className="text-xs text-gray-500">Subscribed {new Date(sub.subscribedAt).toLocaleDateString()}</p>
+                  </div>
+                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    sub.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                  }`}>
+                    {sub.active ? "Active" : "Inactive"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
     </AdminLayout>
   );

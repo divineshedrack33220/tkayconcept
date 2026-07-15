@@ -6,6 +6,7 @@ import { Component, useState } from "react";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { useKeepAlive } from "@/hooks/useKeepAlive";
+import { useAbandonedCartLogger } from "@/hooks/useAbandonedCartLogger";
 import { OfflineBanner } from "@/components/ui/offline-banner";
 import { BackendStatusProvider } from "@/components/providers/backend-status";
 
@@ -13,6 +14,11 @@ const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90
 
 function KeepAlive() {
   useKeepAlive();
+  return null;
+}
+
+function AbandonedCartLogger() {
+  useAbandonedCartLogger();
   return null;
 }
 
@@ -47,6 +53,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <BackendStatusProvider>
       <OfflineBanner />
       <KeepAlive />
+      <AbandonedCartLogger />
       {children}
       <Toaster position="bottom-right" richColors closeButton />
     </BackendStatusProvider>

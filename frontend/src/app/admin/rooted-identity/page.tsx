@@ -53,7 +53,7 @@ export default function AdminRootedIdentityPage() {
 
       <div className="mb-6 rounded-xl border border-accent/20 bg-accent/5 p-4">
         <p className="text-sm text-gray-700">
-          <strong>Rooted Identity</strong> is your faith-driven apparel and merchandise sub-brand.
+          <strong>Rooted Identity</strong> is your faith-driven sub-brand for custom printing and branded merchandise.
           Products in this category are featured on the <a href="/rooted-identity" className="font-medium text-accent hover:underline">/rooted-identity</a> page.
           Create products with category &quot;Rooted Identity&quot; to see them here.
         </p>
