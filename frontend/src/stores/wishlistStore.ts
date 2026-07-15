@@ -19,17 +19,17 @@ export const useWishlistStore = create<WishlistStore>()(
 
       addItem: (product) =>
         set((state) => {
-          if (state.items.some((p) => p._id === product._id)) return state;
+          if (state.items.some((p) => p?._id === product._id)) return state;
           return { items: [product, ...state.items] };
         }),
 
       removeItem: (productId) =>
         set((state) => ({
-          items: state.items.filter((p) => p._id !== productId),
+          items: state.items.filter((p) => p?._id !== productId),
         })),
 
-      hasItem: (productId) => get().items.some((p) => p._id === productId),
+      hasItem: (productId) => get().items.some((p) => p?._id === productId),
     }),
-    { name: "tkay-wishlist" }
+    { name: "tkc-wishlist" }
   )
 );

@@ -19,7 +19,7 @@ export const useCartStore = create<CartStore>()(
         set((state) => {
           const existingIndex = state.items.findIndex(
             (item) =>
-              item.product._id === product._id &&
+              item.product?._id === product._id &&
               JSON.stringify(item.variant) === JSON.stringify(variant)
           );
 
@@ -38,7 +38,7 @@ export const useCartStore = create<CartStore>()(
           items: state.items.filter(
             (item) =>
               !(
-                item.product._id === productId &&
+                item.product?._id === productId &&
                 JSON.stringify(item.variant) === JSON.stringify(variant)
               )
           ),
@@ -48,7 +48,7 @@ export const useCartStore = create<CartStore>()(
       updateQuantity: (productId, quantity, variant) => {
         set((state) => ({
           items: state.items.map((item) =>
-            item.product._id === productId &&
+            item.product?._id === productId &&
             JSON.stringify(item.variant) === JSON.stringify(variant)
               ? { ...item, quantity: Math.max(1, quantity) }
               : item
@@ -59,7 +59,7 @@ export const useCartStore = create<CartStore>()(
       clearCart: () => set({ items: [] }),
     }),
     {
-      name: "tkay-cart",
+      name: "tkc-cart",
     }
   )
 );
