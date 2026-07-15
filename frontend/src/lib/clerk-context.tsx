@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
+import { useAuth, useUser, useClerk } from "@clerk/nextjs";
 
 type ClerkAuth = { isSignedIn: boolean; userId: string | null; getToken: () => Promise<string | null> };
 type ClerkUser = {
@@ -24,9 +25,6 @@ export function useClerkCtx() {
 }
 
 export function ClerkContextProvider({ children }: { children: ReactNode }) {
-  // These imports run only on the client (loaded via next/dynamic ssr:false)
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useAuth, useUser, useClerk } = require("@clerk/nextjs");
   const auth = useAuth();
   const user = useUser();
   const clerk = useClerk();
