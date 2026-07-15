@@ -89,7 +89,7 @@ export function AdminSidebar({ collapsed = false, onToggle, mobileOpen = false, 
       </div>
 
       {/* Nav Links */}
-      <nav className="flex-1 overflow-y-auto py-4">
+      <nav className="flex-1 overflow-y-auto py-4 scrollbar-hide">
         <ul className="flex flex-col gap-1 px-2">
           {sidebarLinks.map((link) => {
             const isActive = pathname === link.href || (link.href !== "/admin" && pathname.startsWith(link.href));
