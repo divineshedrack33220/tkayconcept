@@ -25,7 +25,7 @@ exports.validate = async (req, res) => {
       return res.status(400).json({ error: 'Coupon usage limit reached' });
     }
     if (orderTotal && coupon.minimumOrder > 0 && parseFloat(orderTotal) < coupon.minimumOrder) {
-      return res.status(400).json({ error: `Minimum order of $${coupon.minimumOrder} required` });
+      return res.status(400).json({ error: `Minimum order of £${coupon.minimumOrder} required` });
     }
     let discount = coupon.type === 'percentage' ? (parseFloat(orderTotal || 0) * coupon.value / 100) : coupon.value;
     if (coupon.maximumDiscount > 0 && discount > coupon.maximumDiscount) {

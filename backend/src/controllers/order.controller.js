@@ -99,10 +99,10 @@ const createOrder = async (req, res) => {
           <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
             <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Order Number:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${order.orderNumber}</td></tr>
             <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Items:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${orderItems.length}</td></tr>
-            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Subtotal:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">$${subtotal.toFixed(2)}</td></tr>
-            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Shipping:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${shippingCost === 0 ? 'FREE' : `$${shippingCost.toFixed(2)}`}</td></tr>
-            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Tax:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">$${tax.toFixed(2)}</td></tr>
-            <tr><td style="padding: 8px;"><strong>Total:</strong></td><td style="padding: 8px; font-size: 18px; color: #F59E0B;"><strong>$${total.toFixed(2)}</strong></td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Subtotal:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">£${subtotal.toFixed(2)}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Shipping:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${shippingCost === 0 ? 'FREE' : `£${shippingCost.toFixed(2)}`}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Tax:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">£${tax.toFixed(2)}</td></tr>
+            <tr><td style="padding: 8px;"><strong>Total:</strong></td><td style="padding: 8px; font-size: 18px; color: #F59E0B;"><strong>£${total.toFixed(2)}</strong></td></tr>
           </table>
           <p>We'll notify you when your order ships.</p>
           <p style="color: #666; font-size: 12px; margin-top: 30px;">TK Concepts - Faith. Purpose. Identity.</p>

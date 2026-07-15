@@ -123,7 +123,7 @@ export default function ShopContent() {
         </div>
         <div className="container-custom relative z-10">
           <h1 className="text-2xl sm:text-4xl font-bold text-white">Shop</h1>
-          <p className="mt-1.5 sm:mt-2 max-w-lg text-xs sm:text-sm text-white/70">Explore our full collection of faith-driven apparel, books, games, and more.</p>
+          <p className="mt-1.5 sm:mt-2 max-w-lg text-xs sm:text-sm text-white/70">Explore our full collection of faith-driven games, puzzles, devotionals, and books.</p>
           <p className="mt-2 text-xs text-white/50">
             {total} {total === 1 ? "product" : "products"} found
           </p>
@@ -306,7 +306,7 @@ export default function ShopContent() {
             <div>
               <h3 className="mb-2.5 sm:mb-3 text-[13px] sm:text-sm font-semibold text-primary">Brand</h3>
               <div className="flex flex-wrap gap-1.5 sm:space-y-2 sm:flex-col">
-                {["TKAYKONCEPTS", "Rooted Identity"].map((b) => (
+                {["TK Concepts", "Rooted Identity"].map((b) => (
                   <button
                     key={b}
                     onClick={() => { setBrand(brand === b ? "" : b); setPage(1); }}

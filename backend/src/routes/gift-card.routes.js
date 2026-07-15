@@ -21,7 +21,7 @@ router.post('/', requireAuth, async (req, res) => {
   try {
     const { amount, recipientEmail, recipientName, message } = req.body;
     if (!amount || amount < 5 || amount > 500) {
-      return res.status(400).json({ message: 'Amount must be between $5 and $500' });
+      return res.status(400).json({ message: 'Amount must be between £5 and £500' });
     }
 
     const user = await User.findOne({ clerkId: req.user.sub });
@@ -47,7 +47,7 @@ router.post('/', requireAuth, async (req, res) => {
         html: `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
             <h2 style="color:#1a1a2e;">You've Got a Gift Card!</h2>
-            <p>${user.firstName} sent you a <strong>$${amount} gift card</strong> to TK Concepts!</p>
+            <p>${user.firstName} sent you a <strong>£${amount} gift card</strong> to TK Concepts!</p>
             ${message ? `<p style="font-style:italic;color:#666;">"${message}"</p>` : ''}
             <div style="background:#f9f9f9;border:2px dashed #F59E0B;border-radius:12px;padding:24px;text-align:center;margin:20px 0;">
               <p style="margin:0 0 8px;color:#666;font-size:12px;">YOUR GIFT CARD CODE</p>
@@ -95,7 +95,7 @@ router.post('/redeem', requireAuth, async (req, res) => {
     const giftCard = await GiftCard.findOne({ code: code.toUpperCase(), isActive: true });
     if (!giftCard) return res.status(404).json({ message: 'Gift card not found' });
     if (giftCard.balance < amount) {
-      return res.status(400).json({ message: `Insufficient balance. Available: $${giftCard.balance.toFixed(2)}` });
+      return res.status(400).json({ message: `Insufficient balance. Available: £${giftCard.balance.toFixed(2)}` });
     }
 
     giftCard.balance -= amount;

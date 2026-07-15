@@ -59,7 +59,7 @@ router.post('/send-recovery', requireAuth, checkRole('admin', 'super_admin'), as
     for (const cart of abandoned) {
       const userName = cart.user?.firstName || 'there';
       const itemList = cart.items.map(
-        (item) => `<tr><td style="padding:8px;border-bottom:1px solid #eee;">${item.name}</td><td style="padding:8px;border-bottom:1px solid #eee;">x${item.quantity}</td><td style="padding:8px;border-bottom:1px solid #eee;">$${(item.price * item.quantity).toFixed(2)}</td></tr>`
+        (item) => `<tr><td style="padding:8px;border-bottom:1px solid #eee;">${item.name}</td><td style="padding:8px;border-bottom:1px solid #eee;">x${item.quantity}</td><td style="padding:8px;border-bottom:1px solid #eee;">£${(item.price * item.quantity).toFixed(2)}</td></tr>`
       ).join('');
 
       sendEmail({
@@ -73,7 +73,7 @@ router.post('/send-recovery', requireAuth, checkRole('admin', 'super_admin'), as
             <table style="width:100%;border-collapse:collapse;margin:20px 0;">
               <tr style="background:#f9f9f9;"><td style="padding:8px;font-weight:bold;">Item</td><td style="padding:8px;font-weight:bold;">Qty</td><td style="padding:8px;font-weight:bold;">Price</td></tr>
               ${itemList}
-              <tr><td colspan="2" style="padding:8px;font-weight:bold;">Subtotal</td><td style="padding:8px;font-weight:bold;">$${cart.subtotal.toFixed(2)}</td></tr>
+              <tr><td colspan="2" style="padding:8px;font-weight:bold;">Subtotal</td><td style="padding:8px;font-weight:bold;">£${cart.subtotal.toFixed(2)}</td></tr>
             </table>
             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/shop" style="display:inline-block;background:#F59E0B;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;">Complete Your Order</a>
             <p style="color:#666;font-size:12px;margin-top:30px;">TK Concepts - Faith. Purpose. Identity.</p>

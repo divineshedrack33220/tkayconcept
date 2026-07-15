@@ -27,7 +27,7 @@ export default function ShippingPage() {
           <ul className="list-disc pl-6 mt-2 space-y-1">
             <li><strong>Standard Shipping:</strong> 5-7 business days</li>
             <li><strong>Express Shipping:</strong> 2-3 business days</li>
-            <li><strong>Free Standard Shipping</strong> on orders over $50</li>
+              <li><strong>Free Standard Shipping</strong> on orders over £75</li>
           </ul>
         </section>
         <section>

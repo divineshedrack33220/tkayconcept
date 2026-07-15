@@ -132,11 +132,11 @@ export default function AdminSettingsPage() {
               <Input type="number" step="0.01" value={settings.taxRate} onChange={(e) => update("taxRate", parseFloat(e.target.value) || 0)} min={0} max={100} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Flat Shipping Rate ($)</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Flat Shipping Rate (£)</label>
               <Input type="number" step="0.01" value={settings.shippingFlatRate} onChange={(e) => update("shippingFlatRate", parseFloat(e.target.value) || 0)} min={0} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Free Shipping Threshold ($)</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Free Shipping Threshold (£)</label>
               <Input type="number" step="0.01" value={settings.freeShippingThreshold} onChange={(e) => update("freeShippingThreshold", parseFloat(e.target.value) || 0)} min={0} />
             </div>
           </div>

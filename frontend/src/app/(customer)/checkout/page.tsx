@@ -474,7 +474,7 @@ export default function CheckoutPage() {
                         {item.variant && ` (${Object.values(item.variant).join(", ")})`}
                       </span>
                       <span className="font-medium">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        {formatPrice(item.product.price * item.quantity)}
                       </span>
                     </div>
                   ))}
@@ -538,7 +538,7 @@ export default function CheckoutPage() {
                     <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                   </div>
                   <p className="text-sm font-medium">
-                    ${(item.product.price * item.quantity).toFixed(2)}
+                    {formatPrice(item.product.price * item.quantity)}
                   </p>
                 </div>
               );
