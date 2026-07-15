@@ -11,7 +11,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'tkaykoncepts',
+    folder: 'tk-concepts',
     allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
     resource_type: 'image',
   },

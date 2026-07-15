@@ -162,7 +162,7 @@
     "expires": "Expira en 1 año",
     "code": "Código de Tarjeta",
     "selectAmount": "Elegir Monto",
-    "customAmount": "Monto Personalizado ($5–$500)",
+    "customAmount": "Monto Personalizado (£5–£500)",
     "purchasedSuccess": "¡Tarjeta de Regalo Comprada!",
     "shareCode": "Comparte este código con el destinatario:",
     "valueExpires": "Valor: ${{amount}} · Expira en 1 año",
@@ -173,7 +173,7 @@
     "invalidCard": "Tarjeta de regalo inválida o expirada",
     "codeCopied": "¡Código copiado!",
     "purchaseError": "Error al comprar la tarjeta de regalo",
-    "amountError": "El monto debe estar entre $5 y $500",
+    "amountError": "El monto debe estar entre £5 y £500",
     "availableBalance": "Saldo Disponible",
     "applyAtCheckout": "Usa este código en el checkout para aplicar tu saldo"
   },

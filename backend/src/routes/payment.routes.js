@@ -5,10 +5,10 @@ const { requireAuth } = require('../middleware/auth');
 // POST /api/payments/create-intent - Create Stripe payment intent
 const createPaymentIntent = async (req, res) => {
   try {
-    const { amount, currency = 'usd', metadata = {} } = req.body;
+    const { amount, currency = 'gbp', metadata = {} } = req.body;
 
     if (!amount || amount < 0.5) {
-      return res.status(400).json({ message: 'Invalid amount. Minimum is $0.50 (50 cents)' });
+      return res.status(400).json({ message: 'Invalid amount. Minimum is £0.50 (50 pence)' });
     }
 
     // Check if Stripe is configured with real keys

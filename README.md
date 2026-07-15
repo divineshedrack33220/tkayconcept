@@ -1,4 +1,4 @@
-# TKAYKONCEPTS INT'L
+# TK Concepts
 
 > Faith. Purpose. Identity.
 

@@ -17,7 +17,7 @@ router.post('/', contactLimiter, async (req, res) => {
 
     // Notify admin of new contact (non-blocking)
     sendEmail({
-      to: process.env.EMAIL_FROM || 'info@tkaykoncepts.com',
+      to: process.env.EMAIL_FROM || 'info@tkconcepts.co.uk',
       subject: `New Contact: ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
