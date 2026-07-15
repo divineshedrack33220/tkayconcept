@@ -1,7 +1,7 @@
 "use client";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import dynamic from "next/dynamic";
 import { Component, useState } from "react";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
@@ -9,10 +9,7 @@ import { useKeepAlive } from "@/hooks/useKeepAlive";
 import { OfflineBanner } from "@/components/ui/offline-banner";
 import { BackendStatusProvider } from "@/components/providers/backend-status";
 
-const ClerkProviderWrapper = dynamic(
-  () => import("./clerk-provider-wrap").then((m) => m.ClerkProviderWrap),
-  { ssr: false }
-);
+const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_bm90ZWQtbmV3dC00My5jbGVyay5hY2NvdW50cy5kZXYk";
 
 function KeepAlive() {
   useKeepAlive();
@@ -61,7 +58,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <ClerkErrorBoundary fallback={content}>
-      <ClerkProviderWrapper>{content}</ClerkProviderWrapper>
+      <ClerkProvider publishableKey={CLERK_KEY}>{content}</ClerkProvider>
     </ClerkErrorBoundary>
   );
 }

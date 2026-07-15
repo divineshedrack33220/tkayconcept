@@ -1,11 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-const SignIn = dynamic(
-  () => import("@clerk/nextjs").then((m) => m.SignIn),
-  { ssr: false }
-);
+import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
