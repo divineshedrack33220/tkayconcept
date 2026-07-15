@@ -51,7 +51,6 @@ export function Footer() {
 
   const companyLinks = [
     { label: t("nav.about"), href: "/about" },
-    { label: t("nav.rootedIdentity"), href: "/rooted-identity" },
     { label: t("footer.community"), href: "/community" },
     { label: t("nav.contact"), href: "/contact" },
   ];

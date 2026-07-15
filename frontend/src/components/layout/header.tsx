@@ -170,7 +170,6 @@ export function Header() {
   const navLinks = [
     { label: t("nav.home"), href: "/" },
     { label: t("nav.shop"), href: "/shop", hasMega: true },
-    { label: t("nav.rootedIdentity"), href: "/rooted-identity" },
     { label: t("nav.contact"), href: "/contact" },
   ];
 

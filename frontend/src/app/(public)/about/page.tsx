@@ -97,17 +97,16 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Rooted Identity */}
+      {/* Our Collections */}
       <section className="section-padding bg-accent/5">
         <div className="container-custom text-center">
-          <h2 className="heading-secondary mb-4">Rooted Identity</h2>
+          <h2 className="heading-secondary mb-4">Our Collections</h2>
           <p className="mx-auto mb-6 max-w-2xl text-gray-600">
-            Our flagship collection celebrating faith, culture, and identity.
-            Rooted Identity is more than apparel — it&apos;s a declaration of who
-            you are and whose you are.
+            From games and puzzles to devotionals and storybooks — explore products
+            that celebrate faith, culture, and purposeful living.
           </p>
-          <a href="/rooted-identity" className="btn-primary">
-            Explore Rooted Identity
+          <a href="/shop" className="btn-primary">
+            Explore All Products
           </a>
         </div>
       </section>
