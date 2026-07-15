@@ -117,14 +117,14 @@ export default function WishlistPage() {
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
-                {items.map((product) => {
+                {items.filter(Boolean).map((product, i) => {
                   const image = optImg(product.images?.find((img) => img.isPrimary)?.url || product.images?.[0]?.url || "", 400, 400);
                   return (
-                    <div key={product._id} className="group rounded-xl border border-gray-100 bg-white p-4">
-                      <Link href={`/shop/${product.category?.slug || "shop"}/${product._id}`}>
+                    <div key={product?._id || i} className="group rounded-xl border border-gray-100 bg-white p-4">
+                      <Link href={`/shop/${product?.category?.slug || "shop"}/${product?._id}`}>
                         <div className="mb-3 aspect-square overflow-hidden rounded-lg bg-gray-50">
                           {image ? (
-                            <img src={image} alt={product.name} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                            <img src={image} alt={product?.name || ""} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
                           ) : (
                             <div className="flex h-full items-center justify-center text-gray-300">
                               <ShoppingBag className="h-12 w-12" />
@@ -132,18 +132,18 @@ export default function WishlistPage() {
                           )}
                         </div>
                       </Link>
-                      <h3 className="mb-1 text-sm font-medium text-gray-900 line-clamp-2">{product.name}</h3>
-                      <p className="mb-3 text-sm font-semibold text-accent">{formatPrice(product.price)}</p>
+                      <h3 className="mb-1 text-sm font-medium text-gray-900 line-clamp-2">{product?.name}</h3>
+                      <p className="mb-3 text-sm font-semibold text-accent">{formatPrice(product?.price || 0)}</p>
                       <div className="flex gap-2">
-                        <Button variant="accent" size="sm" className="flex-1" onClick={() => handleAddToCart(product)}>
+                        <Button variant="accent" size="sm" className="flex-1" onClick={() => product && handleAddToCart(product)}>
                           <ShoppingBag className="mr-1 h-3 w-3" /> Add to Cart
                         </Button>
                         <button
-                          onClick={() => handleRemove(product._id)}
-                          disabled={removing === product._id}
+                          onClick={() => product?._id && handleRemove(product._id)}
+                          disabled={removing === product?._id}
                           className="rounded-lg border border-gray-200 p-2 text-gray-400 hover:border-red-200 hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
                         >
-                          {removing === product._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                          {removing === product?._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
