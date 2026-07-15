@@ -96,9 +96,9 @@ export function Footer() {
           {/* Brand + Newsletter */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
-              <span className="text-xl sm:text-2xl font-bold">
-                TK <span className="text-accent">Concepts</span>
-              </span>
+              <div className="inline-block rounded-lg bg-white px-3 py-2">
+                <img src="/logo.png" alt="TK Concepts" className="h-8 sm:h-10 w-auto" />
+              </div>
             </Link>
             <p className="mt-3 sm:mt-4 max-w-sm text-xs sm:text-sm leading-relaxed text-gray-400">
               {t("footer.description")}

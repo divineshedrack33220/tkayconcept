@@ -188,9 +188,7 @@ export function Header() {
         <div className="container-custom">
           <div className="flex h-[52px] sm:h-16 items-center justify-between gap-2 sm:gap-4">
             <Link href="/" className="flex-shrink-0 touch-feedback rounded-xl px-1 py-1">
-              <span className="text-lg sm:text-xl font-bold text-primary">
-                TK <span className="text-accent">Concepts</span>
-              </span>
+              <img src="/logo.png" alt="TK Concepts" className="h-8 sm:h-10 w-auto" />
             </Link>
 
             <nav className="hidden lg:flex items-center gap-1">
@@ -290,8 +288,8 @@ export function Header() {
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 safe-area-top">
-            <Link href="/" onClick={toggleMobileMenu} className="text-lg font-bold text-primary">
-              TK <span className="text-accent">Concepts</span>
+            <Link href="/" onClick={toggleMobileMenu}>
+              <img src="/logo.png" alt="TK Concepts" className="h-8 w-auto" />
             </Link>
             <button onClick={toggleMobileMenu} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 active:bg-gray-300 touch-feedback transition-colors">
               <X className="h-5 w-5" />

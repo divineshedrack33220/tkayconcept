@@ -67,9 +67,7 @@ export function AdminSidebar({ collapsed = false, onToggle, mobileOpen = false, 
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
         {!collapsed && (
           <Link href="/admin" onClick={onCloseMobile}>
-            <span className="text-lg font-bold">
-              TK <span className="text-accent">Concepts</span>
-            </span>
+            <img src="/logo.png" alt="TK Concepts" className="h-8 w-auto" />
           </Link>
         )}
         {/* Desktop collapse toggle */}
