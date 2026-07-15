@@ -42,18 +42,16 @@ export function Footer() {
   };
 
   const shopLinks = [
-    { label: t("nav.shop") + " — Books", href: "/shop/books" },
     { label: t("nav.shop") + " — Games", href: "/shop/games" },
-    { label: t("nav.shop") + " — Apparel", href: "/shop/apparel" },
-    { label: t("nav.shop") + " — Merchandise", href: "/shop/merchandise" },
+    { label: t("nav.shop") + " — Puzzles", href: "/shop/puzzles" },
     { label: t("nav.shop") + " — Devotionals", href: "/shop/devotionals" },
-    { label: t("nav.shop") + " — Accessories", href: "/shop/accessories" },
+    { label: t("nav.shop") + " — Storybooks", href: "/shop/storybooks" },
+    { label: t("nav.shop") + " — Ebooks", href: "/shop/ebooks" },
   ];
 
   const companyLinks = [
     { label: t("nav.about"), href: "/about" },
     { label: t("nav.rootedIdentity"), href: "/rooted-identity" },
-    { label: t("nav.customPrinting"), href: "/custom-printing" },
     { label: t("footer.community"), href: "/community" },
     { label: t("nav.contact"), href: "/contact" },
   ];
@@ -99,7 +97,7 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
               <span className="text-xl sm:text-2xl font-bold">
-                TKAY<span className="text-accent">KONCEPTS</span>
+                TK <span className="text-accent">Concepts</span>
               </span>
             </Link>
             <p className="mt-3 sm:mt-4 max-w-sm text-xs sm:text-sm leading-relaxed text-gray-400">

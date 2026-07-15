@@ -28,10 +28,10 @@ const SORT_OPTIONS = [
 
 const PRICE_RANGES = [
   { label: "All Prices", min: 0, max: 0 },
-  { label: "Under $15", min: 0, max: 15 },
-  { label: "$15 - $25", min: 15, max: 25 },
-  { label: "$25 - $50", min: 25, max: 50 },
-  { label: "Over $50", min: 50, max: 999 },
+  { label: "Under £10", min: 0, max: 10 },
+  { label: "£10 - £20", min: 10, max: 20 },
+  { label: "£20 - £40", min: 20, max: 40 },
+  { label: "Over £40", min: 40, max: 999 },
 ];
 
 export default function ShopContent() {

@@ -9,8 +9,8 @@ export interface Currency {
 }
 
 export const CURRENCIES: Currency[] = [
-  { code: "USD", symbol: "$", name: "US Dollar", rate: 1 },
   { code: "GBP", symbol: "£", name: "British Pound", rate: 0.79 },
+  { code: "USD", symbol: "$", name: "US Dollar", rate: 1 },
   { code: "EUR", symbol: "€", name: "Euro", rate: 0.92 },
   { code: "NGN", symbol: "₦", name: "Nigerian Naira", rate: 1550 },
   { code: "ZAR", symbol: "R", name: "South African Rand", rate: 18.5 },
@@ -32,7 +32,7 @@ export const useCurrencyStore = create<CurrencyStore>()(
         if (found) set({ currency: found });
       },
     }),
-    { name: "tkay-currency" }
+    { name: "tkc-currency" }
   )
 );
 

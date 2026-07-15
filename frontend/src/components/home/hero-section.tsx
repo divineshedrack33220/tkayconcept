@@ -8,7 +8,7 @@ import { useTranslation } from "@/i18n";
 
 const trustItems = [
   { icon: Star, text: "4.9/5 Rated", sub: "500+ Reviews" },
-  { icon: Truck, text: "Free Shipping", sub: "Orders over $75" },
+  { icon: Truck, text: "Free Shipping", sub: "Orders over £75" },
   { icon: Shield, text: "Secure Checkout", sub: "SSL Encrypted" },
   { icon: RotateCcw, text: "30-Day Returns", sub: "Hassle Free" },
 ];

@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export function formatPrice(price: number, currency?: string): string {
   const storeCurrency = useCurrencyStore.getState().currency;
   const code = currency || storeCurrency.code;
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: code,
   }).format(price * storeCurrency.rate);

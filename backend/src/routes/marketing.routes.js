@@ -71,8 +71,8 @@ router.post('/campaigns/:id/send', requireAuth, checkRole('admin', 'super_admin'
               <h2 style="color:#1a1a2e;">${campaign.subject || campaign.name}</h2>
               <div>${campaign.content}</div>
               <hr style="border:none;border-top:1px solid #eee;margin:30px 0;" />
-              <p style="color:#666;font-size:11px;">You're receiving this because you subscribed to TKAYKONCEPTS emails.</p>
-              <p style="color:#666;font-size:11px;">TKAYKONCEPTS INT'L - Faith. Purpose. Identity.</p>
+              <p style="color:#666;font-size:11px;">You're receiving this because you subscribed to TK Concepts emails.</p>
+              <p style="color:#666;font-size:11px;">TK Concepts INT'L - Faith. Purpose. Identity.</p>
             </div>
           `,
         }).catch(() => {});

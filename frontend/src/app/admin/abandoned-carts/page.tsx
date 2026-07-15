@@ -5,6 +5,7 @@ import { ShoppingCart, Send, Loader2, DollarSign, AlertTriangle } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/utils";
 
 interface AbandonedCart {
   _id: string;
@@ -85,7 +86,7 @@ export default function AbandonedCartsPage() {
               <DollarSign className="h-5 w-5 text-red-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">${stats.totalValue.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatPrice(stats.totalValue)}</p>
               <p className="text-xs text-gray-500">Lost Revenue</p>
             </div>
           </div>
@@ -126,7 +127,7 @@ export default function AbandonedCartsPage() {
                       {cart.user ? `${cart.user.firstName} ${cart.user.lastName}` : cart.email}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {cart.items.length} items · ${cart.subtotal.toFixed(2)} · {new Date(cart.createdAt).toLocaleDateString()}
+                      {cart.items.length} items · {formatPrice(cart.subtotal)} · {new Date(cart.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${

@@ -15,6 +15,7 @@ import { Modal } from "@/components/ui/modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/utils";
 import type { Order } from "@/types";
 
 const STATUS_OPTIONS = ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"];
@@ -168,7 +169,7 @@ export default function AdminOrdersPage() {
                     </p>
                   </td>
                   <td className="px-4 py-3 text-gray-600">{order.items?.length || 0}</td>
-                  <td className="px-4 py-3 font-medium">${order.total.toFixed(2)}</td>
+                  <td className="px-4 py-3 font-medium">{formatPrice(order.total)}</td>
                   <td className="px-4 py-3">
                     <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                       order.paymentStatus === "paid" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
@@ -277,7 +278,7 @@ export default function AdminOrdersPage() {
                         <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                       </div>
                     </div>
-                    <p className="text-sm font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-sm font-medium">{formatPrice(item.price * item.quantity)}</p>
                   </div>
                 ))}
               </div>
@@ -285,11 +286,11 @@ export default function AdminOrdersPage() {
 
             {/* Totals */}
             <div className="rounded-lg bg-gray-50 p-4 text-sm">
-              <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>${selectedOrder.subtotal?.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Shipping</span><span>{selectedOrder.shippingCost === 0 ? "Free" : `$${selectedOrder.shippingCost?.toFixed(2)}`}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Tax</span><span>${selectedOrder.tax?.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>{formatPrice(selectedOrder.subtotal ?? 0)}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500">Shipping</span><span>{selectedOrder.shippingCost === 0 ? "Free" : formatPrice(selectedOrder.shippingCost ?? 0)}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500">Tax</span><span>{formatPrice(selectedOrder.tax ?? 0)}</span></div>
               <hr className="my-2" />
-              <div className="flex justify-between font-bold"><span>Total</span><span>${selectedOrder.total?.toFixed(2)}</span></div>
+              <div className="flex justify-between font-bold"><span>Total</span><span>{formatPrice(selectedOrder.total ?? 0)}</span></div>
             </div>
           </div>
         )}

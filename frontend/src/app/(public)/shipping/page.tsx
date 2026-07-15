@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Shipping Policy | TKAYKONCEPTS",
-  description: "Shipping rates, delivery times, and policies for TKAYKONCEPTS orders.",
+  title: "Shipping Policy | TK Concepts",
+  description: "Shipping rates, delivery times, and policies for TK Concepts orders.",
 };
 
 export default function ShippingPage() {
@@ -40,7 +40,7 @@ export default function ShippingPage() {
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Lost or Damaged Packages</h2>
-          <p>If your package appears to be lost or arrives damaged, please contact us at <a href="mailto:info@tkaykoncepts.com" className="text-accent hover:underline">info@tkaykoncepts.com</a> within 7 days of the expected delivery date.</p>
+          <p>If your package appears to be lost or arrives damaged, please contact us at <a href="mailto:info@tkconcepts.co.uk" className="text-accent hover:underline">info@tkconcepts.co.uk</a> within 7 days of the expected delivery date.</p>
         </section>
       </div>
     </div>

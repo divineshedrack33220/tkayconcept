@@ -3,7 +3,7 @@ import { Users, BookOpen, Heart, MessageCircle } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Community",
-  description: "Join the TKAYKONCEPTS community - connect with like-minded believers.",
+  description: "Join the TK Concepts community - connect with like-minded believers.",
 };
 
 const features = [

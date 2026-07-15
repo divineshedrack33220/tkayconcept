@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Heart, Target, Users, BookOpen, Gamepad2, Shirt } from "lucide-react";
+import { Heart, Target, Users, Gamepad2, Puzzle, BookCopy, BookMarked } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "Learn about TKAYKONCEPTS INT'L - our mission, values, and the story behind our faith-driven creative company.",
+  description: "Learn about TK Concepts - our mission, values, and the story behind our faith-driven creative company.",
 };
 
 const values = [
@@ -25,9 +25,11 @@ const values = [
 ];
 
 const whatWeDo = [
-  { icon: BookOpen, title: "Books", description: "Inspiring reads that deepen faith and clarify purpose." },
   { icon: Gamepad2, title: "Games", description: "Fun, educational games for the whole family." },
-  { icon: Shirt, title: "Apparel", description: "Wear your faith with our Rooted Identity collection." },
+  { icon: Puzzle, title: "Puzzles", description: "Challenging puzzles that sharpen the mind and strengthen faith." },
+  { icon: BookCopy, title: "Storybooks", description: "Inspiring stories and coloring books for all ages." },
+  { icon: Heart, title: "Devotionals", description: "Daily devotionals to deepen your spiritual journey." },
+  { icon: BookMarked, title: "Ebooks", description: "Digital reads for faith-driven growth on the go." },
 ];
 
 export default function AboutPage() {
@@ -36,7 +38,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="bg-primary py-20 text-white">
         <div className="container-custom text-center">
-          <h1 className="mb-4 text-4xl font-bold md:text-5xl">About TKAYKONCEPTS</h1>
+          <h1 className="mb-4 text-4xl font-bold md:text-5xl">About TK Concepts</h1>
           <p className="mx-auto max-w-2xl text-lg text-gray-300">
             A faith-driven creative company dedicated to producing products that
             inspire people to live boldly and purposefully.
@@ -49,13 +51,13 @@ export default function AboutPage() {
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="heading-secondary mb-6">Our Mission</h2>
           <p className="mb-4 text-lg leading-relaxed text-gray-600">
-            TKAYKONCEPTS INT&apos;L was born from a deep conviction that faith, purpose, and
+            TK Concepts was born from a deep conviction that faith, purpose, and
             identity are the foundations of a life well-lived. We create products that
             remind you of who you are in Christ and empower you to walk in your calling.
           </p>
           <p className="text-lg leading-relaxed text-gray-600">
-            From books that ignite passion, to games that bring families together, to
-            apparel that declares your identity — everything we do points back to one
+            From games that bring families together, to puzzles that sharpen the mind, to
+            devotionals that deepen your walk with God — everything we do points back to one
             truth: you are created for a purpose.
           </p>
         </div>
@@ -65,7 +67,7 @@ export default function AboutPage() {
       <section className="section-padding bg-gray-50">
         <div className="container-custom">
           <h2 className="heading-secondary mb-12 text-center">Our Values</h2>
-          <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {values.map((value) => (
               <div key={value.title} className="rounded-xl bg-white p-8 text-center shadow-sm">
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10">

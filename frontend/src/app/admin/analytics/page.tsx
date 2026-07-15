@@ -5,6 +5,7 @@ import { DollarSign, ShoppingCart, Users, Package } from "lucide-react";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
+import { formatPrice } from "@/lib/utils";
 
 const BarChartLazy = lazy(() =>
   import("recharts").then((m) => ({ default: m.BarChart }))
@@ -57,7 +58,7 @@ export default function AdminAnalyticsPage() {
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
   const statCards = stats ? [
-    { label: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: "bg-green-50 text-green-600" },
+    { label: "Total Revenue", value: formatPrice(stats.totalRevenue), icon: DollarSign, color: "bg-green-50 text-green-600" },
     { label: "Total Orders", value: stats.totalOrders, icon: ShoppingCart, color: "bg-blue-50 text-blue-600" },
     { label: "Total Products", value: stats.totalProducts, icon: Package, color: "bg-purple-50 text-purple-600" },
     { label: "Total Users", value: stats.totalUsers, icon: Users, color: "bg-amber-50 text-amber-600" },
@@ -126,7 +127,7 @@ export default function AdminAnalyticsPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-35} textAnchor="end" interval={0} />
                       <YAxis tick={{ fontSize: 12 }} />
-                      <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Revenue"]} />
+                      <Tooltip formatter={(value) => [formatPrice(Number(value)), "Revenue"]} />
                       <Bar dataKey="revenue" fill="#5A206D" radius={[4, 4, 0, 0]} />
                     </BarChartLazy>
                   </ResponsiveContainer>
@@ -184,7 +185,7 @@ export default function AdminAnalyticsPage() {
                           "bg-gray-100 text-gray-600"
                         }`}>{order.status}</span>
                       </div>
-                      <span className="font-medium">${order.total.toFixed(2)}</span>
+                      <span className="font-medium">{formatPrice(order.total)}</span>
                     </div>
                   ))}
                 </div>
@@ -203,7 +204,7 @@ export default function AdminAnalyticsPage() {
                       <span className="text-sm font-medium">{p.name}</span>
                       <div className="text-right">
                         <span className="text-sm text-gray-500">{p.totalSold} sold</span>
-                        <span className="ml-2 text-sm font-medium">${p.revenue.toFixed(2)}</span>
+                        <span className="ml-2 text-sm font-medium">{formatPrice(p.revenue)}</span>
                       </div>
                     </div>
                   ))}

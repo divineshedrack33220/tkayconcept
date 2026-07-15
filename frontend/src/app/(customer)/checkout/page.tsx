@@ -21,6 +21,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
 import type { Address } from "@/types";
+import { formatPrice } from "@/lib/utils";
 import { optImg } from "@/lib/opt-img";
 
 const US_STATES = [
@@ -71,7 +72,7 @@ export default function CheckoutPage() {
       const balance = res.data.data.balance;
       const discount = Math.min(balance, subtotal + shipping + tax);
       setGiftCardDiscount(discount);
-      toast.success(`Gift card applied! -$${discount.toFixed(2)}`);
+      toast.success(`Gift card applied! -${formatPrice(discount)}`);
     } catch {
       toast.error("Invalid or expired gift card");
     } finally {
@@ -149,7 +150,7 @@ export default function CheckoutPage() {
       // Create payment intent
       const paymentRes = await authApi.post("/payments/create-intent", {
         amount: total,
-        currency: "usd",
+        currency: "gbp",
         metadata: { orderId: newOrder._id, orderNumber: newOrder.orderNumber },
       });
 
@@ -501,7 +502,7 @@ export default function CheckoutPage() {
                   ) : (
                     <Lock className="h-4 w-4" />
                   )}
-                  {processing ? "Placing Order..." : `Pay $${total.toFixed(2)}`}
+                  {processing ? "Placing Order..." : `Pay ${formatPrice(total)}`}
                 </Button>
               </div>
             </div>
@@ -547,26 +548,26 @@ export default function CheckoutPage() {
           <div className="space-y-2 border-t pt-4 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Shipping</span>
-              <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+              <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Tax</span>
-              <span>${tax.toFixed(2)}</span>
+              <span>{formatPrice(tax)}</span>
             </div>
             {giftCardDiscount > 0 && (
               <div className="flex justify-between text-emerald-600">
                 <span>Gift Card</span>
-                <span className="font-semibold">-${giftCardDiscount.toFixed(2)}</span>
+                <span className="font-semibold">-{formatPrice(giftCardDiscount)}</span>
               </div>
             )}
             <hr />
             <div className="flex justify-between text-base font-bold">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>{formatPrice(total)}</span>
             </div>
           </div>
 
@@ -593,7 +594,7 @@ export default function CheckoutPage() {
                 <Truck className="h-4 w-4 text-emerald-600" />
               </div>
               <p className="text-[10px] font-semibold text-gray-700">Free Shipping</p>
-              <p className="text-[9px] text-gray-400">$75+</p>
+              <p className="text-[9px] text-gray-400">£75+</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">

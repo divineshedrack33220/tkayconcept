@@ -6,6 +6,7 @@ import { Search, X, Loader2, ArrowLeft } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import api from "@/lib/api";
 import { optImg } from "@/lib/opt-img";
+import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
 export function SearchPanel() {
@@ -116,7 +117,7 @@ export function SearchPanel() {
                       <p className="text-[14px] sm:text-sm font-medium text-gray-900 truncate">{product.name}</p>
                       <p className="text-[12px] sm:text-xs text-gray-500">{product.brand}</p>
                     </div>
-                    <span className="text-[14px] sm:text-sm font-semibold text-primary">${product.price.toFixed(2)}</span>
+                    <span className="text-[14px] sm:text-sm font-semibold text-primary">{formatPrice(product.price)}</span>
                   </button>
                 ))}
                 <button

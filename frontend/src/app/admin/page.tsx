@@ -14,6 +14,7 @@ import {
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatPrice } from "@/lib/utils";
 
 interface DashboardStats {
   totalProducts: number;
@@ -64,7 +65,7 @@ export default function AdminDashboard() {
 
   const statCards = stats
     ? [
-        { label: "Total Revenue", value: `$${stats.totalRevenue.toFixed(2)}`, icon: DollarSign, color: "bg-green-500" },
+        { label: "Total Revenue", value: formatPrice(stats.totalRevenue), icon: DollarSign, color: "bg-green-500" },
         { label: "Total Orders", value: stats.totalOrders, icon: ShoppingCart, color: "bg-blue-500" },
         { label: "Products", value: stats.totalProducts, icon: Package, color: "bg-purple-500" },
         { label: "Customers", value: stats.totalCustomers, icon: Users, color: "bg-accent" },
@@ -131,7 +132,7 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold">${order.total.toFixed(2)}</p>
+                    <p className="text-sm font-semibold">{formatPrice(order.total)}</p>
                     <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[order.orderStatus] || "bg-gray-100 text-gray-600"}`}>
                       {order.orderStatus}
                     </span>

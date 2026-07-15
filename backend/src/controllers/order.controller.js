@@ -105,7 +105,7 @@ const createOrder = async (req, res) => {
             <tr><td style="padding: 8px;"><strong>Total:</strong></td><td style="padding: 8px; font-size: 18px; color: #F59E0B;"><strong>$${total.toFixed(2)}</strong></td></tr>
           </table>
           <p>We'll notify you when your order ships.</p>
-          <p style="color: #666; font-size: 12px; margin-top: 30px;">TKAYKONCEPTS INT'L - Faith. Purpose. Identity.</p>
+          <p style="color: #666; font-size: 12px; margin-top: 30px;">TK Concepts - Faith. Purpose. Identity.</p>
         </div>
       `,
     }).catch(() => {});
@@ -245,7 +245,7 @@ const updateOrderStatus = async (req, res) => {
               <p>Your order <strong>${order.orderNumber}</strong> has been shipped.</p>
               <p><strong>Tracking Number:</strong> ${trackingNumber}</p>
               <p>We'll notify you when it's delivered.</p>
-              <p style="color: #666; font-size: 12px; margin-top: 30px;">TKAYKONCEPTS INT'L - Faith. Purpose. Identity.</p>
+              <p style="color: #666; font-size: 12px; margin-top: 30px;">TK Concepts - Faith. Purpose. Identity.</p>
             </div>
           `,
         }).catch(() => {});

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
 export default function AdminRootedIdentityPage() {
@@ -89,7 +90,7 @@ export default function AdminRootedIdentityPage() {
               </div>
               <div className="flex-1">
                 <h3 className="font-medium text-gray-900">{p.name}</h3>
-                <p className="text-sm text-gray-500">${p.price.toFixed(2)} &middot; {p.stock} in stock</p>
+                <p className="text-sm text-gray-500">{formatPrice(p.price)} &middot; {p.stock} in stock</p>
               </div>
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleFeatured(p)}

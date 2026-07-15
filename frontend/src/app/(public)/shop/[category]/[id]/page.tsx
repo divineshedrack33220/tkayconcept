@@ -449,7 +449,7 @@ export default function ProductDetailPage() {
                 <Truck className="h-5 w-5 text-emerald-600" />
               </div>
               <p className="text-xs font-semibold text-gray-700">Free Shipping</p>
-              <p className="text-[10px] text-gray-400">Orders $75+</p>
+              <p className="text-[10px] text-gray-400">Orders £75+</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">

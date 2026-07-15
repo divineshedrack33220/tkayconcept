@@ -50,7 +50,7 @@ export const productSchema = z.object({
   tags: z.array(z.string()).default([]),
   sku: z.string().default(""),
   stock: z.number().min(0).default(0),
-  brand: z.enum(["TKAYKONCEPTS", "Rooted Identity"]).default("TKAYKONCEPTS"),
+  brand: z.enum(["TK Concepts", "Rooted Identity"]).default("TK Concepts"),
   isFeatured: z.boolean().default(false),
   isNewArrival: z.boolean().default(false),
   isBestSeller: z.boolean().default(false),

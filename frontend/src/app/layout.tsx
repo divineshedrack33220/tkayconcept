@@ -12,23 +12,23 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "TKAYKONCEPTS INT'L | Faith. Purpose. Identity.",
-    template: "%s | TKAYKONCEPTS INT'L",
+    default: "TK Concepts | Faith. Purpose. Identity.",
+    template: "%s | TK Concepts",
   },
   description:
-    "Creating products that inspire people to live boldly and purposefully. Shop books, games, apparel, and custom printing.",
-  keywords: ["faith", "purpose", "identity", "christian", "apparel", "books", "games", "custom printing"],
+    "Creating products that inspire people to live boldly and purposefully. Shop games, puzzles, devotionals, and books.",
+  keywords: ["faith", "purpose", "identity", "christian", "games", "puzzles", "devotionals", "books"],
   openGraph: {
     type: "website",
-    locale: "en_US",
-    siteName: "TKAYKONCEPTS INT'L",
-    title: "TKAYKONCEPTS INT'L | Faith. Purpose. Identity.",
+    locale: "en_GB",
+    siteName: "TK Concepts",
+    title: "TK Concepts | Faith. Purpose. Identity.",
     description: "Creating products that inspire people to live boldly and purposefully.",
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "TKAYKONCEPTS",
+    title: "TK Concepts",
   },
 };
 

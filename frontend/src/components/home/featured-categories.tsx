@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Gamepad2, Palette, Printer, Shirt, ShoppingBag, Heart, Watch, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, Gamepad2, Heart, Puzzle, BookMarked, BookCopy, ChevronLeft, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { useTranslation } from "@/i18n";
@@ -11,24 +11,19 @@ import api from "@/lib/api";
 import type { Category } from "@/types";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  books: BookOpen,
   games: Gamepad2,
-  apparel: Shirt,
-  merchandise: ShoppingBag,
+  puzzles: Puzzle,
   devotionals: Heart,
-  accessories: Watch,
-  "rooted-identity": Palette,
-  "custom-printing": Printer,
+  storybooks: BookCopy,
+  ebooks: BookMarked,
 };
 
 const fallbackCategories = [
-  { name: "Books", slug: "books", href: "/shop/books", description: "Inspiring reads that strengthen your faith and purpose." },
   { name: "Games", slug: "games", href: "/shop/games", description: "Fun and educational games for the whole family." },
-  { name: "Apparel", slug: "apparel", href: "/shop/apparel", description: "Wear your faith boldly with our apparel collection." },
-  { name: "Merchandise", slug: "merchandise", href: "/shop/merchandise", description: "Accessories and merchandise for everyday inspiration." },
+  { name: "Puzzles", slug: "puzzles", href: "/shop/puzzles", description: "Challenging puzzles that sharpen the mind and strengthen faith." },
   { name: "Devotionals", slug: "devotionals", href: "/shop/devotionals", description: "Daily devotionals to deepen your spiritual journey." },
-  { name: "Accessories", slug: "accessories", href: "/shop/accessories", description: "Faith-inspired accessories for every occasion." },
-  { name: "Rooted Identity", slug: "rooted-identity", href: "/rooted-identity", description: "Wear your faith boldly with the Rooted Identity collection." },
+  { name: "Storybooks", slug: "storybooks", href: "/shop/storybooks", description: "Inspiring stories for readers of all ages." },
+  { name: "Ebooks", slug: "ebooks", href: "/shop/ebooks", description: "Digital reads for faith-driven growth on the go." },
 ];
 
 export function FeaturedCategories() {

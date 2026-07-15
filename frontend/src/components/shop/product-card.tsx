@@ -12,6 +12,7 @@ import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n";
 import { optImg } from "@/lib/opt-img";
+import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -163,9 +164,9 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
           </div>
           <div className="mt-auto flex items-center justify-between pt-2">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base sm:text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
+              <span className="text-base sm:text-lg font-bold text-primary">{formatPrice(product.price)}</span>
               {hasDiscount && (
-                <span className="text-xs sm:text-sm text-gray-400 line-through">${product.compareAtPrice!.toFixed(2)}</span>
+                <span className="text-xs sm:text-sm text-gray-400 line-through">{formatPrice(product.compareAtPrice!)}</span>
               )}
             </div>
             <button
@@ -301,11 +302,11 @@ const ProductCardInner = memo(function ProductCardInner({ product, layout = "gri
           <div className="mt-2 sm:mt-3">
             <div className="flex items-baseline gap-1.5">
               <span className="text-base sm:text-lg font-bold text-primary">
-                ${product.price.toFixed(2)}
+                {formatPrice(product.price)}
               </span>
               {hasDiscount && (
                 <span className="text-[11px] sm:text-sm text-gray-400 line-through">
-                  ${product.compareAtPrice!.toFixed(2)}
+                  {formatPrice(product.compareAtPrice!)}
                 </span>
               )}
             </div>

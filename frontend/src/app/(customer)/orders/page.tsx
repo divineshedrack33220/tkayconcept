@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
 import type { Order } from "@/types";
+import { formatPrice } from "@/lib/utils";
 
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -114,7 +115,7 @@ export default function OrdersPage() {
                         <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusColors[order.orderStatus] || "bg-gray-100 text-gray-600"}`}>
                           {order.orderStatus}
                         </span>
-                        <span className="font-semibold">${order.total.toFixed(2)}</span>
+                        <span className="font-semibold">{formatPrice(order.total)}</span>
                         <button
                           onClick={() => setExpandedOrder(expandedOrder === order._id ? null : order._id)}
                           className="rounded p-1 hover:bg-gray-100"
@@ -133,15 +134,15 @@ export default function OrdersPage() {
                                 {item.name} x{item.quantity}
                                 {item.variant && ` (${Object.values(item.variant).join(", ")})`}
                               </span>
-                              <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                              <span className="font-medium">{formatPrice(item.price * item.quantity)}</span>
                             </div>
                           ))}
                         </div>
                         <div className="space-y-1 border-t pt-2 text-xs text-gray-500">
-                          <div className="flex justify-between"><span>Subtotal</span><span>${order.subtotal.toFixed(2)}</span></div>
-                          <div className="flex justify-between"><span>Shipping</span><span>{order.shippingCost === 0 ? "Free" : `$${order.shippingCost.toFixed(2)}`}</span></div>
-                          <div className="flex justify-between"><span>Tax</span><span>${order.tax.toFixed(2)}</span></div>
-                          <div className="flex justify-between font-semibold text-gray-900"><span>Total</span><span>${order.total.toFixed(2)}</span></div>
+                          <div className="flex justify-between"><span>Subtotal</span><span>{formatPrice(order.subtotal)}</span></div>
+                          <div className="flex justify-between"><span>Shipping</span><span>{order.shippingCost === 0 ? "Free" : formatPrice(order.shippingCost)}</span></div>
+                          <div className="flex justify-between"><span>Tax</span><span>{formatPrice(order.tax)}</span></div>
+                          <div className="flex justify-between font-semibold text-gray-900"><span>Total</span><span>{formatPrice(order.total)}</span></div>
                         </div>
                         {order.trackingNumber && (
                           <p className="mt-2 text-xs text-gray-500">Tracking: {order.trackingNumber}</p>

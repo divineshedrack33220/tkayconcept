@@ -22,18 +22,6 @@ interface ProductFormProps {
   productId?: string;
 }
 
-function getColorHex(color: string): string {
-  const map: Record<string, string> = {
-    "Black": "#1a1a1a",
-    "White": "#ffffff",
-    "Navy": "#1e3a5f",
-    "Olive Green": "#556b2f",
-    "Sand": "#c2b280",
-    "Charcoal Grey": "#36454f",
-  };
-  return map[color] || "#888888";
-}
-
 export function ProductForm({ productId }: ProductFormProps) {
   const router = useRouter();
   const authApi = useAuthenticatedApi();
@@ -54,7 +42,7 @@ export function ProductForm({ productId }: ProductFormProps) {
     price: "",
     compareAtPrice: "",
     category: "",
-    brand: "TKAYKONCEPTS",
+    brand: "TK Concepts",
     sku: "",
     stock: "0",
     lowStockThreshold: "5",
@@ -70,27 +58,6 @@ export function ProductForm({ productId }: ProductFormProps) {
 
   const [images, setImages] = useState<ProductImage[]>([]);
   const [manualUrl, setManualUrl] = useState("");
-
-  const APPAREL_COLORS = ["Black", "White", "Navy", "Olive Green", "Sand", "Charcoal Grey"];
-  const APPAREL_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
-
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-
-  const isApparelCategory = categories.find((c) => c._id === form.category)?.slug === "apparel" ||
-    categories.find((c) => c._id === form.category)?.name?.toLowerCase() === "apparel";
-
-  const toggleColor = (color: string) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
-    );
-  };
-
-  const toggleSize = (size: string) => {
-    setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    );
-  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -117,7 +84,7 @@ export function ProductForm({ productId }: ProductFormProps) {
           price: p.price?.toString() || "",
           compareAtPrice: p.compareAtPrice?.toString() || "",
           category: p.category?._id || "",
-          brand: p.brand || "TKAYKONCEPTS",
+          brand: p.brand || "TK Concepts",
           sku: p.sku || "",
           stock: p.stock?.toString() || "0",
           lowStockThreshold: p.lowStockThreshold?.toString() || "5",
@@ -136,12 +103,6 @@ export function ProductForm({ productId }: ProductFormProps) {
             alt: img.alt || "",
             isPrimary: img.isPrimary ?? false,
           })));
-        }
-        if (p.variants?.length > 0) {
-          const colorVariant = p.variants.find((v: { name: string }) => v.name === "Color");
-          const sizeVariant = p.variants.find((v: { name: string }) => v.name === "Size");
-          if (colorVariant) setSelectedColors(colorVariant.options.map((o: { value: string }) => o.value));
-          if (sizeVariant) setSelectedSizes(sizeVariant.options.map((o: { value: string }) => o.value));
         }
       } catch {
         toast.error("Failed to load product");
@@ -185,16 +146,6 @@ export function ProductForm({ productId }: ProductFormProps) {
           alt: img.alt || form.name,
           isPrimary: img.isPrimary,
         })),
-        variants: [
-          ...(selectedColors.length > 0 ? [{
-            name: "Color",
-            options: selectedColors.map((color) => ({ value: color, stock: 0 })),
-          }] : []),
-          ...(selectedSizes.length > 0 ? [{
-            name: "Size",
-            options: selectedSizes.map((size) => ({ value: size, stock: 0 })),
-          }] : []),
-        ],
       };
 
       if (isEdit) {
@@ -494,73 +445,6 @@ export function ProductForm({ productId }: ProductFormProps) {
                 )}
               </div>
             </div>
-
-            {/* Variants — only for apparel */}
-            {isApparelCategory && (
-              <div className="rounded-xl border border-gray-100 bg-white p-6">
-                <h2 className="mb-4 text-lg font-semibold text-primary">Variants</h2>
-
-                {/* Colors */}
-                <div className="mb-5">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">Colors</label>
-                  <div className="flex flex-wrap gap-2">
-                    {APPAREL_COLORS.map((color) => {
-                      const active = selectedColors.includes(color);
-                      return (
-                        <button
-                          key={color}
-                          type="button"
-                          onClick={() => toggleColor(color)}
-                          className={`flex items-center gap-2 rounded-xl border-2 px-3 py-2 text-sm font-medium transition-all ${
-                            active
-                              ? "border-accent bg-accent/10 text-accent"
-                              : "border-gray-200 text-gray-600 hover:border-gray-300"
-                          }`}
-                        >
-                          <span
-                            className={`h-4 w-4 rounded-full border ${
-                              color === "White" ? "border-gray-300" : "border-transparent"
-                            }`}
-                            style={{ backgroundColor: getColorHex(color) }}
-                          />
-                          {color}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Sizes */}
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">Sizes</label>
-                  <div className="flex flex-wrap gap-2">
-                    {APPAREL_SIZES.map((size) => {
-                      const active = selectedSizes.includes(size);
-                      return (
-                        <button
-                          key={size}
-                          type="button"
-                          onClick={() => toggleSize(size)}
-                          className={`min-w-[48px] rounded-xl border-2 px-4 py-2 text-sm font-semibold transition-all ${
-                            active
-                              ? "border-accent bg-accent/10 text-accent"
-                              : "border-gray-200 text-gray-600 hover:border-gray-300"
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {(selectedColors.length > 0 || selectedSizes.length > 0) && (
-                  <p className="mt-3 text-xs text-gray-400">
-                    {selectedColors.length} color{selectedColors.length !== 1 ? "s" : ""} × {selectedSizes.length} size{selectedSizes.length !== 1 ? "s" : ""} = {selectedColors.length * selectedSizes.length || selectedColors.length || selectedSizes.length} variant{((selectedColors.length * selectedSizes.length || selectedColors.length || selectedSizes.length) !== 1) ? "s" : ""}
-                  </p>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Sidebar */}
@@ -589,7 +473,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                     onChange={(e) => update("brand", e.target.value)}
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
                   >
-                    <option value="TKAYKONCEPTS">TKAYKONCEPTS</option>
+                    <option value="TK Concepts">TK Concepts</option>
                     <option value="Rooted Identity">Rooted Identity</option>
                   </select>
                 </div>

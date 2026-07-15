@@ -6,24 +6,20 @@ import { cn } from "@/lib/utils";
 
 const faqs = [
   {
-    question: "What is TKAYKONCEPTS?",
-    answer: "TKAYKONCEPTS INT'L is a faith-driven creative company producing books, games, apparel, devotionals, and accessories that inspire people to live boldly and purposefully. Our mission is rooted in Faith, Purpose, and Identity.",
+    question: "What is TK Concepts?",
+    answer: "TK Concepts is a faith-driven creative company producing games, puzzles, devotionals, storybooks, and ebooks that inspire people to live boldly and purposefully. Our mission is rooted in Faith, Purpose, and Identity.",
   },
   {
     question: "What is Rooted Identity?",
-    answer: "Rooted Identity is our flagship apparel collection celebrating faith, culture, and identity. It's more than clothing — it's a declaration of who you are and whose you are. Each piece features meaningful designs rooted in biblical truth.",
-  },
-  {
-    question: "Do you offer custom printing?",
-    answer: "Yes! We offer custom printing services for t-shirts, hoodies, mugs, banners, and more. Whether it's for a church event, business, or personal use, we can bring your vision to life. Visit our Custom Printing page to submit a request.",
+    answer: "Rooted Identity is our apparel collection celebrating faith, culture, and identity. It's more than clothing — it's a declaration of who you are and whose you are. Each piece features meaningful designs rooted in biblical truth. Visit rootedidentity.com to explore the collection.",
   },
   {
     question: "How long does shipping take?",
-    answer: "Standard shipping typically takes 5-7 business days within the US. Express shipping (2-3 business days) is available at checkout. International shipping times vary by location. Orders over $75 qualify for free standard shipping.",
+    answer: "Standard shipping typically takes 5-7 business days within the UK. Express shipping (2-3 business days) is available at checkout. International shipping times vary by location. Orders over £75 qualify for free standard shipping.",
   },
   {
     question: "What is your return policy?",
-    answer: "We offer a 30-day return policy on most items. Products must be in their original condition with tags attached. Contact our support team to initiate a return. Custom printed items are non-refundable unless there's a defect.",
+    answer: "We offer a 30-day return policy on most items. Products must be in their original condition with tags attached. Contact our support team to initiate a return.",
   },
   {
     question: "How can I track my order?",
@@ -35,7 +31,7 @@ const faqs = [
   },
   {
     question: "How can I become a partner or reseller?",
-    answer: "We love working with like-minded organizations! Visit our Contact page and select 'Partnership' as the inquiry type, or email us directly at hello@tkaykoncepts.com to discuss partnership opportunities.",
+    answer: "We love working with like-minded organizations! Visit our Contact page and select 'Partnership' as the inquiry type, or email us directly at hello@tkconcepts.co.uk to discuss partnership opportunities.",
   },
 ];
 

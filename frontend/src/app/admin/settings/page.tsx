@@ -10,11 +10,11 @@ import { toast } from "sonner";
 const SETTINGS_KEY = "tkay-admin-settings";
 
 const defaultSettings = {
-  storeName: "TKAYKONCEPTS INT'L",
-  storeEmail: "info@tkaykoncepts.com",
+  storeName: "TK Concepts",
+  storeEmail: "info@tkconcepts.co.uk",
   storePhone: "",
   storeAddress: "",
-  currency: "USD",
+  currency: "GBP",
   taxRate: 0,
   shippingFlatRate: 5.99,
   freeShippingThreshold: 50,

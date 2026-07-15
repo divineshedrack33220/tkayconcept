@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { optImg } from "@/lib/opt-img";
+import { formatPrice } from "@/lib/utils";
 
 export default function CartPage() {
   const items = useCartStore((s) => s.items);
@@ -136,7 +137,7 @@ export default function CartPage() {
                     </div>
 
                     <p className="text-sm font-bold text-primary">
-                      ${(item.product.price * item.quantity).toFixed(2)}
+                      {formatPrice(item.product.price * item.quantity)}
                     </p>
                   </div>
                 </div>
@@ -162,7 +163,7 @@ export default function CartPage() {
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium">${subtotal.toFixed(2)}</span>
+              <span className="font-medium">{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Shipping</span>
@@ -170,26 +171,26 @@ export default function CartPage() {
                 {shipping === 0 ? (
                   <span className="text-green-600">Free</span>
                 ) : (
-                  `$${shipping.toFixed(2)}`
+                  formatPrice(shipping)
                 )}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Tax</span>
-              <span className="font-medium">${tax.toFixed(2)}</span>
+              <span className="font-medium">{formatPrice(tax)}</span>
             </div>
             <hr />
             <div className="flex justify-between text-base">
               <span className="font-semibold text-primary">Total</span>
               <span className="font-bold text-primary">
-                ${total.toFixed(2)}
+                {formatPrice(total)}
               </span>
             </div>
           </div>
 
           {subtotal < 75 && (
             <p className="mt-3 rounded-lg bg-green-50 p-3 text-xs text-green-700">
-              Add ${(75 - subtotal).toFixed(2)} more for free shipping!
+              Add {formatPrice(75 - subtotal)} more for free shipping!
             </p>
           )}
 

@@ -118,7 +118,7 @@ export default function ContactPage() {
                   <Mail className="mt-0.5 h-5 w-5 text-accent" />
                   <div>
                     <p className="text-sm font-medium text-gray-900">Email</p>
-                    <p className="text-sm text-gray-500">hello@tkaykoncepts.com</p>
+                    <p className="text-sm text-gray-500">hello@tkconcepts.co.uk</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -132,16 +132,16 @@ export default function ContactPage() {
                   <MapPin className="mt-0.5 h-5 w-5 text-accent" />
                   <div>
                     <p className="text-sm font-medium text-gray-900">Location</p>
-                    <p className="text-sm text-gray-500">United States</p>
+                    <p className="text-sm text-gray-500">United Kingdom</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="rounded-xl border border-gray-100 bg-accent/5 p-6">
-              <h3 className="mb-2 text-lg font-semibold text-primary">Custom Printing</h3>
+              <h3 className="mb-2 text-lg font-semibold text-primary">Rooted Identity</h3>
               <p className="mb-4 text-sm text-gray-600">
-                Need custom t-shirts, mugs, or banners? We&apos;ve got you covered.
+                Need custom t-shirts, mugs, or banners? Our Rooted Identity brand handles all custom printing.
               </p>
               <a href="/custom-printing" className="text-sm font-medium text-accent hover:text-accent-dark">
                 Learn More →

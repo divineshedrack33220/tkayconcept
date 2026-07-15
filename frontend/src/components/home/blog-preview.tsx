@@ -86,7 +86,7 @@ export function BlogPreview() {
                     <img src={post.featuredImage} alt={post.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   ) : (
                     <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
-                      <span className="text-sm text-gray-400">TKAY KONCEPTS</span>
+                      <span className="text-sm text-gray-400">TK Concepts</span>
                     </div>
                   )}
                 </div>

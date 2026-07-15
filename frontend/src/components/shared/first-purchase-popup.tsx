@@ -57,7 +57,7 @@ export function FirstPurchasePopup() {
           <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
             <Gift className="h-8 w-8" />
           </div>
-          <p className="mb-1 text-sm font-medium text-white/80">Welcome to TKAYKONCEPTS!</p>
+          <p className="mb-1 text-sm font-medium text-white/80">Welcome to TK Concepts!</p>
           <h2 className="text-3xl font-bold">15% OFF</h2>
           <p className="mt-1 text-sm text-white/80">Your first order</p>
         </div>

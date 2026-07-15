@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, ChevronDown, BookOpen, Shirt, Gamepad2, Gem, Heart, Headphones } from "lucide-react";
+import { ChevronRight, ChevronDown, BookOpen, Gamepad2, Heart, Puzzle, BookCopy, BookMarked } from "lucide-react";
 import { ProductCard } from "@/components/shop/product-card";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,29 +24,17 @@ const CATEGORY_META: Record<string, {
   gradient: string;
   icon: React.ElementType;
 }> = {
-  books: {
-    title: "Books",
-    description: "Faith-driven reads that challenge, inspire, and equip you for your purpose.",
-    gradient: "from-amber-600 via-amber-700 to-orange-800",
-    icon: BookOpen,
-  },
   games: {
     title: "Games",
     description: "Board games and card games built for connection, laughter, and meaningful moments.",
     gradient: "from-violet-600 via-purple-700 to-indigo-800",
     icon: Gamepad2,
   },
-  apparel: {
-    title: "Apparel",
-    description: "Wear your identity. Bold designs for those who refuse to blend in.",
-    gradient: "from-rose-600 via-pink-700 to-red-800",
-    icon: Shirt,
-  },
-  merchandise: {
-    title: "Merchandise",
-    description: "Premium accessories and lifestyle products for the faith-driven community.",
-    gradient: "from-emerald-600 via-teal-700 to-cyan-800",
-    icon: Gem,
+  puzzles: {
+    title: "Puzzles",
+    description: "Challenging puzzles that sharpen the mind and strengthen faith through play.",
+    gradient: "from-teal-600 via-cyan-700 to-blue-800",
+    icon: Puzzle,
   },
   devotionals: {
     title: "Devotionals",
@@ -54,11 +42,17 @@ const CATEGORY_META: Record<string, {
     gradient: "from-sky-600 via-blue-700 to-indigo-800",
     icon: Heart,
   },
-  accessories: {
-    title: "Accessories",
-    description: "Complete your look with curated accessories that speak to your identity.",
-    gradient: "from-slate-600 via-gray-700 to-zinc-800",
-    icon: Headphones,
+  storybooks: {
+    title: "Storybooks",
+    description: "Inspiring stories and coloring books for readers of all ages.",
+    gradient: "from-amber-600 via-amber-700 to-orange-800",
+    icon: BookCopy,
+  },
+  ebooks: {
+    title: "Ebooks",
+    description: "Digital reads for faith-driven growth, available instantly.",
+    gradient: "from-emerald-600 via-teal-700 to-cyan-800",
+    icon: BookMarked,
   },
 };
 
@@ -66,7 +60,7 @@ const DEFAULT_META = {
   title: "Collection",
   description: "Explore our curated collections.",
   gradient: "from-gray-600 via-gray-700 to-gray-800",
-  icon: Gem,
+  icon: BookOpen,
 };
 
 export default function CategoryPage() {

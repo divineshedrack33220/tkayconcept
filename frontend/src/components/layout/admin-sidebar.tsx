@@ -11,7 +11,6 @@ import {
   Users,
   FileText,
   Palette,
-  Printer,
   Image,
   Star,
   Ticket,
@@ -33,7 +32,6 @@ const sidebarLinks = [
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Blog", href: "/admin/blog", icon: FileText },
   { label: "Rooted Identity", href: "/admin/rooted-identity", icon: Palette },
-  { label: "Custom Printing", href: "/admin/custom-printing", icon: Printer },
   { label: "Media", href: "/admin/media", icon: Image },
   { label: "Testimonials", href: "/admin/testimonials", icon: Star },
   { label: "Coupons", href: "/admin/coupons", icon: Ticket },
@@ -70,7 +68,7 @@ export function AdminSidebar({ collapsed = false, onToggle, mobileOpen = false, 
         {!collapsed && (
           <Link href="/admin" onClick={onCloseMobile}>
             <span className="text-lg font-bold">
-              TKAY<span className="text-accent">K</span>
+              TK <span className="text-accent">Concepts</span>
             </span>
           </Link>
         )}

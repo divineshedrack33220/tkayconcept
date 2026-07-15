@@ -114,8 +114,8 @@ const productSchema = new mongoose.Schema(
     },
     brand: {
       type: String,
-      enum: ['TKAYKONCEPTS', 'Rooted Identity'],
-      default: 'TKAYKONCEPTS',
+      enum: ['TK Concepts', 'Rooted Identity'],
+      default: 'TK Concepts',
     },
     seoTitle: {
       type: String,

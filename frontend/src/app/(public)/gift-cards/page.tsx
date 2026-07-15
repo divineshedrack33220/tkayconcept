@@ -9,6 +9,7 @@ import { useSafeAuth } from "@/lib/safe-clerk";
 import { useTranslation } from "@/i18n";
 import { toast } from "sonner";
 import api from "@/lib/api";
+import { formatPrice } from "@/lib/utils";
 
 const AMOUNTS = [25, 50, 75, 100, 150, 200];
 
@@ -227,7 +228,7 @@ export default function GiftCardsPage() {
               {redeemedBalance !== null && (
                 <div className="mt-6 rounded-xl bg-emerald-50 p-6 text-center">
                   <p className="mb-1 text-sm text-emerald-600">{t("giftCard.availableBalance")}</p>
-                  <p className="text-3xl font-bold text-emerald-700">${redeemedBalance.toFixed(2)}</p>
+                  <p className="text-3xl font-bold text-emerald-700">{formatPrice(redeemedBalance)}</p>
                   <p className="mt-2 text-xs text-emerald-500">{t("giftCard.applyAtCheckout")}</p>
                 </div>
               )}

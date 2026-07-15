@@ -1,16 +1,15 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://tkayconcept.onrender.com/api";
 
-export const SITE_NAME = "TKAYKONCEPTS INT'L";
+export const SITE_NAME = "TK Concepts";
 export const SITE_DESCRIPTION = "Creating products that inspire people to live boldly and purposefully.";
-export const SITE_URL = "https://tkaykoncepts.com";
+export const SITE_URL = "https://tkconcepts.co.uk";
 
 export const PRODUCT_CATEGORIES = [
-  "books",
   "games",
-  "apparel",
-  "merchandise",
+  "puzzles",
   "devotionals",
-  "accessories",
+  "storybooks",
+  "ebooks",
 ] as const;
 
 export const BLOG_CATEGORIES = [
@@ -45,11 +44,11 @@ export const CUSTOM_ORDER_STATUSES = [
 ] as const;
 
 export const SOCIAL_LINKS = {
-  instagram: "https://instagram.com/tkaykoncepts",
-  facebook: "https://facebook.com/tkaykoncepts",
-  twitter: "https://twitter.com/tkaykoncepts",
+  instagram: "https://instagram.com/tkconcepts",
+  facebook: "https://facebook.com/tkconcepts",
+  twitter: "https://twitter.com/tkconcepts",
   whatsapp: "https://wa.me/1234567890",
-  youtube: "https://youtube.com/@tkaykoncepts",
+  youtube: "https://youtube.com/@tkconcepts",
 } as const;
 
 export const ITEMS_PER_PAGE = 12;

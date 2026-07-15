@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | TKAYKONCEPTS",
-  description: "Terms and conditions governing use of the TKAYKONCEPTS website and services.",
+  title: "Terms of Service | TK Concepts",
+  description: "Terms and conditions governing use of the TK Concepts website and services.",
 };
 
 export default function TermsPage() {
@@ -20,7 +20,7 @@ export default function TermsPage() {
       <div className="prose prose-gray max-w-none space-y-6 text-gray-600">
         <section>
           <h2 className="text-xl font-semibold text-primary">Acceptance of Terms</h2>
-          <p>By accessing or using the TKAYKONCEPTS website and services, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services.</p>
+          <p>By accessing or using the TK Concepts website and services, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services.</p>
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Products and Services</h2>
@@ -36,15 +36,15 @@ export default function TermsPage() {
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Intellectual Property</h2>
-          <p>All content on this website, including text, images, logos, designs, and products, is the property of TKAYKONCEPTS and is protected by copyright and trademark laws. You may not reproduce or distribute our content without written permission.</p>
+          <p>All content on this website, including text, images, logos, designs, and products, is the property of TK Concepts and is protected by copyright and trademark laws. You may not reproduce or distribute our content without written permission.</p>
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">User Content</h2>
-          <p>Reviews and communications you submit become non-confidential. By submitting content, you grant TKAYKONCEPTS the right to use, modify, and display such content.</p>
+          <p>Reviews and communications you submit become non-confidential. By submitting content, you grant TK Concepts the right to use, modify, and display such content.</p>
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Limitation of Liability</h2>
-          <p>TKAYKONCEPTS shall not be liable for any indirect, incidental, or consequential damages arising from use of our products or services. Our total liability shall not exceed the purchase price of the product.</p>
+          <p>TK Concepts shall not be liable for any indirect, incidental, or consequential damages arising from use of our products or services. Our total liability shall not exceed the purchase price of the product.</p>
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Governing Law</h2>
@@ -52,7 +52,7 @@ export default function TermsPage() {
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Contact</h2>
-          <p>For questions about these terms, contact us at <a href="mailto:info@tkaykoncepts.com" className="text-accent hover:underline">info@tkaykoncepts.com</a>.</p>
+          <p>For questions about these terms, contact us at <a href="mailto:info@tkconcepts.co.uk" className="text-accent hover:underline">info@tkconcepts.co.uk</a>.</p>
         </section>
       </div>
     </div>

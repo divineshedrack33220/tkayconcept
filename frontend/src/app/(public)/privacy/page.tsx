@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | TKAYKONCEPTS",
-  description: "How TKAYKONCEPTS collects, uses, and protects your personal information.",
+  title: "Privacy Policy | TK Concepts",
+  description: "How TK Concepts collects, uses, and protects your personal information.",
 };
 
 export default function PrivacyPage() {
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Your Rights</h2>
-          <p>You have the right to access, correct, or delete your personal information. Contact us at <a href="mailto:info@tkaykoncepts.com" className="text-accent hover:underline">info@tkaykoncepts.com</a> to exercise these rights.</p>
+          <p>You have the right to access, correct, or delete your personal information. Contact us at <a href="mailto:info@tkconcepts.co.uk" className="text-accent hover:underline">info@tkconcepts.co.uk</a> to exercise these rights.</p>
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Cookies</h2>
@@ -61,7 +61,7 @@ export default function PrivacyPage() {
         </section>
         <section>
           <h2 className="text-xl font-semibold text-primary">Contact</h2>
-          <p>For privacy-related inquiries, contact us at <a href="mailto:info@tkaykoncepts.com" className="text-accent hover:underline">info@tkaykoncepts.com</a>.</p>
+          <p>For privacy-related inquiries, contact us at <a href="mailto:info@tkconcepts.co.uk" className="text-accent hover:underline">info@tkconcepts.co.uk</a>.</p>
         </section>
       </div>
     </div>

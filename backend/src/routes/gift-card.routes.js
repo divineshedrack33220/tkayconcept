@@ -47,14 +47,14 @@ router.post('/', requireAuth, async (req, res) => {
         html: `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
             <h2 style="color:#1a1a2e;">You've Got a Gift Card!</h2>
-            <p>${user.firstName} sent you a <strong>$${amount} gift card</strong> to TKAYKONCEPTS!</p>
+            <p>${user.firstName} sent you a <strong>$${amount} gift card</strong> to TK Concepts!</p>
             ${message ? `<p style="font-style:italic;color:#666;">"${message}"</p>` : ''}
             <div style="background:#f9f9f9;border:2px dashed #F59E0B;border-radius:12px;padding:24px;text-align:center;margin:20px 0;">
               <p style="margin:0 0 8px;color:#666;font-size:12px;">YOUR GIFT CARD CODE</p>
               <p style="margin:0;font-size:24px;font-weight:bold;letter-spacing:2px;color:#1a1a2e;">${code}</p>
             </div>
             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/shop" style="display:inline-block;background:#F59E0B;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;">Shop Now</a>
-            <p style="color:#666;font-size:12px;margin-top:30px;">TKAYKONCEPTS INT'L - Faith. Purpose. Identity.</p>
+            <p style="color:#666;font-size:12px;margin-top:30px;">TK Concepts INT'L - Faith. Purpose. Identity.</p>
           </div>
         `,
       }).catch(() => {});

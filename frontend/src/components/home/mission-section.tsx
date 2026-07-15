@@ -6,7 +6,7 @@ export function MissionSection() {
           <div>
             <h2 className="heading-secondary mb-6">Our Mission</h2>
             <p className="mb-4 text-gray-600 leading-relaxed">
-              TKAYKONCEPTS INT&apos;L was founded with a singular vision: to create products
+              TK Concepts was founded with a singular vision: to create products
               that point people back to what matters most. In a world full of noise,
               we believe in creating things of substance.
             </p>

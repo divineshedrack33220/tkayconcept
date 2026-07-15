@@ -18,6 +18,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
 export default function AdminProductsPage() {
@@ -157,7 +158,7 @@ export default function AdminProductsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-gray-500">{product.sku}</td>
-                  <td className="px-4 py-3 font-medium">${product.price.toFixed(2)}</td>
+                  <td className="px-4 py-3 font-medium">{formatPrice(product.price)}</td>
                   <td className="px-4 py-3">
                     <span className={`font-medium ${product.stock <= product.lowStockThreshold ? "text-orange-500" : "text-gray-900"}`}>
                       {product.stock}

@@ -130,7 +130,7 @@ async function processAbandonedCarts() {
               <tr><td colspan="2" style="padding:8px;font-weight:bold;">Subtotal</td><td style="padding:8px;font-weight:bold;">$${cart.subtotal.toFixed(2)}</td></tr>
             </table>
             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/shop" style="display:inline-block;background:#F59E0B;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;">Complete Your Order</a>
-            <p style="color:#666;font-size:12px;margin-top:30px;">TKAYKONCEPTS INT'L - Faith. Purpose. Identity.</p>
+            <p style="color:#666;font-size:12px;margin-top:30px;">TK Concepts - Faith. Purpose. Identity.</p>
           </div>
         `,
       }).catch(() => {});

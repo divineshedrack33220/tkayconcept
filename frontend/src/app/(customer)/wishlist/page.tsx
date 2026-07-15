@@ -12,6 +12,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import type { Product } from "@/types";
 import { optImg } from "@/lib/opt-img";
+import { formatPrice } from "@/lib/utils";
 
 export default function WishlistPage() {
   const { isSignedIn } = useSafeUser();
@@ -132,7 +133,7 @@ export default function WishlistPage() {
                         </div>
                       </Link>
                       <h3 className="mb-1 text-sm font-medium text-gray-900 line-clamp-2">{product.name}</h3>
-                      <p className="mb-3 text-sm font-semibold text-accent">${product.price.toFixed(2)}</p>
+                      <p className="mb-3 text-sm font-semibold text-accent">{formatPrice(product.price)}</p>
                       <div className="flex gap-2">
                         <Button variant="accent" size="sm" className="flex-1" onClick={() => handleAddToCart(product)}>
                           <ShoppingBag className="mr-1 h-3 w-3" /> Add to Cart

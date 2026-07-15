@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Return Policy | TKAYKONCEPTS",
-  description: "How to return or exchange items purchased from TKAYKONCEPTS.",
+  title: "Return Policy | TK Concepts",
+  description: "How to return or exchange items purchased from TK Concepts.",
 };
 
 export default function ReturnsPage() {
@@ -33,7 +33,7 @@ export default function ReturnsPage() {
         <section>
           <h2 className="text-xl font-semibold text-primary">How to Initiate a Return</h2>
           <ol className="list-decimal pl-6 mt-2 space-y-1">
-            <li>Contact us at <a href="mailto:info@tkaykoncepts.com" className="text-accent hover:underline">info@tkaykoncepts.com</a> with your order number</li>
+            <li>Contact us at <a href="mailto:info@tkconcepts.co.uk" className="text-accent hover:underline">info@tkconcepts.co.uk</a> with your order number</li>
             <li>Receive return authorization and shipping instructions</li>
             <li>Pack the item(s) securely and ship using the provided label</li>
             <li>Refund will be processed within 5-7 business days of receiving the return</li>

@@ -83,15 +83,15 @@ describe('Product Model', () => {
   });
 
   it('should accept brand enum values', async () => {
-    const p1 = await Product.create(validProduct({ brand: 'TKAYKONCEPTS' }));
-    expect(p1.brand).toBe('TKAYKONCEPTS');
+    const p1 = await Product.create(validProduct({ brand: 'TK Concepts' }));
+    expect(p1.brand).toBe('TK Concepts');
     const p2 = await Product.create(validProduct({ name: 'Rooted', brand: 'Rooted Identity' }));
     expect(p2.brand).toBe('Rooted Identity');
   });
 
-  it('should default brand to TKAYKONCEPTS', async () => {
+  it('should default brand to TK Concepts', async () => {
     const p = await Product.create(validProduct());
-    expect(p.brand).toBe('TKAYKONCEPTS');
+    expect(p.brand).toBe('TK Concepts');
   });
 
   it('should store images', async () => {

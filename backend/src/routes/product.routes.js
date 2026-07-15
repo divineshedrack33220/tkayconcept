@@ -26,7 +26,7 @@ const productValidation = [
   body('description').optional().trim(),
   body('shortDescription').optional().trim(),
   body('compareAtPrice').optional({ nullable: true }).isFloat({ min: 0 }),
-  body('brand').optional().isIn(['TKAYKONCEPTS', 'Rooted Identity']),
+  body('brand').optional().isIn(['TK Concepts', 'Rooted Identity']),
   body('stock').optional().isInt({ min: 0 }),
   body('sku').optional().trim(),
   body('tags').optional().isArray(),

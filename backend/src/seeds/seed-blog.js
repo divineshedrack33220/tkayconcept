@@ -76,18 +76,18 @@ const posts = [
     views: 256,
   },
   {
-    title: 'How Christian Apparel Is Changing the Conversation',
-    content: `<p>Christian apparel has evolved far beyond the novelty t-shirts of decades past. Today's faith-based clothing combines quality, style, and meaningful messages that spark genuine conversations.</p>
-<h2>The New Wave of Faith Fashion</h2>
-<p>Modern Christian apparel brands are creating clothing that people actually want to wear — not because it's "Christian," but because it's well-designed and carries a message worth sharing. The quality speaks for itself.</p>
-<h2>Wearing Your Faith Boldly</h2>
-<p>There's something powerful about wearing a message that reflects your core values. It becomes a conversation starter, a quiet testimony, and a daily reminder of who you are and whose you are.</p>
+    title: 'How Faith-Based Products Are Changing the Conversation',
+    content: `<p>Faith-based products have evolved far beyond the novelty items of decades past. Today's faith-inspired creations combine quality, style, and meaningful messages that spark genuine conversations.</p>
+<h2>The New Wave of Faith Products</h2>
+<p>Modern faith-based brands are creating products that people actually want to use — not because they're "Christian," but because they're well-designed and carry a message worth sharing. The quality speaks for itself.</p>
+<h2>Living Your Faith Boldly</h2>
+<p>There's something powerful about surrounding yourself with items that reflect your core values. They become conversation starters, quiet testimonies, and daily reminders of who you are and whose you are.</p>
 <h2>Quality Over Quantity</h2>
-<p>The best faith-based apparel brands prioritize ethical manufacturing, sustainable materials, and designs that stand the test of time. At TKAYKONCEPTS, every Rooted Identity piece is crafted with these principles in mind.</p>
-<p>When you choose quality faith apparel, you're not just buying clothes — you're supporting a movement that puts purpose above profit.</p>`,
-    excerpt: 'Christian apparel has evolved into a powerful form of expression. Learn how modern faith-based fashion is making an impact.',
+<p>The best faith-based brands prioritize ethical manufacturing, sustainable materials, and designs that stand the test of time. At TK Concepts, every Rooted Identity piece is crafted with these principles in mind.</p>
+<p>When you choose quality faith products, you're not just buying things — you're supporting a movement that puts purpose above profit.</p>`,
+    excerpt: 'Faith-based products have evolved into a powerful form of expression. Learn how modern faith-inspired creations are making an impact.',
     category: 'culture',
-    tags: ['apparel', 'fashion', 'faith', 'culture'],
+    tags: ['faith', 'products', 'culture', 'identity'],
     readTime: 5,
     status: 'published',
     publishedAt: new Date('2026-07-05'),
