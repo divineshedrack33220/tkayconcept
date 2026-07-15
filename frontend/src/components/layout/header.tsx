@@ -10,8 +10,6 @@ import {
   Menu,
   X,
   Heart,
-  ChevronDown,
-  ChevronRight,
   LogOut,
   Package,
   Settings,
@@ -22,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useUIStore } from "@/stores/uiStore";
-import api from "@/lib/api";
 import { SearchPanel } from "@/components/shared/search-panel";
 import { CartDrawer } from "@/components/shared/cart-drawer";
 import { CurrencySelector } from "@/components/shared/currency-selector";
@@ -148,28 +145,16 @@ function MobileUserDrawer() {
 export function Header() {
   const totalItems = useCartStore((s) => s.items.reduce((sum, item) => sum + item.quantity, 0));
   const { isMobileMenuOpen, toggleMobileMenu, toggleSearch, toggleCart } = useUIStore();
-  const [megaOpen, setMegaOpen] = useState(false);
-  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [megaCategories, setMegaCategories] = useState<{ name: string; slug: string; image: string }[]>([]);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    api.get("/categories")
-      .then((res) => {
-        const cats = (res.data.data || []).map((c: { name: string; slug: string; image?: string }) => ({
-          name: c.name,
-          slug: c.slug,
-          image: c.image || `https://picsum.photos/seed/tkay-${c.slug}/200/200`,
-        }));
-        setMegaCategories(cats);
-      })
-      .catch(() => {});
-  }, []);
 
   const navLinks = [
     { label: t("nav.home"), href: "/" },
-    { label: t("nav.shop"), href: "/shop", hasMega: true },
+    { label: "Games", href: "/shop/games" },
+    { label: "Puzzles", href: "/shop/puzzles" },
+    { label: "Devotionals", href: "/shop/devotionals" },
+    { label: "Storybooks", href: "/shop/storybooks" },
+    { label: t("nav.shop"), href: "/shop" },
     { label: t("nav.contact"), href: "/contact" },
   ];
 
@@ -190,50 +175,15 @@ export function Header() {
               <img src="/logo.png" alt="TK Concepts" className="h-8 sm:h-10 w-auto" />
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-0.5">
               {navLinks.map((link) => (
-                <div
+                <Link
                   key={link.label}
-                  className="relative"
-                  onMouseEnter={() => link.hasMega && setMegaOpen(true)}
-                  onMouseLeave={() => link.hasMega && setMegaOpen(false)}
+                  href={link.href}
+                  className="px-2.5 py-2 text-sm font-medium text-gray-700 transition-colors hover:text-accent rounded-lg hover:bg-accent/5"
                 >
-                  <Link
-                    href={link.href}
-                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:text-accent rounded-lg hover:bg-accent/5"
-                  >
-                    {link.label}
-                    {link.hasMega && <ChevronDown className="h-3 w-3 transition-transform" style={{ transform: megaOpen ? "rotate(180deg)" : "" }} />}
-                  </Link>
-
-                  {link.hasMega && megaOpen && (
-                    <div
-                      className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3"
-                      onMouseEnter={() => setMegaOpen(true)}
-                      onMouseLeave={() => setMegaOpen(false)}
-                    >
-                      <div className="w-[min(600px,calc(100vw-3rem))] rounded-2xl border border-gray-100 bg-white p-6 shadow-2xl shadow-gray-200/50">
-                        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">Categories</p>
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                          {megaCategories.map((cat) => (
-                            <Link
-                              key={cat.slug}
-                              href={`/shop/${cat.slug}`}
-                              className="group flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-accent/5"
-                            >
-                              <img
-                                src={cat.image}
-                                alt={cat.name}
-                                className="h-10 w-10 rounded-lg object-cover"
-                              />
-                              <span className="text-sm font-medium text-gray-700 group-hover:text-accent">{cat.name}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  {link.label}
+                </Link>
               ))}
             </nav>
 
@@ -297,40 +247,14 @@ export function Header() {
 
           <nav className="flex-1 overflow-y-auto px-3 py-3 scroll-y-momentum">
             {navLinks.map((link) => (
-              <div key={link.label}>
-                {link.hasMega ? (
-                  <>
-                    <button
-                      onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
-                      className="flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
-                    >
-                      {link.label}
-                      <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${mobileExpanded === link.label ? "rotate-90" : ""}`} />
-                    </button>
-                    {mobileExpanded === link.label && (
-                        <div className="ml-4 border-l-2 border-accent/20 pl-4 pb-2 animate-slide-in-up">
-                          <Link href={`/shop`} onClick={toggleMobileMenu} className="block rounded-lg px-3 py-2.5 text-[15px] font-semibold text-accent hover:bg-accent/5 active:bg-accent/10">
-                            View All Products
-                          </Link>
-                          {megaCategories.map((cat) => (
-                            <Link key={cat.slug} href={`/shop/${cat.slug}`} onClick={toggleMobileMenu} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] text-gray-600 hover:bg-gray-50 hover:text-accent active:bg-gray-100 touch-feedback">
-                              <img src={cat.image} alt={cat.name} className="h-8 w-8 rounded-lg object-cover" />
-                              {cat.name}
-                            </Link>
-                          ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <Link
-                    href={link.href}
-                    onClick={toggleMobileMenu}
-                    className="block rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
-                  >
-                    {link.label}
-                  </Link>
-                )}
-              </div>
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={toggleMobileMenu}
+                className="block rounded-xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100 touch-feedback"
+              >
+                {link.label}
+              </Link>
             ))}
           </nav>
 
