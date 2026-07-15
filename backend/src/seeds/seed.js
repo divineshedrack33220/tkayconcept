@@ -40,40 +40,14 @@ const categories = [
   {
     name: 'Ebooks',
     slug: 'ebooks',
-    description: 'Digital books for faith, purpose, and identity.',
+    description: 'Digital reads for faith-driven growth, available instantly.',
     sortOrder: 5,
     seoTitle: 'Faith-Based Ebooks | TK Concepts',
-    seoDescription: 'Ebooks that inspire faith and spiritual growth.',
-  },
-  {
-    name: 'Books',
-    slug: 'books',
-    description: 'Inspiring reads that strengthen your faith and purpose.',
-    sortOrder: 6,
-    isActive: false,
-    seoTitle: 'Faith-Based Books | TK Concepts',
-    seoDescription: 'Discover books that inspire faith, purpose, and identity.',
+    seoDescription: 'Downloadable ebooks for spiritual growth on the go.',
   },
 ];
 
 const products = [
-  {
-    name: 'Walking in Purpose',
-    description: 'A transformative guide to discovering and walking in your God-given purpose. This book combines biblical wisdom with practical steps to help you align your life with divine intention.',
-    shortDescription: 'A transformative guide to discovering your God-given purpose.',
-    price: 19.99,
-    compareAtPrice: 24.99,
-    category: 'books',
-    tags: ['purpose', 'faith', 'guidance'],
-    images: [{ url: 'https://picsum.photos/seed/book1/600/600', alt: 'Walking in Purpose book', isPrimary: true }],
-    sku: 'TK-BOOK-001',
-    stock: 150,
-    brand: 'TK Concepts',
-    isFeatured: true,
-    isBestSeller: true,
-    averageRating: 4.8,
-    totalReviews: 124,
-  },
   {
     name: 'Faith & Family Board Game',
     description: 'An exciting board game designed to bring families together through faith-based challenges and discussions. Perfect for family game nights.',
