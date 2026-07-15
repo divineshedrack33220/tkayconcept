@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ShoppingCart, Send, Loader2, DollarSign, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
+import { AdminLayout } from "@/components/layout/admin-layout";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/utils";
 
@@ -58,6 +59,7 @@ export default function AbandonedCartsPage() {
   };
 
   return (
+    <AdminLayout>
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Abandoned Carts</h1>
@@ -150,5 +152,6 @@ export default function AbandonedCartsPage() {
         )}
       </div>
     </div>
+    </AdminLayout>
   );
 }

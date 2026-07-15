@@ -68,7 +68,7 @@ export function HeroSection() {
               {t("hero.subtitle")}
             </p>
 
-            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-wrap gap-3 sm:gap-4">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link href="/shop" className="w-full sm:w-auto">
                 <button className="w-full sm:w-auto rounded-xl bg-accent px-6 sm:px-8 py-3.5 text-[15px] sm:text-base font-semibold text-white transition-all hover:bg-accent-dark active:scale-[0.98] touch-feedback elevation-2">
                   {t("hero.shopNow")}

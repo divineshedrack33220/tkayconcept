@@ -5,6 +5,7 @@ import { Mail, Send, Trash2, Loader2, Users, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthenticatedApi } from "@/hooks/useAuthenticatedApi";
+import { AdminLayout } from "@/components/layout/admin-layout";
 import { toast } from "sonner";
 
 interface Campaign {
@@ -95,6 +96,7 @@ export default function MarketingPage() {
   };
 
   return (
+    <AdminLayout>
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Email Marketing</h1>
@@ -221,5 +223,6 @@ export default function MarketingPage() {
         )}
       </div>
     </div>
+    </AdminLayout>
   );
 }
