@@ -16,8 +16,7 @@ function generateCode() {
   return code;
 }
 
-// POST /api/gift-cards - Purchase a gift card
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', requireAuth, async (req, res, next) => {
   try {
     const { amount, recipientEmail, recipientName, message } = req.body;
     if (!amount || amount < 5 || amount > 500) {
@@ -36,10 +35,9 @@ router.post('/', requireAuth, async (req, res) => {
       recipientEmail: recipientEmail || user.email,
       recipientName: recipientName || '',
       message: message || '',
-      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     });
 
-    // Send gift card email to recipient
     if (recipientEmail) {
       sendEmail({
         to: recipientEmail,
@@ -62,13 +60,11 @@ router.post('/', requireAuth, async (req, res) => {
 
     res.status(201).json({ data: giftCard });
   } catch (error) {
-    console.error('Create gift card error:', error);
-    res.status(500).json({ message: 'Failed to create gift card' });
+    next(error);
   }
 });
 
-// POST /api/gift-cards/validate - Validate a gift card code
-router.post('/validate', requireAuth, async (req, res) => {
+router.post('/validate', requireAuth, async (req, res, next) => {
   try {
     const { code } = req.body;
     if (!code) return res.status(400).json({ message: 'Code is required' });
@@ -84,12 +80,11 @@ router.post('/validate', requireAuth, async (req, res) => {
 
     res.json({ data: { code: giftCard.code, balance: giftCard.balance } });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to validate gift card' });
+    next(error);
   }
 });
 
-// POST /api/gift-cards/redeem - Apply gift card to checkout
-router.post('/redeem', requireAuth, async (req, res) => {
+router.post('/redeem', requireAuth, async (req, res, next) => {
   try {
     const { code, orderId, amount } = req.body;
     const giftCard = await GiftCard.findOne({ code: code.toUpperCase(), isActive: true });
@@ -110,13 +105,11 @@ router.post('/redeem', requireAuth, async (req, res) => {
 
     res.json({ data: { remainingBalance: giftCard.balance } });
   } catch (error) {
-    console.error('Redeem gift card error:', error);
-    res.status(500).json({ message: 'Failed to redeem gift card' });
+    next(error);
   }
 });
 
-// GET /api/gift-cards/my - Get my gift cards
-router.get('/my', requireAuth, async (req, res) => {
+router.get('/my', requireAuth, async (req, res, next) => {
   try {
     const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -127,12 +120,11 @@ router.get('/my', requireAuth, async (req, res) => {
 
     res.json({ data: giftCards });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get gift cards' });
+    next(error);
   }
 });
 
-// GET /api/gift-cards/admin - Admin: list all gift cards
-router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const cards = await GiftCard.find().sort({ createdAt: -1 }).limit(100)
       .populate('purchaser', 'firstName lastName email');
@@ -147,7 +139,7 @@ router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req,
     ]);
     res.json({ data: cards, stats: stats[0] || { totalIssued: 0, totalValue: 0, totalRedeemed: 0, totalOutstanding: 0 } });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get gift cards' });
+    next(error);
   }
 });
 

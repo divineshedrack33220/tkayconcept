@@ -1,7 +1,6 @@
 const User = require('../models/User');
 
-// POST /api/users/sync - Sync Clerk user to MongoDB (called from frontend after login)
-const syncUser = async (req, res) => {
+const syncUser = async (req, res, next) => {
   try {
     const { clerkId, email, firstName, lastName, phone, avatar } = req.body;
 
@@ -24,13 +23,11 @@ const syncUser = async (req, res) => {
 
     res.json({ data: user });
   } catch (error) {
-    console.error('Sync user error:', error);
-    res.status(500).json({ message: 'Failed to sync user' });
+    next(error);
   }
 };
 
-// GET /api/users/me - Get current user profile
-const getProfile = async (req, res) => {
+const getProfile = async (req, res, next) => {
   try {
     const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) {
@@ -38,13 +35,11 @@ const getProfile = async (req, res) => {
     }
     res.json({ data: user });
   } catch (error) {
-    console.error('Get profile error:', error);
-    res.status(500).json({ message: 'Failed to get profile' });
+    next(error);
   }
 };
 
-// PUT /api/users/me - Update current user profile
-const updateProfile = async (req, res) => {
+const updateProfile = async (req, res, next) => {
   try {
     const { firstName, lastName, phone, avatar } = req.body;
     const user = await User.findOne({ clerkId: req.user.sub });
@@ -60,13 +55,11 @@ const updateProfile = async (req, res) => {
     await user.save();
     res.json({ data: user });
   } catch (error) {
-    console.error('Update profile error:', error);
-    res.status(500).json({ message: 'Failed to update profile' });
+    next(error);
   }
 };
 
-// GET /api/users/me/addresses - Get all addresses
-const getAddresses = async (req, res) => {
+const getAddresses = async (req, res, next) => {
   try {
     const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) {
@@ -74,13 +67,11 @@ const getAddresses = async (req, res) => {
     }
     res.json({ data: user.addresses });
   } catch (error) {
-    console.error('Get addresses error:', error);
-    res.status(500).json({ message: 'Failed to get addresses' });
+    next(error);
   }
 };
 
-// POST /api/users/me/addresses - Add new address
-const addAddress = async (req, res) => {
+const addAddress = async (req, res, next) => {
   try {
     const { label, street, city, state, zipCode, country, isDefault } = req.body;
     const user = await User.findOne({ clerkId: req.user.sub });
@@ -97,13 +88,11 @@ const addAddress = async (req, res) => {
 
     res.status(201).json({ data: user.addresses });
   } catch (error) {
-    console.error('Add address error:', error);
-    res.status(500).json({ message: 'Failed to add address' });
+    next(error);
   }
 };
 
-// PUT /api/users/me/addresses/:addressId - Update address
-const updateAddress = async (req, res) => {
+const updateAddress = async (req, res, next) => {
   try {
     const { addressId } = req.params;
     const { label, street, city, state, zipCode, country, isDefault } = req.body;
@@ -132,13 +121,11 @@ const updateAddress = async (req, res) => {
     await user.save();
     res.json({ data: user.addresses });
   } catch (error) {
-    console.error('Update address error:', error);
-    res.status(500).json({ message: 'Failed to update address' });
+    next(error);
   }
 };
 
-// DELETE /api/users/me/addresses/:addressId - Delete address
-const deleteAddress = async (req, res) => {
+const deleteAddress = async (req, res, next) => {
   try {
     const { addressId } = req.params;
     const user = await User.findOne({ clerkId: req.user.sub });
@@ -156,13 +143,11 @@ const deleteAddress = async (req, res) => {
 
     res.json({ data: user.addresses });
   } catch (error) {
-    console.error('Delete address error:', error);
-    res.status(500).json({ message: 'Failed to delete address' });
+    next(error);
   }
 };
 
-// PUT /api/users/me/addresses/:addressId/default - Set default address
-const setDefaultAddress = async (req, res) => {
+const setDefaultAddress = async (req, res, next) => {
   try {
     const { addressId } = req.params;
     const user = await User.findOne({ clerkId: req.user.sub });
@@ -181,13 +166,11 @@ const setDefaultAddress = async (req, res) => {
 
     res.json({ data: user.addresses });
   } catch (error) {
-    console.error('Set default address error:', error);
-    res.status(500).json({ message: 'Failed to set default address' });
+    next(error);
   }
 };
 
-// GET /api/users/:clerkId - Admin: get user by clerkId
-const getUserByClerkId = async (req, res) => {
+const getUserByClerkId = async (req, res, next) => {
   try {
     const user = await User.findOne({ clerkId: req.params.clerkId });
     if (!user) {
@@ -195,13 +178,11 @@ const getUserByClerkId = async (req, res) => {
     }
     res.json({ data: user });
   } catch (error) {
-    console.error('Get user error:', error);
-    res.status(500).json({ message: 'Failed to get user' });
+    next(error);
   }
 };
 
-// PUT /api/users/:clerkId/role - Admin: update user role
-const updateUserRole = async (req, res) => {
+const updateUserRole = async (req, res, next) => {
   try {
     const { role } = req.body;
     const validRoles = ['customer', 'content_manager', 'inventory_manager', 'support', 'admin', 'super_admin'];
@@ -219,8 +200,7 @@ const updateUserRole = async (req, res) => {
 
     res.json({ data: user });
   } catch (error) {
-    console.error('Update role error:', error);
-    res.status(500).json({ message: 'Failed to update role' });
+    next(error);
   }
 };
 

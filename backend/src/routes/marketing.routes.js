@@ -7,25 +7,22 @@ const Newsletter = require('../models/Newsletter');
 const User = require('../models/User');
 const { sendEmail } = require('../utils/email');
 
-// GET /api/marketing/campaigns - Admin: list campaigns
-router.get('/campaigns', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.get('/campaigns', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const campaigns = await Campaign.find().sort({ createdAt: -1 }).limit(50);
     res.json({ data: campaigns });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get campaigns' });
+    next(error);
   }
 });
 
-// POST /api/marketing/campaigns - Admin: create campaign
-router.post('/campaigns', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.post('/campaigns', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const { name, type, subject, content } = req.body;
     if (!name || !content) {
       return res.status(400).json({ message: 'Name and content are required' });
     }
 
-    // Count recipients
     let recipientCount = 0;
     if (type === 'email') {
       recipientCount = await Newsletter.countDocuments({ isActive: true });
@@ -46,13 +43,11 @@ router.post('/campaigns', requireAuth, checkRole('admin', 'super_admin'), async 
 
     res.status(201).json({ data: campaign });
   } catch (error) {
-    console.error('Create campaign error:', error);
-    res.status(500).json({ message: 'Failed to create campaign' });
+    next(error);
   }
 });
 
-// POST /api/marketing/campaigns/:id/send - Admin: send campaign
-router.post('/campaigns/:id/send', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.post('/campaigns/:id/send', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
     if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
@@ -61,7 +56,6 @@ router.post('/campaigns/:id/send', requireAuth, checkRole('admin', 'super_admin'
     if (campaign.type === 'email') {
       const subscribers = await Newsletter.find({ isActive: true }).lean();
 
-      // Fire all emails in parallel (non-blocking) — don't await
       subscribers.forEach((sub) => {
         sendEmail({
           to: sub.email,
@@ -86,39 +80,34 @@ router.post('/campaigns/:id/send', requireAuth, checkRole('admin', 'super_admin'
       return res.json({ data: campaign, message: `Sending to ${subscribers.length} subscribers` });
     }
 
-    // SMS: just mark as sent (would integrate Twilio/etc)
     campaign.status = 'sent';
     campaign.sentAt = new Date();
     await campaign.save();
     res.json({ data: campaign, message: 'SMS campaign marked as sent (SMS provider not configured)' });
   } catch (error) {
-    console.error('Send campaign error:', error);
-    res.status(500).json({ message: 'Failed to send campaign' });
+    next(error);
   }
 });
 
-// DELETE /api/marketing/campaigns/:id - Admin: delete campaign
-router.delete('/campaigns/:id', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.delete('/campaigns/:id', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     await Campaign.findByIdAndDelete(req.params.id);
     res.json({ message: 'Campaign deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete campaign' });
+    next(error);
   }
 });
 
-// GET /api/marketing/subscribers - Admin: list newsletter subscribers
-router.get('/subscribers', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.get('/subscribers', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const subscribers = await Newsletter.find({ isActive: true }).sort({ createdAt: -1 });
     res.json({ data: subscribers, total: subscribers.length });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get subscribers' });
+    next(error);
   }
 });
 
-// GET /api/marketing/stats - Admin: marketing overview
-router.get('/stats', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.get('/stats', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const [subscriberCount, campaignStats] = await Promise.all([
       Newsletter.countDocuments({ isActive: true }),
@@ -134,7 +123,7 @@ router.get('/stats', requireAuth, checkRole('admin', 'super_admin'), async (req,
       },
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get marketing stats' });
+    next(error);
   }
 });
 

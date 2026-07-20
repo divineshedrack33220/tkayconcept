@@ -13,7 +13,7 @@ async function updateProductRating(productId) {
   });
 }
 
-exports.listByProduct = async (req, res) => {
+exports.listByProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(productId)) {
@@ -27,11 +27,11 @@ exports.listByProduct = async (req, res) => {
     ]);
     res.json({ data: reviews, total, page: parseInt(page), totalPages: Math.ceil(total / parseInt(limit)) });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   try {
     const existing = await Review.findOne({ product: req.params.productId, user: req.user._id });
     if (existing) return res.status(400).json({ error: 'You have already reviewed this product' });
@@ -40,27 +40,27 @@ exports.create = async (req, res) => {
     await updateProductRating(req.params.productId);
     res.status(201).json({ data: review });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
   try {
     const review = await Review.findOneAndDelete({ _id: req.params.id, user: req.user._id });
     if (!review) return res.status(404).json({ error: 'Review not found' });
     await updateProductRating(review.product.toString());
     res.json({ message: 'Deleted' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.listAll = async (req, res) => {
+exports.listAll = async (req, res, next) => {
   try {
     const { limit = 50 } = req.query;
     const reviews = await Review.find().populate('user', 'firstName lastName').populate('product', 'name').sort({ createdAt: -1 }).limit(parseInt(limit));
     res.json({ data: reviews });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };

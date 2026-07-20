@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order');
+const orderService = require('../services/order.service');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder');
 
@@ -21,6 +21,8 @@ router.post('/', async (req, res) => {
   }
 
   try {
+    const Order = require('../models/Order');
+
     switch (event.type) {
       case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object;
@@ -37,8 +39,7 @@ router.post('/', async (req, res) => {
         const failedIntent = event.data.object;
         const failedOrder = await Order.findOne({ stripePaymentIntentId: failedIntent.id });
         if (failedOrder) {
-          failedOrder.paymentStatus = 'failed';
-          await failedOrder.save();
+          await orderService.handlePaymentFailure(failedOrder._id);
         }
         break;
       }
@@ -46,9 +47,7 @@ router.post('/', async (req, res) => {
         const charge = event.data.object;
         const refundedOrder = await Order.findOne({ stripePaymentIntentId: charge.payment_intent });
         if (refundedOrder) {
-          refundedOrder.paymentStatus = 'refunded';
-          refundedOrder.orderStatus = 'cancelled';
-          await refundedOrder.save();
+          await orderService.handleRefund(refundedOrder._id);
         }
         break;
       }

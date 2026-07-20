@@ -122,9 +122,57 @@ A full-stack e-commerce platform for faith-inspired products — games, puzzles,
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
----
+## Architecture Patterns
 
-## Tech Stack
+### Layered Architecture (Controller → Service → Model)
+
+```
+HTTP Request
+    │
+    ▼
+┌─────────────┐    Validates input, handles req/res
+│ Controllers │    No business logic, no DB queries
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐    Business rules, transactions,
+│  Services   │    stock ops, coupon logic
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐    Data access, schemas,
+│   Models    │    validation, indexes
+└─────────────┘
+```
+
+### Key Patterns
+
+| Pattern | Where Used | Purpose |
+|---------|-----------|---------|
+| **Service Layer** | `services/order.service.js` | Separates business logic from HTTP |
+| **Repository Pattern** | Services wrap Mongoose models | Decouples logic from data access |
+| **DTO** | `dto/order.dto.js` | Shapes API responses, hides internals |
+| **Custom Errors** | `errors/AppError.js` | Operational vs programming errors |
+| **Atomic Operations** | `Product.findOneAndUpdate` with `$gte` | Prevents race conditions |
+| **Database Transactions** | `mongoose.startSession()` | Atomic multi-document operations |
+| **Strategy Pattern Ready** | `CouponService.calculateDiscount()` | Discount types via coupon.type |
+| **Dependency Injection** | Services imported by controllers | Loose coupling |
+
+### Error Handling Flow
+
+```
+Controller catches error
+    │
+    ├── Operational error (AppError) → next(error) → errorHandler
+    │                                                   │
+    │                              Returns { message, statusCode }
+    │
+    └── Programming error → next(error) → errorHandler → 500
+```
+
+All controllers use `next(error)` — errors flow to the global `errorHandler` middleware which handles CastError, ValidationError, duplicate key (11000), and MulterError uniformly.
+
+---
 
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
@@ -169,6 +217,7 @@ graph TB
         Middleware["Middleware<br/>CORS · Auth · Rate Limit"]
         Routes["Route Handlers"]
         Controllers["Controllers<br/>Product · Order · Payment"]
+        Services["Services<br/>OrderService · ProductService<br/>CouponService · EmailService"]
         Models["Mongoose Models"]
     end
 
@@ -188,7 +237,8 @@ graph TB
     Components -->|"HTTP/HTTPS"| Middleware
     Middleware --> Routes
     Routes --> Controllers
-    Controllers --> Models
+    Controllers --> Services
+    Services --> Models
     Models --> DB
     Controllers --> Auth
     Controllers --> Pay
@@ -370,7 +420,7 @@ sequenceDiagram
     participant Frontend as Next.js
     participant API as Express API
     participant Stripe
-    participant DB as MongoDB
+    participant DB as MongoDB (Transaction)
     participant Email as Nodemailer
 
     Customer->>Frontend: Click "Place Order"
@@ -383,8 +433,12 @@ sequenceDiagram
     Stripe-->>Frontend: Payment confirmed
 
     Frontend->>API: POST /api/orders
-    API->>DB: Order.create({ ... })
-    API->>Email: Send order confirmation
+    Note over API,DB: Transaction starts
+    API->>DB: Order.create(orderData)
+    API->>DB: Atomic stock decrement ($gte check)
+    API->>DB: Increment coupon usageCount
+    Note over API,DB: Transaction commits
+    API->>Email: Send order confirmation (non-blocking)
     Email-->>Customer: Order confirmation email
     API-->>Frontend: Order created
     Frontend-->>Customer: Order success page
@@ -593,28 +647,60 @@ tkayconcept/
 │   │   │   ├── product.routes.js
 │   │   │   ├── order.routes.js
 │   │   │   ├── payment.routes.js
-│   │   │   ├── coupon.routes.js
+│   │   │   ├── coupon.js
 │   │   │   ├── gift-card.routes.js
 │   │   │   ├── marketing.routes.js
 │   │   │   ├── abandoned-cart.routes.js
-│   │   │   ├── review.routes.js
+│   │   │   ├── review.js
 │   │   │   ├── blog.routes.js
 │   │   │   ├── contact.routes.js
-│   │   │   └── newsletter.routes.js
+│   │   │   ├── wishlist.routes.js
+│   │   │   ├── admin.routes.js
+│   │   │   ├── testimonial.js
+│   │   │   └── newsletter.js
 │   │   │
-│   │   ├── controllers/               # Business logic
+│   │   ├── controllers/               # HTTP request handlers
 │   │   │   ├── order.controller.js
-│   │   │   └── coupon.js
+│   │   │   ├── product.controller.js
+│   │   │   ├── user.controller.js
+│   │   │   ├── admin.controller.js
+│   │   │   ├── wishlist.controller.js
+│   │   │   ├── blog.controller.js
+│   │   │   ├── category.controller.js
+│   │   │   ├── coupon.js
+│   │   │   ├── review.js
+│   │   │   ├── testimonial.js
+│   │   │   └── newsletter.js
+│   │   │
+│   │   ├── services/                  # Business logic layer
+│   │   │   ├── order.service.js       # Order creation, status, refunds (w/ transactions)
+│   │   │   ├── product.service.js     # Stock validation & atomic updates
+│   │   │   ├── coupon.service.js      # Coupon validation & usage tracking
+│   │   │   └── email.service.js       # Email templates & sending
+│   │   │
+│   │   ├── dto/                       # Data Transfer Objects
+│   │   │   └── order.dto.js           # Order API response formatting
+│   │   │
+│   │   ├── errors/                    # Custom error classes
+│   │   │   └── AppError.js            # Operational error with status codes
 │   │   │
 │   │   ├── middleware/
 │   │   │   ├── auth.js                # Clerk token verification
 │   │   │   ├── errorHandler.js        # Global error handler
-│   │   │   └── cors.js                # CORS configuration
+│   │   │   ├── cors.js                # CORS configuration
+│   │   │   ├── rateLimiter.js         # API rate limiting
+│   │   │   ├── roleCheck.js           # Role-based access control
+│   │   │   └── validate.js            # Express-validator middleware
 │   │   │
 │   │   ├── utils/
 │   │   │   ├── email.js               # Nodemailer setup
 │   │   │   ├── cloudinary.js          # Cloudinary config
-│   │   │   └── stripe.js              # Stripe setup
+│   │   │   └── helpers.js             # Pagination helpers
+│   │   │
+│   │   ├── config/
+│   │   │   ├── db.js                  # MongoDB connection
+│   │   │   ├── cors.js                # CORS options
+│   │   │   └── clerk.js               # Clerk config
 │   │   │
 │   │   ├── seeds/                     # Database seeders
 │   │   │   ├── seed.js                # Products + Categories
@@ -624,8 +710,7 @@ tkayconcept/
 │   │   ├── migrations/                # Data migrations
 │   │   │   └── rebrand-to-tk-concepts.js
 │   │   │
-│   │   ├── server.js                  # Entry point
-│   │   └── app.js                     # Express app setup
+│   │   └── server.js                  # Entry point
 │   │
 │   ├── __tests__/                     # Jest test suites
 │   │   └── routes/
@@ -837,10 +922,15 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=...
 
 ### Backend Optimizations
 
+- **Service layer** — Business logic separated from HTTP handlers (controllers → services → models)
+- **Database transactions** — Order creation uses `session.withTransaction()` for atomicity (order + stock + coupon)
+- **Atomic stock operations** — `findOneAndUpdate` with `$gte` filter prevents overselling race conditions
+- **Stock restoration** — Cancelled/refunded orders automatically restore inventory
+- **Coupon integration** — Coupons validated, discounts applied, and usage tracked atomically
+- **Consistent error handling** — All controllers use `next(error)` → global `errorHandler` middleware
 - **Graceful degradation** — Nodemailer failures don't block responses
-- **Error boundaries** — Clerk, auth, and API failures handled gracefully
 - **Rate limiting** — API protection against abuse
-- **MongoDB indexes** — indexed on slug, orderNumber, clerkId
+- **MongoDB indexes** — Indexed on slug, orderNumber, clerkId, and compound indexes for common queries
 - **Keep-alive** — `/health` endpoint for uptime monitoring
 
 ---

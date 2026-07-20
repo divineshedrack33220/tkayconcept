@@ -45,6 +45,7 @@ const orderSchema = new mongoose.Schema(
     trackingNumber: { type: String, default: '' },
     trackingUrl: { type: String, default: '' },
     carrier: { type: String, default: '' },
+    coupon: { type: mongoose.Schema.Types.ObjectId, ref: 'Coupon' },
     notes: { type: String, default: '' },
   },
   { timestamps: true }

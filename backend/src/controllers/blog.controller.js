@@ -1,7 +1,6 @@
 const BlogPost = require('../models/BlogPost');
 
-// GET /api/blog - Public: published posts
-const getPublishedPosts = async (req, res) => {
+const getPublishedPosts = async (req, res, next) => {
   try {
     const { page = 1, limit = 9, category, search } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -34,13 +33,11 @@ const getPublishedPosts = async (req, res) => {
       totalPages: Math.ceil(total / parseInt(limit)),
     });
   } catch (error) {
-    console.error('Get blog posts error:', error);
-    res.status(500).json({ message: 'Failed to fetch blog posts' });
+    next(error);
   }
 };
 
-// GET /api/blog/:slug - Public: single post by slug
-const getPostBySlug = async (req, res) => {
+const getPostBySlug = async (req, res, next) => {
   try {
     const post = await BlogPost.findOne({ slug: req.params.slug, status: 'published' })
       .populate('author', 'firstName lastName avatar');
@@ -54,13 +51,11 @@ const getPostBySlug = async (req, res) => {
 
     res.json({ data: post });
   } catch (error) {
-    console.error('Get blog post error:', error);
-    res.status(500).json({ message: 'Failed to fetch blog post' });
+    next(error);
   }
 };
 
-// GET /api/blog/admin/all - Admin: all posts
-const getAllPosts = async (req, res) => {
+const getAllPosts = async (req, res, next) => {
   try {
     const { page = 1, limit = 20, search, status, category } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -92,24 +87,20 @@ const getAllPosts = async (req, res) => {
       totalPages: Math.ceil(total / parseInt(limit)),
     });
   } catch (error) {
-    console.error('Admin get posts error:', error);
-    res.status(500).json({ message: 'Failed to fetch posts' });
+    next(error);
   }
 };
 
-// POST /api/blog/admin - Admin: create post
-const createPost = async (req, res) => {
+const createPost = async (req, res, next) => {
   try {
     const post = await BlogPost.create(req.body);
     res.status(201).json({ data: post });
   } catch (error) {
-    console.error('Create post error:', error);
-    res.status(500).json({ message: 'Failed to create post' });
+    next(error);
   }
 };
 
-// PUT /api/blog/admin/:id - Admin: update post
-const updatePost = async (req, res) => {
+const updatePost = async (req, res, next) => {
   try {
     const post = await BlogPost.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -120,13 +111,11 @@ const updatePost = async (req, res) => {
     }
     res.json({ data: post });
   } catch (error) {
-    console.error('Update post error:', error);
-    res.status(500).json({ message: 'Failed to update post' });
+    next(error);
   }
 };
 
-// DELETE /api/blog/admin/:id - Admin: delete post
-const deletePost = async (req, res) => {
+const deletePost = async (req, res, next) => {
   try {
     const post = await BlogPost.findByIdAndDelete(req.params.id);
     if (!post) {
@@ -134,8 +123,7 @@ const deletePost = async (req, res) => {
     }
     res.json({ message: 'Post deleted' });
   } catch (error) {
-    console.error('Delete post error:', error);
-    res.status(500).json({ message: 'Failed to delete post' });
+    next(error);
   }
 };
 

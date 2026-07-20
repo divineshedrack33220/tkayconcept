@@ -1,6 +1,6 @@
 const Newsletter = require('../models/Newsletter');
 
-exports.subscribe = async (req, res) => {
+exports.subscribe = async (req, res, next) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email is required' });
@@ -16,11 +16,11 @@ exports.subscribe = async (req, res) => {
     await Newsletter.create({ email: email.toLowerCase() });
     res.status(201).json({ message: 'Successfully subscribed!' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.unsubscribe = async (req, res) => {
+exports.unsubscribe = async (req, res, next) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email is required' });
@@ -30,11 +30,11 @@ exports.unsubscribe = async (req, res) => {
     await subscriber.save();
     res.json({ message: 'Successfully unsubscribed' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.list = async (req, res) => {
+exports.list = async (req, res, next) => {
   try {
     const { active, limit = 100 } = req.query;
     const filter = {};
@@ -42,6 +42,6 @@ exports.list = async (req, res) => {
     const subscribers = await Newsletter.find(filter).sort({ createdAt: -1 }).limit(parseInt(limit));
     res.json({ data: subscribers, count: subscribers.length });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };

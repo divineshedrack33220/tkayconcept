@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
 const { requireAuth } = require('../middleware/auth');
 const { checkRole } = require('../middleware/roleCheck');
+const validate = require('../middleware/validate');
 const {
   createOrder,
   getMyOrders,
@@ -10,17 +11,6 @@ const {
   getAllOrders,
   updateOrderStatus,
 } = require('../controllers/order.controller');
-
-const validate = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      message: 'Validation failed',
-      errors: errors.array().map((err) => ({ field: err.path, message: err.msg })),
-    });
-  }
-  next();
-};
 
 const orderCreateValidation = [
   body('items').isArray({ min: 1 }).withMessage('At least one item is required'),
@@ -31,6 +21,7 @@ const orderCreateValidation = [
   body('shippingAddress.city').trim().notEmpty().withMessage('City is required'),
   body('shippingAddress.state').trim().notEmpty().withMessage('State is required'),
   body('shippingAddress.zipCode').trim().notEmpty().withMessage('ZIP code is required'),
+  body('couponCode').optional().trim().isString(),
 ];
 
 const orderStatusValidation = [
@@ -38,12 +29,10 @@ const orderStatusValidation = [
   body('trackingNumber').optional().trim(),
 ];
 
-// User routes
 router.post('/', requireAuth, orderCreateValidation, validate, createOrder);
 router.get('/', requireAuth, getMyOrders);
 router.get('/:orderId', requireAuth, getOrder);
 
-// Admin routes
 router.get('/admin/all', requireAuth, checkRole('admin', 'super_admin'), getAllOrders);
 router.put('/admin/:orderId/status', requireAuth, checkRole('admin', 'super_admin'), orderStatusValidation, validate, updateOrderStatus);
 

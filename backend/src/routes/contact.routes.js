@@ -6,8 +6,7 @@ const { checkRole } = require('../middleware/roleCheck');
 const { contactLimiter } = require('../middleware/rateLimiter');
 const { sendEmail } = require('../utils/email');
 
-// POST /api/contacts - Public: submit contact form (rate limited)
-router.post('/', contactLimiter, async (req, res) => {
+router.post('/', contactLimiter, async (req, res, next) => {
   try {
     const { name, email, phone, subject, type, message } = req.body;
     if (!name || !email || !subject || !message) {
@@ -15,7 +14,6 @@ router.post('/', contactLimiter, async (req, res) => {
     }
     const contact = await Contact.create({ name, email, phone, subject, type, message });
 
-    // Notify admin of new contact (non-blocking)
     sendEmail({
       to: process.env.EMAIL_FROM || 'info@tkconcepts.co.uk',
       subject: `New Contact: ${subject}`,
@@ -39,13 +37,11 @@ router.post('/', contactLimiter, async (req, res) => {
 
     res.status(201).json({ data: contact, message: 'Message sent successfully!' });
   } catch (error) {
-    console.error('Contact form error:', error);
-    res.status(500).json({ message: 'Failed to send message' });
+    next(error);
   }
 });
 
-// GET /api/contacts/admin - Admin: list contacts
-router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const { page = 1, limit = 20, status } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -65,21 +61,18 @@ router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req,
       totalPages: Math.ceil(total / parseInt(limit)),
     });
   } catch (error) {
-    console.error('Get contacts error:', error);
-    res.status(500).json({ message: 'Failed to fetch contacts' });
+    next(error);
   }
 });
 
-// PUT /api/contacts/admin/:id - Admin: update status
-router.put('/admin/:id', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.put('/admin/:id', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const { status } = req.body;
     const contact = await Contact.findByIdAndUpdate(req.params.id, { status }, { new: true });
     if (!contact) return res.status(404).json({ message: 'Contact not found' });
     res.json({ data: contact });
   } catch (error) {
-    console.error('Update contact error:', error);
-    res.status(500).json({ message: 'Failed to update contact' });
+    next(error);
   }
 });
 

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { requireAuth } = require('../middleware/auth');
+const Order = require('../models/Order');
+const orderService = require('../services/order.service');
 
-// POST /api/payments/create-intent - Create Stripe payment intent
-const createPaymentIntent = async (req, res) => {
+const createPaymentIntent = async (req, res, next) => {
   try {
     const { amount, currency = 'gbp', metadata = {} } = req.body;
 
@@ -11,9 +12,7 @@ const createPaymentIntent = async (req, res) => {
       return res.status(400).json({ message: 'Invalid amount. Minimum is £0.50 (50 pence)' });
     }
 
-    // Check if Stripe is configured with real keys
     if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_xxx') {
-      // Demo mode - return a mock payment intent
       return res.json({
         data: {
           clientSecret: 'demo_secret_' + Date.now(),
@@ -29,7 +28,7 @@ const createPaymentIntent = async (req, res) => {
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents
+      amount: Math.round(amount * 100),
       currency,
       metadata: {
         userId: req.user.sub,
@@ -48,13 +47,11 @@ const createPaymentIntent = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Create payment intent error:', error);
-    res.status(500).json({ message: 'Failed to create payment intent' });
+    next(error);
   }
 };
 
-// POST /api/payments/confirm - Confirm payment and update order
-const confirmPayment = async (req, res) => {
+const confirmPayment = async (req, res, next) => {
   try {
     const { paymentIntentId, orderId } = req.body;
 
@@ -62,47 +59,35 @@ const confirmPayment = async (req, res) => {
       return res.status(400).json({ message: 'paymentIntentId and orderId are required' });
     }
 
-    // In demo mode, just mark as paid
-    if (paymentIntentId.startsWith('pi_demo_')) {
-      const Order = require('../models/Order');
-      const order = await Order.findById(orderId);
-      if (!order) {
-        return res.status(404).json({ message: 'Order not found' });
-      }
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
 
+    if (paymentIntentId.startsWith('pi_demo_')) {
       order.paymentStatus = 'paid';
       order.stripePaymentIntentId = paymentIntentId;
       order.orderStatus = 'confirmed';
       await order.save();
-
       return res.json({ data: order });
     }
 
-    // Live mode - verify with Stripe
     if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== 'sk_test_xxx') {
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
       const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
       if (paymentIntent.status === 'succeeded') {
-        const Order = require('../models/Order');
-        const order = await Order.findById(orderId);
-        if (!order) {
-          return res.status(404).json({ message: 'Order not found' });
-        }
-
         order.paymentStatus = 'paid';
         order.stripePaymentIntentId = paymentIntentId;
         order.orderStatus = 'confirmed';
         await order.save();
-
         return res.json({ data: order });
       }
     }
 
     res.status(400).json({ message: 'Payment not completed' });
   } catch (error) {
-    console.error('Confirm payment error:', error);
-    res.status(500).json({ message: 'Failed to confirm payment' });
+    next(error);
   }
 };
 

@@ -6,8 +6,7 @@ const AbandonedCart = require('../models/AbandonedCart');
 const User = require('../models/User');
 const { sendEmail } = require('../utils/email');
 
-// POST /api/abandoned-carts - Log a cart (called by frontend periodically)
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', requireAuth, async (req, res, next) => {
   try {
     const { items, subtotal } = req.body;
     if (!items || items.length === 0) return res.status(400).json({ message: 'No items' });
@@ -15,7 +14,6 @@ router.post('/', requireAuth, async (req, res) => {
     const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Upsert: update if exists within last 24h, else create
     const existing = await AbandonedCart.findOne({
       user: user._id,
       recovered: false,
@@ -38,20 +36,18 @@ router.post('/', requireAuth, async (req, res) => {
 
     res.status(201).json({ data: cart });
   } catch (error) {
-    console.error('Log abandoned cart error:', error);
-    res.status(500).json({ message: 'Failed to log cart' });
+    next(error);
   }
 });
 
-// POST /api/abandoned-carts/send-recovery - Admin: send recovery emails
-router.post('/send-recovery', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.post('/send-recovery', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
-    const cutoff = new Date(Date.now() - 30 * 60 * 1000); // 30 min ago
+    const cutoff = new Date(Date.now() - 30 * 60 * 1000);
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const abandoned = await AbandonedCart.find({
       recoveryEmailSent: false,
       recovered: false,
-      createdAt: { $lte: cutoff },
-      createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }, // last 7 days
+      createdAt: { $lte: cutoff, $gte: weekAgo },
     }).populate('user', 'firstName email');
 
     let sentCount = 0;
@@ -88,13 +84,11 @@ router.post('/send-recovery', requireAuth, checkRole('admin', 'super_admin'), as
 
     res.json({ data: { sentCount, totalFound: abandoned.length } });
   } catch (error) {
-    console.error('Send recovery emails error:', error);
-    res.status(500).json({ message: 'Failed to send recovery emails' });
+    next(error);
   }
 });
 
-// POST /api/abandoned-carts/mark-recovered - Called when order is placed
-router.post('/mark-recovered', requireAuth, async (req, res) => {
+router.post('/mark-recovered', requireAuth, async (req, res, next) => {
   try {
     const user = await User.findOne({ clerkId: req.user.sub });
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -107,13 +101,11 @@ router.post('/mark-recovered', requireAuth, async (req, res) => {
 
     res.json({ message: 'Marked as recovered' });
   } catch (error) {
-    console.error('Mark recovered error:', error);
-    res.status(500).json({ message: 'Failed to mark recovered' });
+    next(error);
   }
 });
 
-// GET /api/abandoned-carts/admin - Admin: list abandoned carts
-router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req, res) => {
+router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req, res, next) => {
   try {
     const carts = await AbandonedCart.find({ recovered: false })
       .sort({ createdAt: -1 })
@@ -130,8 +122,7 @@ router.get('/admin', requireAuth, checkRole('admin', 'super_admin'), async (req,
       stats: stats[0] || { total: 0, totalValue: 0 },
     });
   } catch (error) {
-    console.error('Get abandoned carts error:', error);
-    res.status(500).json({ message: 'Failed to get abandoned carts' });
+    next(error);
   }
 });
 

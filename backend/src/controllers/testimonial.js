@@ -1,6 +1,6 @@
 const Testimonial = require('../models/Testimonial');
 
-exports.list = async (req, res) => {
+exports.list = async (req, res, next) => {
   try {
     const { approved, featured, limit = 50 } = req.query;
     const filter = {};
@@ -12,11 +12,11 @@ exports.list = async (req, res) => {
       .limit(parseInt(limit));
     res.json({ data: testimonials, count: testimonials.length });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.public = async (req, res) => {
+exports.public = async (req, res, next) => {
   try {
     const { limit = 6 } = req.query;
     const testimonials = await Testimonial.find({ isApproved: true })
@@ -25,36 +25,36 @@ exports.public = async (req, res) => {
       .limit(parseInt(limit));
     res.json({ data: testimonials });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   try {
     const testimonial = new Testimonial(req.body);
     await testimonial.save();
     res.status(201).json({ data: testimonial });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
   try {
     const testimonial = await Testimonial.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!testimonial) return res.status(404).json({ error: 'Testimonial not found' });
     res.json({ data: testimonial });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
   try {
     const testimonial = await Testimonial.findByIdAndDelete(req.params.id);
     if (!testimonial) return res.status(404).json({ error: 'Testimonial not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };

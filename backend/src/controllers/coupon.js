@@ -1,6 +1,7 @@
 const Coupon = require('../models/Coupon');
+const couponService = require('../services/coupon.service');
 
-exports.list = async (req, res) => {
+exports.list = async (req, res, next) => {
   try {
     const { active, limit = 50 } = req.query;
     const filter = {};
@@ -8,61 +9,51 @@ exports.list = async (req, res) => {
     const coupons = await Coupon.find(filter).sort({ createdAt: -1 }).limit(parseInt(limit));
     res.json({ data: coupons });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.validate = async (req, res) => {
+exports.validate = async (req, res, next) => {
   try {
     const { code, orderTotal } = req.query;
-    if (!code) return res.status(400).json({ error: 'Code is required' });
-    const coupon = await Coupon.findOne({ code: code.toUpperCase(), isActive: true });
-    if (!coupon) return res.status(404).json({ error: 'Invalid coupon code' });
-    if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) {
-      return res.status(400).json({ error: 'Coupon has expired' });
-    }
-    if (coupon.usageLimit > 0 && coupon.usedCount >= coupon.usageLimit) {
-      return res.status(400).json({ error: 'Coupon usage limit reached' });
-    }
-    if (orderTotal && coupon.minimumOrder > 0 && parseFloat(orderTotal) < coupon.minimumOrder) {
-      return res.status(400).json({ error: `Minimum order of £${coupon.minimumOrder} required` });
-    }
-    let discount = coupon.type === 'percentage' ? (parseFloat(orderTotal || 0) * coupon.value / 100) : coupon.value;
-    if (coupon.maximumDiscount > 0 && discount > coupon.maximumDiscount) {
-      discount = coupon.maximumDiscount;
-    }
-    res.json({ data: { ...coupon.toObject(), discount: Math.round(discount * 100) / 100 } });
+    const result = await couponService.validate(code, parseFloat(orderTotal || 0));
+    res.json({
+      data: {
+        ...result.coupon.toObject(),
+        discount: result.discount,
+      },
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   try {
     const coupon = new Coupon(req.body);
     await coupon.save();
     res.status(201).json({ data: coupon });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
   try {
     const coupon = await Coupon.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!coupon) return res.status(404).json({ error: 'Coupon not found' });
     res.json({ data: coupon });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    next(err);
   }
 };
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
   try {
     const coupon = await Coupon.findByIdAndDelete(req.params.id);
     if (!coupon) return res.status(404).json({ error: 'Coupon not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };

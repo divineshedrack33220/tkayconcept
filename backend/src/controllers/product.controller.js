@@ -32,14 +32,8 @@ exports.getProducts = async (req, res, next) => {
       }
     }
 
-    if (brand) {
-      query.brand = brand;
-    }
-
-    if (tag) {
-      query.tags = { $in: Array.isArray(tag) ? tag : [tag] };
-    }
-
+    if (brand) query.brand = brand;
+    if (tag) query.tags = { $in: Array.isArray(tag) ? tag : [tag] };
     if (isNewArrival === 'true') query.isNewArrival = true;
     if (isBestSeller === 'true') query.isBestSeller = true;
     if (isFeatured === 'true') query.isFeatured = true;
@@ -50,9 +44,7 @@ exports.getProducts = async (req, res, next) => {
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    if (search) {
-      query.$text = { $search: search };
-    }
+    if (search) query.$text = { $search: search };
 
     const { currentPage, itemsPerPage, skip } = calculatePagination(page, limit);
 
@@ -169,7 +161,6 @@ exports.deleteProduct = async (req, res, next) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Clean up Cloudinary images
     if (product.images && product.images.length > 0) {
       for (const image of product.images) {
         if (image.publicId) {
